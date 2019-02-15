@@ -1,0 +1,60 @@
+.search-project{
+    width: 120px !important;
+    margin: 0 !important;
+    position: absolute !important;
+    right: 0;
+    top: -40px;
+    border: 1px solid #d2d0d0 !important;
+    border-radius: 10px !important;
+    z-index: 12;
+    background: white;
+    cursor: pointer;
+    box-shadow: 0px 0px 1px 0px rgba(0,0,0,0.75);
+    .dd-header{
+        text-align: center
+    }
+    ul{
+        position: absolute;
+        width: inherit;
+        margin-top: 8px;
+        background: white;
+        border-radius: 10px !important;
+        border: 1px solid #d2d0d0;
+        box-shadow: inherit;
+    }
+    li{
+        text-align: center;
+        padding: 8px;
+        border-bottom: 1px solid #d2d0d0;
+    }
+    .hidden{
+        display: none;
+    }
+    i.arrow {
+        border: solid black;
+        border-width: 0 3px 3px 0;
+        display: inline-block;
+        padding: 3px;
+    }
+    .down {
+        transform: rotate(45deg);
+        -webkit-transform: rotate(45deg);
+        margin-bottom: 3px;
+        float: right;
+        margin-right: 10px;
+    }
+    .removeFilter{
+        position: absolute;
+        right: 122px;
+        top: 4px;
+        width: 95px;
+        text-decoration: underline
+    }
+}
+.container{
+    position: relative;
+}
+.cards-container{
+    margin-top: 55px !important;
+    margin-bottom: 55px !important;
+}
