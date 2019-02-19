@@ -1,0 +1,32 @@
+.tenant-class{
+    .project-link{
+        text-align: center;
+        margin-top: 10px !important;
+        padding-top: 10px;
+        border-top: 1px solid #009432;
+        color: black !important;
+    }
+    .project-name{
+        font-weight: bold
+    }
+    .card-title{
+        font-weight: bold !important;
+        overflow: hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+    }
+    .card-content p{
+        color: gray !important;
+    }
+    .card-content div{
+        margin-top: 25px;
+    }
+    .published .badge {
+        background: green;
+        color: white
+    }
+    .unpublished .badge{
+        background: #1da1f2;
+        color: white
+    }
+}
