@@ -1,0 +1,33 @@
+.create-project-page{
+    .col-centered{
+        float: none !important;
+        margin: 0 auto;
+    }
+}
+.Add_ordgaization{
+    margin-top: 8px;
+    margin-bottom: 2%;
+    margin-left: 2%;
+}
+.Add_Location{
+    margin-top: 8px;
+    margin-left: 2%;
+    margin-bottom: 3%;
+}
+.CreateProjectTabContent{
+    overflow-y: auto;
+    .role-details{
+        tbody{
+            display: block;
+        }
+        tr{
+            display: table;
+        }
+    }
+}
+.CreateProjectPublish{
+    float: right;
+}
+.CreateProjectSave{
+    float: right;
+}

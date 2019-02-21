@@ -1,0 +1,572 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Dynamic Data demo",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "type": "static",
+      "label": "<em>Enrolling in this program requires your consent.</em>"
+    },
+    {
+      "type": "states",
+      "name": "state",
+      "label": "State",
+      "options": {
+        "hint": "Select a state",
+        "showIf": {},
+        "validation": {
+          "required": true,
+          "requiredIf": {}
+        }
+      }
+    },
+    {
+      "type": "ssn",
+      "name": "ssn",
+      "label": "Social security number",
+      "options": {
+        "validation": {
+          "required": true,
+          "requiredIf": {}
+        }
+      }
+    },    
+    {
+      "type": "zip",
+      "name": "zip",
+      "label": "Zip",
+      "options": {
+        "validation": {
+          "required": true,
+          "requiredIf": {}
+        }
+      }
+    },
+    {
+      "name": "password",
+      "type": "password",
+      "label": "Password",
+      "options": {
+        "hint": "Enter your password.",
+        "validation": {
+          "required": true
+        }
+      }
+    },    
+    {
+      "name": "startTime",
+      "type": "time",
+      "label": "Start time",
+      "options": {
+        "hint": "Enter start time.",
+        "validation": {
+          "required": true
+        }
+      }
+    },   
+    {
+      "name": "altPhone",
+      "type": "text-mask",
+      "label": "Alt phone",
+      "options": {
+        "hint": "Enter another phone number.",
+        "inputMask": "(000) 000-0000",
+        "validation": {
+          "required": true,
+          "pattern": "[0-9]{10}",
+          "patternValMsg": "Alt phone should be 10 digits."
+        }
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "consent",
+      "label": "I consent.",
+      "options": {
+        "hint": "Consent is required to continue.",
+        "align": "after",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Full name",
+      "options": {
+        "hint": "Enter your full name.",
+        "validation": {
+          "required": true,
+          "minLength": "3",
+          "maxLength": "100"
+        }
+      }
+    },
+    {
+      "name": "schoolInfo",
+      "type": "panel",
+      "label": "School Information",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "hint": "Talkin' 'bout your education",
+        "fields": [
+          {
+            "name": "school",
+            "type": "text",
+            "label": "School",
+            "options": {
+              "autocomplete": true,
+              "hint": "Start typing...",
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Central High School"
+                },
+                {
+                  "label": "East High School"
+                },
+                {
+                  "label": "North High School"
+                }
+              ]
+            }
+          },
+          {
+            "name": "address",
+            "type": "address",
+            "label": "Address",
+            "options": {
+              "validation": {
+                "required": true
+              },
+              "hint": "Enter your school's address"
+            }
+          },
+          {
+            "name": "studentId",
+            "type": "text",
+            "label": "Student Id",
+            "options": {
+              "hint": "AA000",
+              "validation": {
+                "required": true,
+                "pattern": "[A-Z]{2}[0-9]{3}"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "age",
+      "type": "number",
+      "label": "Age",
+      "options": {
+        "hint": "Provide your current age.",
+        "validation": {
+          "required": true,
+          "min": "12",
+          "max": "22"
+        }
+      }
+    },
+    {
+      "type": "date",
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "options": {
+        "hint": "Provide your date of birth.",
+        "startAt": {
+          "year": "2001",
+          "month": "0",
+          "day": "1"
+        },
+        "validation": {
+          "required": true,
+          "minDate": {
+            "year": "2001",
+            "month": "0",
+            "day": "1"
+          },
+          "maxDate": {
+            "year": "2010",
+            "month": "11",
+            "day": "15"
+          }
+        }
+      }
+    },
+    {
+      "type": "select",
+      "name": "status",
+      "label": "Status",
+      "options": {
+        "hint": "Select the case status",
+        "validation": {
+          "required": true
+        },
+        "items": [
+          {
+            "value": "1",
+            "label": "New"
+          },
+          {
+            "value": "2",
+            "label": "Active"
+          },
+          {
+            "value": "3",
+            "label": "Closed"
+          },
+          {
+            "value": "4",
+            "label": "Other",
+            "options": {
+              "specify": {
+                "name": "statusOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. withdrawn, deceased)",
+                  "validation": {
+                    "required": true,
+                    "minLength": "2",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "appointmentTime",
+      "label": "Appointment time",
+      "options": {
+        "hint": "Select the appointment time",
+        "validation": {
+          "required": true
+        },
+        "items": [
+          {
+            "value": "10",
+            "label": "10:00 AM"
+          },
+          {
+            "value": "11",
+            "label": "11:00 AM"
+          },
+          {
+            "value": "12",
+            "label": "12:00 PM"
+          },
+          {
+            "value": "13",
+            "label": " 1:00 PM",
+            "options": {
+              "specify": {
+                "name": "statusOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. withdrawn, deceased)",
+                  "validation": {
+                    "required": true,
+                    "minLength": "2",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "sportsList",
+      "type": "checkbox-group",
+      "label": "Which of the following sports did you play last year?",
+      "options": {
+        "hint": "(Check all that apply)",
+        "validation": {
+          "requiredMin": "2"
+        },
+        "fields": [
+          {
+            "type": "checkbox",
+            "name": "baseball",
+            "label": "Baseball",
+            "options": {
+              "align": "after",
+              "validation": {}
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "soccer",
+            "label": "Soccer",
+            "options": {
+              "align": "after",
+              "validation": {}
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "teamSport",
+            "label": "Other team sport",
+            "options": {
+              "align": "after",
+              "validation": {},
+              "specify": {
+                "name": "teamSportOther",
+                "type": "text",
+                "label": "Please specify type",
+                "options": {
+                  "hint": "(e.g. dodge ball, kickball)",
+                  "validation": {
+                    "requiredIf": { "property": "teamSport", "value": "true" },
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "sport",
+            "label": "Other individual sport",
+            "options": {
+              "align": "after",
+              "validation": {},
+              "specify": {
+                "name": "sportOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. running, swimming)",
+                  "validation": {
+                    "required": true,
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "brightness",
+      "type": "slider",
+      "label": "Brightness",
+      "options": {
+        "validation": {
+          "required": true,
+          "min": 0,
+          "max": "10"
+        },
+        "invert": false,
+        "vertical": false,
+        "thumbLabel": true,
+        "step": "0.5",
+        "tickInterval": "auto"
+      }
+    },
+    {
+      "type": "radio",
+      "name": "color",
+      "label": "Which color is your favorite?",
+      "options": {
+        "hint": "Select your preference",
+        "align": "after",
+        "vertical": true,
+        "validation": {
+          "required": true
+        },
+        "items": [
+          {
+            "value": "blue",
+            "label": "Blue"
+          },
+          {
+            "value": "red",
+            "label": "Red"
+          },
+          {
+            "value": "yellow",
+            "label": "Yellow"
+          },
+          {
+            "value": "other",
+            "label": "Other",
+            "options": {
+              "specify": {
+                "name": "colorOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. turquoise, chartreuse)",
+                  "validation": {
+                    "required": true,
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "contactInfo",
+      "type": "fieldset",
+      "label": "Your contact info",
+      "options": {
+        "fields": [
+            {
+              "type": "phone",
+              "name": "phone",
+              "label": "Phone",
+              "options": {
+                "validation": {
+                  "required": true,
+                  "patternValMsg": "Phone must be 10 digits",
+                  "requiredIf": {}
+                }
+              }
+            },
+          {
+            "name": "email",
+            "type": "email",
+            "label": "Email",
+            "options": {
+              "hint": "Provide your email address.",
+              "validation": {
+                "required": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "contacts",
+      "type": "array",
+      "label": "Additional contacts",
+      "options": {
+        "hint": "Please provide a few names of people close to you.",
+        "addText": "Add contact",
+        "removeText": "Remove contact",
+        "fields": [
+          {
+            "name": "contactName",
+            "type": "text",
+            "label": "Name",
+            "options": {
+              "hint": "Enter the full name",
+              "validation": {
+                "required": true,
+                "minLength": 3,
+                "maxLength": 100
+              }
+            }
+          },
+          {
+            "name": "relationship",
+            "type": "select",
+            "label": "Relationship to you",
+            "options": {
+              "hint": "Give us a clue",
+              "items": [
+                {
+                  "value": "mother",
+                  "label": "Mom"
+                },
+                {
+                  "value": "father",
+                  "label": "Dad"
+                },
+                {
+                  "value": "other",
+                  "label": "Other",
+                  "options": {
+                    "specify": {
+                      "name": "otherRelationship",
+                      "type": "text",
+                      "label": "Please specify",
+                      "options": {
+                        "hint": "(e.g. grandparent, neighbor)",
+                        "validation": {
+                          "requiredIf": {"property": "relationship", "value":"other"},
+                          "minLength": "2",
+                          "maxLength": "100"
+                        }
+                      }
+                    }
+                  }
+                }
+              ],
+              "validation": {
+                "required": false
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "notes",
+      "type": "textarea",
+      "label": "Notes",
+      "options": {
+        "hint": "Please provide a few more details.",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "type": "slide-toggle",
+      "name": "onOff",
+      "label": "Toggle on or off.",
+      "options": {
+        "align": "after",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "type": "action-toolbar",
+      "options": {
+        "buttons": {
+          "allowDelete": false,
+          "allowCancel": false,
+          "allowSubmit": true
+        }
+      }
+    }
+  ],
+  "entity": {
+     "sportsList": {
+    "teamSport": true,
+    "teamSportOther": "asdf"
+  },
+    "color": "other",
+    "colorOther":"some color"
+  }
+}

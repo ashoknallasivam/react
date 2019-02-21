@@ -1,0 +1,64 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Heading configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Label",
+      "options": {
+        "hint": "What the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "options",
+      "type": "panel",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "name": "level",
+            "type": "slider",
+            "label": "Level",
+            "options": {
+              "validation": {
+                "required": true,
+                "min": 1,
+                "max": "6"
+              },
+              "invert": false,
+              "vertical": false,
+              "thumbLabel": true,
+              "step": "1",
+              "tickInterval": "auto"
+          }}
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "heading",
+    "options": {
+      "level": 1
+    }
+  }
+}

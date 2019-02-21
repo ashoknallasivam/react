@@ -1,0 +1,107 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Action Toolbar Configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "type": "panel",
+      "name": "options",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "type": "checkbox-group",
+            "name": "buttons",
+            "label": "Buttons",
+            "options": {
+              "validation": {
+                "requiredMin": 1
+              },
+              "fields": [
+                {
+                  "type": "checkbox",
+                  "name": "allowDelete",
+                  "label": "Delete",
+                  "options": {
+                    "specify": {
+                      "type": "text",
+                      "name": "deleteButtonText",
+                      "label": "Delete button text",
+                      "options": {
+                        "hint": "Default is Delete",
+                        "validation": {}
+                      }
+                    },
+                    "validation": {}
+                  }
+                },
+                {
+                  "type": "checkbox",
+                  "name": "allowCancel",
+                  "label": "Cancel",
+                  "options": {
+                    "specify": {
+                      "type": "text",
+                      "name": "cancelButtonText",
+                      "label": "Cancel button text",
+                      "options": {
+                        "hint": "Default is Cancel",
+                        "validation": {}
+                      }
+                    },
+                    "validation": {}
+                  }
+                },
+                {
+                  "type": "checkbox",
+                  "name": "allowSave",
+                  "label": "Submit",
+                  "options": {
+                    "specify": {
+                      "type": "text",
+                      "name": "submitButtonText",
+                      "label": "Submit button text",
+                      "options": {
+                        "hint": "Default is Submit",
+                        "validation": {}
+                      }
+                    },
+                    "validation": {}
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "action-toolbar",
+    "options": {
+      "buttons": {
+        "allowDelete": false,
+        "deleteButtonText": "Delete",
+        "allowCancel": true,
+        "cancelButtonText": "Cancel",
+        "allowSubmit": true,
+        "submitButtonText": "Submit"
+      }
+    }
+  }
+}

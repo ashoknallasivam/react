@@ -1,0 +1,18 @@
+version: '3.5'
+
+services:
+
+  react-angular:
+    container_name: react-angular
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/usr/src/app'
+      - '/usr/src/app/node_modules'
+    ports:
+      - '4000:4000'
+    environment:
+      - NODE_ENV=production
+      
+

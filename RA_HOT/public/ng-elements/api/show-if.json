@@ -1,0 +1,391 @@
+{
+  "layout": [{
+      "type": "radio",
+      "name": "cancellationQuestion",
+      "label": "Who initiated this cancellation?",
+      "options": {
+        "vertical": true,
+        "validation": { "required": true },
+        "items": [{
+            "value": "client",
+            "label": "Client",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "coach",
+            "label": "Coach",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "noticeOfCancellation",
+      "label": "If the client canceled, how much notice was given?",
+      "options": {
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "validation": {
+          "required": true
+        },
+        "items": [{
+            "value": "moreThanDay",
+            "label": "More than one day",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "lessThanDay",
+            "label": "Less than one day",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "none",
+            "label": "None. (Client was a 'no show.')",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "select",
+      "name": "reasonOptions",
+      "label": "Why did the client cancel?",
+      "options": {
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "validation": {},
+        "items": [{
+            "value": "transportation",
+            "label": "Transportation difficulty",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "childCare",
+            "label": "Lack of child care",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "illness",
+            "label": "Illness of client or caring for ill dependent",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "weather",
+            "label": "Inclement weather",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "employment",
+            "label": "Employment interfered",
+            "options": {
+              "specify": {
+                "options": {
+                  "validation": {}
+                }
+              }
+            }
+          },
+          {
+            "value": "none",
+            "label": "No reason provided",
+            "options": {
+              "specify": {
+                "name": "otherReason",
+                "type": "text",
+                "label": "Please specify reason",
+                "options": {
+                  "hint": "(e.g. dodge ball, kickball)",
+                  "validation": {
+                    "requiredIf": { "property": "reasonOptions", "value": "none" },
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "sportsList",
+      "type": "checkbox-group",
+      "label": "Which of the following sports did you play last year?",
+      "options": {
+        "hint": "(Check all that apply)",
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "validation": {
+          "requiredMin": "2"
+        },
+        "fields": [{
+            "type": "checkbox",
+            "name": "baseball",
+            "label": "Baseball",
+            "options": {
+              "align": "after",
+              "validation": {}
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "soccer",
+            "label": "Soccer",
+            "options": {
+              "align": "after",
+              "validation": {}
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "teamSport",
+            "label": "Other team sport",
+            "options": {
+              "align": "after",
+              "validation": {},
+              "specify": {
+                "name": "teamSportOther",
+                "type": "text",
+                "label": "Please specify type",
+                "options": {
+                  "hint": "(e.g. dodge ball, kickball)",
+                  "validation": {
+                    "requiredIf": { "property": "teamSport", "value": "true" },
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "checkbox",
+            "name": "sport",
+            "label": "Other individual sport",
+            "options": {
+              "align": "after",
+              "validation": {},
+              "specify": {
+                "name": "sportOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. running, swimming)",
+                  "validation": {
+                    "requiredIf": { "property": "sport", "value": "true" },
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "radio",
+      "name": "color",
+      "label": "Which color is your favorite?",
+      "options": {
+        "hint": "Select your preference",
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "align": "after",
+        "vertical": true,
+        "validation": {
+          "required": true
+        },
+        "items": [{
+            "value": "blue",
+            "label": "Blue"
+          },
+          {
+            "value": "red",
+            "label": "Red"
+          },
+          {
+            "value": "yellow",
+            "label": "Yellow"
+          },
+          {
+            "value": "other",
+            "label": "Other",
+            "options": {
+              "specify": {
+                "name": "colorOther",
+                "type": "text",
+                "label": "Please specify",
+                "options": {
+                  "hint": "(e.g. turquoise, chartreuse)",
+                  "validation": {
+                    "required": { "property": "color", "value": "other" },
+                    "minLength": "3",
+                    "maxLength": "100"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "consent",
+      "label": "I consent.",
+      "options": {
+        "hint": "Consent is required to continue.",
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "align": "after",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "otherCheck",
+      "label": "Other check",
+      "options": {
+        "align": "after",
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "validation": {},
+        "specify": {
+          "name": "checkOther",
+          "type": "text",
+          "label": "Please specify type",
+          "options": {
+            "hint": "(e.g. dodge ball, kickball)",
+            "validation": {
+              "requiredIf": { "property": "otherCheck", "value": "true" },
+              "minLength": "3",
+              "maxLength": "100"
+            }
+          }
+        }
+      }
+    },
+    {
+      "type": "static",
+      "label": "When did the participant cancel?",
+      "options": {
+        "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        }
+      }
+    },
+    {
+      "type": "date",
+      "name": "dateOfBirth",
+      "label": "Date of birth",
+      "options": {
+        "hint": "Provide your date of birth.",
+         "showIf": {
+          "property": "cancellationQuestion",
+          "value": "client"
+        },
+        "startAt": {
+          "year": "2001",
+          "month": "0",
+          "day": "1"
+        },
+        "validation": {
+          "required": true,
+          "minDate": {
+            "year": "2001",
+            "month": "0",
+            "day": "1"
+          },
+          "maxDate": {
+            "year": "2010",
+            "month": "11",
+            "day": "15"
+          }
+        }
+      }
+    },
+    {
+      "type": "action-toolbar",
+      "options": {
+        "buttons": {
+          "allowDelete": false,
+          "allowCancel": false,
+          "allowSubmit": true
+        }
+      }
+    }
+  ],
+  "entity": {
+  }
+}
