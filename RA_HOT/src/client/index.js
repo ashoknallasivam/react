@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from "react-router-dom";
 import { Provider } from 'react-redux';
+import { AppContainer } from 'react-hot-loader';
 
 import '../../node_modules/materialize-css/dist/css/materialize.css';
 import '../../public/assets/sass/style.scss';
@@ -17,13 +18,25 @@ if (finaltoken) {
   store.dispatch({ type: AUTH_TOKEN });
 }
 
-ReactDOM.render(<BrowserRouter>
+
+const root = document.getElementById('root');
+
+const renderApp = () => {
+  ReactDOM.render(
+  <AppContainer>
+    <BrowserRouter>
       <Provider store={store}>
           <AppLayout history={history}/>
 		  
       </Provider>
-  </BrowserRouter>,
-  document.getElementById('root')
-);
+  </BrowserRouter>
+   </AppContainer>
+    , root,
+  );
+};
 
+renderApp();
 
+if (module.hot) {
+  module.hot.accept('./appLayout', renderApp);
+}

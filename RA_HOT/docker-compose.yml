@@ -2,16 +2,16 @@ version: '3.5'
 
 services:
 
-  react-angular:
-    container_name: react-angular
+  rapter-admin:
+    container_name: rapter-admin
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
-      - '.:/usr/src/app'
-      - '/usr/src/app/node_modules'
+      - '.:/app'
+      - '/app/node_modules'
     ports:
-      - '4000:4000'
+      - '3000:3000'
     environment:
       - NODE_ENV=production
       

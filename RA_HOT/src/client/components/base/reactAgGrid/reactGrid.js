@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
-import EditComponent from '../EditComponent';
+import EditComponent from '../editComponent';
 import DeleteComponent from '../deleteGridRow';
 
 class ReactGrid extends Component {

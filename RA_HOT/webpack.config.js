@@ -1,16 +1,33 @@
 const path = require('path');
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 
+const { NODE_ENV = 'development' } = process.env;
+
 const outputDirectory = 'dist';
+const ROOT = path.resolve(__dirname);
+const SRC = path.resolve(ROOT, 'src');
+
+const HASH_TYPE = NODE_ENV === 'production' ? 'chunkhash' : 'hash';
 
 module.exports = {
-  entry: ['babel-polyfill', './src/client/index.js'],
-  output: {
-    path: path.join(__dirname, outputDirectory, 'client'),
-	publicPath: '/',
-    filename: 'bundle.js'
+	
+  entry: {
+    app: [
+      'react-hot-loader/patch',
+      'webpack-hot-middleware/client',
+      path.resolve(SRC, 'client', 'index.js'),
+    ].filter(Boolean),
   },
+  output: {
+    filename: `[name].[${HASH_TYPE}].js`,
+    path: path.resolve(ROOT, 'dist', 'client'),
+    publicPath: '/',
+	filename: 'bundle.js'
+  },
+	
+ 
   module: {
         rules: [
             {
@@ -70,7 +87,7 @@ module.exports = {
     }
   },
   plugins: [
-    
+    new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico'

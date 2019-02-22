@@ -13,7 +13,7 @@ import users from '../../users.json';
 
 const RAPTER_URL = 'https://rapter-api.admin.mpr.works/api/v1';
 
-const { NODE_ENV = 'development', PORT = 8080 } = process.env;
+const { NODE_ENV = 'development', PORT = 3000 } = process.env;
 
 var config;
 
@@ -30,6 +30,13 @@ app.use(function (req, res, next) {
    next();
 })
 
+
+apiRouter.route('/getList')
+  .get((req, res) => {
+	  const list = ["item1", "item2", "item7"];
+    res.json(list);
+    console.log('Sent list of items');
+  });
 
 
 apiRouter.route('/users')
@@ -83,26 +90,6 @@ apiRouter.route('/users/:id')
   
 //GlobalVariables
 const allTenantsRead = [];
-
-//READ FILES
-readLatestProject();
-function readLatestProject() {
-  fs.readdir('./exported_file', function (err, filenames) {
-    if(err){
-        return new Error(err);
-        
-    }
-    filenames.forEach(function (filename) {
-        fs.readFile('./exported_file/' + filename, function(err, content) {
-          if (err) {
-            return new Error(err);
-           
-          }
-          JSON.parse(allTenantsRead.push(JSON.parse(content)));
-        })
-    })
-  })  
-}
 
 var loginTokenHeader;
 apiRouter.post('/login', (req, res) => {

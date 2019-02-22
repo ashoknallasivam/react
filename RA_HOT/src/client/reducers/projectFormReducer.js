@@ -156,7 +156,6 @@ export const projectFormReducer = (state = intialData, action) => {
                 menuRoleAccessDetails: [...state.menuRoleAccessDetails, ...data]
             };
             return state;
-            return state;
         case "FETCH_RESOURCE_ROLE_ACCESS":
             state = {
                 ...state,
@@ -189,24 +188,3 @@ export const projectFormReducer = (state = intialData, action) => {
     }
 
 }
-
-// export const selectOrgLocMapCreate = (state = initialTtoReducers, action) => {
-//     const { type, data } = action;
-//     switch (type) {
-//         case 'SELECTED_DROPDOWN_ORG_CREATE':
-//             state = {...state, 
-//                 locList: [...data.locList],
-//              };
-//         default:
-//             return state;
-//     }
-// }
-// export const renderedRoles = (state = intialData.roles, action) => {
-//     const { type, data } = action;
-//     switch (type) {
-//         case 'RENDER_ROLES':
-//             return data;
-//         default:
-//             return state;
-//     }
-// }
