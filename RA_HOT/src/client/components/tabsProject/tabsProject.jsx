@@ -41,7 +41,10 @@ class TabsProject extends Component {
             RoleNameAlreadyExist: false,
             disabledSelectRole: false,
             roleDefaultValue: true,
-            cumulativeRatio: false
+            cumulativeRatio: false,
+	    cursor: '',
+            prevNode: '' ,
+            disabledUpdateRoleBtn: true
         };
         objectUtil.bindAction(HeaderData.enrollmentTargetHeader, "EditColumn", this.editRowHandler);
         objectUtil.bindAction(HeaderData.enrollmentTargetHeader, "DeleteColumn", this.deleteEnrollmentTarget);
@@ -161,6 +164,8 @@ class TabsProject extends Component {
         this.menuData = {};
         this.resourceData = {};
         this.enrollmentTargetTab = false;
+	document.getElementById('roleName').value = '';
+        document.getElementById('roleDescription').value = '';
     }
     functionsChangeHandler = () => {
         this.menuValues = [];
@@ -356,7 +361,7 @@ class TabsProject extends Component {
         this.props.actions.DeleteEnrollmentTarget(selectedData, deletedId);
     }
     ////////////////
-    roleBodyCreate = (description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name) => {
+    roleBodyCreate = (description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name, orgId) => {
         let roleBody = {};
         roleBody.description = description;
         roleBody.id = id;
@@ -364,11 +369,33 @@ class TabsProject extends Component {
         roleBody.isAutoAccess = isAutoAccess;
         roleBody.isAutoAssignOnIntake = isAutoAssignOnIntake;
         roleBody.name = name;
+        roleBody.orgId = orgId;
         return roleBody;
     }//room for improvment, this is required because ds of the received role is different than ds of created role
+    formattedMenu = (roleId, menuId, orgId, locId, tenantId, flag) => {
+        let menuBody = {};
+        menuBody.menuId ={};
+        //let temp = menuId
+        menuBody.roleId = roleId;
+        menuBody.menuId[menuId] = 1;
+        menuBody.orgId = orgId;
+        menuBody.locId = locId;
+        menuBody.tenantId = tenantId;
+        menuBody.flag = flag;
+        return menuBody
+    }
 
-    handleBounds = () => {
-        this.props.actions.FetchMenuRoleAccess();//the callback for this should be handle role dropdown
+    formattedResource = (roleId, resourceId, orgId, locId, tenantId, flag) => {
+        let resourceBody = {};
+        resourceBody.resourceId ={};
+        //let temp = menuId
+        resourceBody.roleId = roleId;
+        resourceBody.resourceId[resourceId] = 1;
+        resourceBody.orgId = orgId;
+        resourceBody.locId = locId;
+        resourceBody.tenantId = tenantId;
+        resourceBody.flag = flag;
+        return resourceBody
     }
     handleRoleDropdown = (e) => {
         this.setState({
@@ -382,28 +409,47 @@ class TabsProject extends Component {
         });
         const selectedValue = e.target.value;
         let filteredRoles = this.props.roleDetails.filter((role) => role.id == selectedValue);
-        let { description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name, flag } = filteredRoles[0];
+        let { description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name, flag, orgId } = filteredRoles[0];
         let filteredRolesData = this.props.ApplicationMode == 'VIEW' ?
-            this.roleBodyCreate(description, id, isAssignable.data[0], isAutoAccess.data[0], isAutoAssignOnIntake.data[0], name) :
-            this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ? filteredRoles[0] : this.props.ApplicationMode == 'EDIT' && flag == 'view' ?
-                this.roleBodyCreate(description, id, isAssignable.data[0], isAutoAccess.data[0], isAutoAssignOnIntake.data[0], name)
-                : filteredRoles[0];
+        this.roleBodyCreate(description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name, orgId) :
+        this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ?  filteredRoles[0] : this.props.ApplicationMode == 'EDIT' && flag == 'view' ? 
+        this.roleBodyCreate(description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name, orgId)
+        : filteredRoles[0];
+
         let filteredMenu = this.props.menuDetails.filter((menu) => menu.roleId == selectedValue);
         let filteredResource = this.props.resourceDetails.filter((resource) => resource.roleId == selectedValue);
+
+        let selectedMenuTemp = this.props.menuRoleAccessDetails.filter(item => item.roleId == selectedValue);
+        let selectedResourceTemp = this.props.resourceRoleAccessDetails.filter(item => item.roleId == selectedValue);
+
+        let formattedMenu = selectedMenuTemp.map(item => this.formattedMenu(item.roleId, item.menuId, 
+            this.props.selectedCurrentTTO, this.isBindToLto ? this.props.selectedCurrentLTO : null,
+            this.props.tenantData.id,
+            this.state.selecteRole.flag == "createFlag" ? this.state.selecteRole.flag: this.props.currentTtoFlag));
+        console.log(this.state.roleStatus);
+        //this.props.actions.AddMenuDetails(formattedMenu);
+        
         this.setState({ selecteRole: filteredRolesData });// in view the ds of roles is different please take
-        let filteredValueMenu = this.props.ApplicationMode == 'VIEW' ?
-            this.props.menuRoleAccessDetails.map(item => item.menuId) ://for view/edit fetch files from menuRoleAccessDetails
-            this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ? Object.keys(filteredMenu[0].menuId).filter(item => filteredMenu[0].menuId[item] == 1) :
-                this.props.ApplicationMode == 'EDIT' && flag == 'view' ? this.props.menuRoleAccessDetails.map(item => item.menuId) :
-                    Object.keys(filteredMenu[0].menuId).filter(item => filteredMenu[0].menuId[item] == 1);
+        let filteredValueMenu = this.props.ApplicationMode == 'VIEW'?
+                this.props.menuRoleAccessDetails.map(item => {if(item.roleId == selectedValue){ return item.menuId}})://for view/edit fetch files from menuRoleAccessDetails
+                this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ? Object.keys(filteredMenu[0].menuId).filter(item => filteredMenu[0].menuId[item] == 1):
+                this.props.ApplicationMode == 'EDIT' && flag == 'view' ? this.props.menuRoleAccessDetails.map(item => {if(item.roleId == selectedValue){ return item.menuId}}):
+                Object.keys(filteredMenu[0].menuId).filter(item => filteredMenu[0].menuId[item] == 1);
         this.setState(prevState => ({
             selectedMenu: [prevState.selectedMenu, ...filteredValueMenu]
         }));
-        let filteredValueResource = this.props.ApplicationMode == 'VIEW' ?
-            this.props.resourceRoleAccessDetails.map(item => item.resourceId) : //for view/edit fetch files from resourceRoleAccessDetails
-            this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ? Object.keys(filteredResource[0].resourceId).filter(item => filteredResource[0].resourceId[item] == 1) :
-                this.props.ApplicationMode == 'EDIT' && flag == 'view' ? this.props.resourceRoleAccessDetails.map(item => item.resourceId) :
-                    Object.keys(filteredResource[0].resourceId).filter(item => filteredResource[0].resourceId[item] == 1);
+
+        let formattedResource = selectedResourceTemp.map(item => this.formattedResource(item.roleId, item.resourceId, 
+            this.props.selectedCurrentTTO, this.isBindToLto ? this.props.selectedCurrentLTO : null,this.props.tenantData.id,
+            this.state.selecteRole.flag == "createFlag" ? this.state.selecteRole.flag: this.props.currentTtoFlag, this.props.tenantData.id));
+        console.log(formattedResource);
+        //this.props.actions.AddResourceDetails(formattedResource);
+
+        let filteredValueResource = this.props.ApplicationMode == 'VIEW'?
+                this.props.resourceRoleAccessDetails.map(item => {if(item.roleId == selectedValue){ return item.resourceId}}): //for view/edit fetch files from resourceRoleAccessDetails
+                this.props.ApplicationMode == 'EDIT' && flag == 'createFlag' ? Object.keys(filteredResource[0].resourceId).filter(item => filteredResource[0].resourceId[item] == 1):
+                this.props.ApplicationMode == 'EDIT' && flag == 'view' ? this.props.resourceRoleAccessDetails.map(item => {if(item.roleId == selectedValue){ return item.resourceId}}):
+                Object.keys(filteredResource[0].resourceId).filter(item => filteredResource[0].resourceId[item] == 1);
         this.setState(prevState => ({
             selectedResource: [prevState.selectedResource, ...filteredValueResource]
         }));
@@ -441,23 +487,35 @@ class TabsProject extends Component {
                 "name": this.rolesData.roleName ? this.rolesData.roleName : this.state.selecteRole.name ? this.state.selecteRole.name : '',
                 "description": this.rolesData.roleDescription ? this.rolesData.roleDescription : this.state.selecteRole.description ? this.state.selecteRole.description : '',
                 "orgId": this.isBindToLto ? this.props.selectedCurrentLTO : this.props.selectedCurrentTTO,
-                "isAssignable": this.rolesData.isAssignable ? this.rolesData.isAssignable : this.state.selecteRole.isAssignable ? this.state.selecteRole.isAssignable : 0,
-                "isAutoAccess": this.rolesData.isAutoAccess ? this.rolesData.isAutoAccess : this.state.selecteRole.isAutoAccess ? this.state.selecteRole.isAutoAccess : 0,
-                "isAutoAssignOnIntake": this.rolesData.isAutoAssignOnIntake ? this.rolesData.isAutoAssignOnIntake : this.state.selecteRole.isAutoAssignOnIntake ? this.state.selecteRole.isAutoAssignOnIntake : 0,
-                "flag": "createFlag"
+                "isAssignable": this.rolesData.isAssignable ? this.rolesData.isAssignable : this.state.selecteRole.isAssignable  && !this.rolesData.hasOwnProperty("isAssignable") ? this.state.selecteRole.isAssignable : this.state.selecteRole.isAssignable  && this.rolesData.hasOwnProperty("isAssignable")? this.rolesData.isAssignable: 0,
+                "isAutoAccess": this.rolesData.isAutoAccess ? this.rolesData.isAutoAccess : this.state.selecteRole.isAutoAccess && !this.rolesData.hasOwnProperty("isAutoAccess") ? this.state.selecteRole.isAutoAccess : this.state.selecteRole.isAutoAccess  && this.rolesData.hasOwnProperty("isAutoAccess")? this.rolesData.isAutoAccess: 0,
+                "isAutoAssignOnIntake": this.rolesData.isAutoAssignOnIntake ? this.rolesData.isAutoAssignOnIntake : this.state.selecteRole.isAutoAssignOnIntake && !this.rolesData.hasOwnProperty("isAutoAssignOnIntake") ? this.state.selecteRole.isAutoAssignOnIntake : this.state.selecteRole.isAutoAssignOnIntake  && this.rolesData.hasOwnProperty("isAutoAssignOnIntake")? this.rolesData.isAutoAssignOnIntake: 0,
+                "flag": "createFlag",
+                "parentFlag": this.isBindToLto? this.props.currentLtoFlag : this.props.currentTtoFlag
             }
             function copyMenuRole(array) {
                 let CopyMenuItem = {};
                 array.map(item => {
                     CopyMenuItem[item] = 1;
                 })
+            return CopyMenuItem;
+            }
+            function copyMenuRoleTemp(array, obj) {
+            let CopyMenuItem = {};
+                array.map(item => {
+                    CopyMenuItem[item] = 1;
+                });
+                Object.keys(obj).map(item => {
+                    CopyMenuItem[item] = obj[item];
+                });
                 return CopyMenuItem;
             }
             const menu = {
                 "roleId": "c" + this.state.newRole,
-                "menuId": this.state.selectedMenu.length != 0 ? copyMenuRole(this.state.selectedMenu) : this.menuData,
+                "menuId": this.state.selectedMenu.length!=0 && Object.keys(this.menuData) == 0 ? copyMenuRole(this.state.selectedMenu): this.state.selectedMenu.length!=0 && Object.keys(this.menuData) !== 0 ?  copyMenuRoleTemp(this.state.selectedMenu, this.menuData):this.menuData,
                 "orgId": this.props.selectedCurrentTTO,
-                "locId": this.props.selectedCurrentLTO,
+                "locId": this.isBindToLto ? this.props.selectedCurrentLTO : null,
+                "tenantId": this.props.selectedOrg.id,
                 "flag": "createFlag"
             }
             function copyResourceRole(array) {
@@ -466,12 +524,24 @@ class TabsProject extends Component {
                     CopyResourceItem[item] = 1;
                 })
                 return CopyResourceItem;
-            }
+                }
+                function copyResourceRoleTemp(array, obj) {
+                    let CopyResourceItem = {};
+                        array.map(item => {
+                            CopyResourceItem[item] = 1;
+                        });
+                        Object.keys(obj).map(item => {
+                            CopyResourceItem[item] = obj[item];
+                        });
+                        return CopyResourceItem;
+                    }
             const resource = {
                 "roleId": "c" + this.state.newRole,
-                "resourceId": this.state.selectedResource.length != 0 ? copyResourceRole(this.state.selectedResource) : this.resourceData,
+                "resourceId": this.state.selectedResource.length!=0 && Object.keys(this.resourceData) == 0 ?copyResourceRole(this.state.selectedResource):this.state.selectedResource.length!=0 && Object.keys(this.resourceData) !== 0 ? copyResourceRoleTemp(this.state.selectedResource, this.resourceData): this.resourceData,
                 "orgId": this.props.selectedCurrentTTO,
-                "locId": this.props.selectedCurrentLTO
+                "locId": this.isBindToLto ? this.props.selectedCurrentLTO : null,
+                "tenantId": this.props.selectedOrg.id,
+                "flag": "createFlag"
             }
             this.props.actions.AddRoleDetails(role);
             this.props.actions.AddMenuDetails(menu);
@@ -501,6 +571,7 @@ class TabsProject extends Component {
             RoleNameAlreadyExist: false,
         });
         this.enrollmentTargetTab = false;
+        this.studyConfigTab = false;
 
     }
     handleDeleteRoleModal = () => {
@@ -513,9 +584,9 @@ class TabsProject extends Component {
             this.rolesData,
             this.menuData,
             this.resourceData,
-            this.props.selectedCurrentTTO,
-            this.props.currentTtoFlag
-        )
+            this.isBindToLto ? this.props.selectedCurrentLTO : this.props.selectedCurrentTTO,
+            this.state.selecteRole.flag == "createFlag" ? this.state.selecteRole.flag: this.props.currentTtoFlag
+            )
         this.setState({
             roleStatus: false,
             disabledSelectRole: false,
@@ -533,29 +604,29 @@ class TabsProject extends Component {
                 children: iteratedValue.topLevelOrg && iteratedValue.topLevelOrg.map((TenantChildren) => {
                     const TloRole = TenantChildren.roles && TenantChildren.roles.map((TopOrgRole) => {
                         return {
-                            name: TopOrgRole.name,
-                            id: TopOrgRole.id,
-                            description: TopOrgRole.description,
-                            isAssignable: TopOrgRole.isAssignable.data[0],
-                            isAutoAccess: TopOrgRole.isAutoAccess.data[0],
-                            isAutoAssignOnIntake: TopOrgRole.isAutoAssignOnIntake.data[0],
-                            isLast: true
+                            name:TopOrgRole.name,
+                            id:TopOrgRole.id,
+                            description:TopOrgRole.description,
+                            isAssignable:TopOrgRole.isAssignable,
+                            isAutoAccess:TopOrgRole.isAutoAccess,
+                            isAutoAssignOnIntake:TopOrgRole.isAutoAssignOnIntake,
+                            isLast:true
                         }
 
                     });
-                    let Llo = iteratedValue.lowerLevelOrg && iteratedValue.lowerLevelOrg.map((LoweLevelOrgchildren) => {
-                        if (LoweLevelOrgchildren.parentId == TenantChildren.id) {
-                            const LloRole = LoweLevelOrgchildren.roles && LoweLevelOrgchildren.roles.map((LowerOrgRole) => {
-                                return {
-                                    name: LowerOrgRole.name,
-                                    id: LowerOrgRole.id,
-                                    description: LowerOrgRole.description,
-                                    isAssignable: LowerOrgRole.isAssignable.data[0],
-                                    isAutoAccess: LowerOrgRole.isAutoAccess.data[0],
-                                    isAutoAssignOnIntake: LowerOrgRole.isAutoAssignOnIntake.data[0],
-                                    isLast: true
-                                }
-                            })
+                    let Llo = iteratedValue.lowerLevelOrg && iteratedValue.lowerLevelOrg.map((LoweLevelOrgchildren)=>{
+                        if (LoweLevelOrgchildren.parentId == TenantChildren.id){
+                            const LloRole = LoweLevelOrgchildren.roles && LoweLevelOrgchildren.roles.map((LowerOrgRole)=>{
+                                            return {
+                                                name:LowerOrgRole.name,
+                                                id:LowerOrgRole.id,
+                                                description:LowerOrgRole.description,
+                                                isAssignable:LowerOrgRole.isAssignable,
+                                                isAutoAccess:LowerOrgRole.isAutoAccess,
+                                                isAutoAssignOnIntake:LowerOrgRole.isAutoAssignOnIntake,
+                                                isLast:true
+                                            }
+                                        })
                             return {
                                 name: LoweLevelOrgchildren.name,
                                 locCopyRoleId: LoweLevelOrgchildren.id,
@@ -600,38 +671,51 @@ class TabsProject extends Component {
     }
 
     onToggle = (node, toggled) => {
-        if (this.state.cursor) { this.state.cursor.active = false; }
-        node.active = true;
-        if (node.children) { node.toggled = toggled; }
-        this.setState({ cursor: node });
-        if (node.isOrg === true) {
-            this.props.actions.FetchCopyMenuRoleAccess(node.tenantId, node.orgCopyRoleId);
-            this.props.actions.FetchCopyResourceRoleAccess(node.tenantId, node.orgCopyRoleId);
+        // node.active = true;
+        // if (node.children) { node.toggled = toggled; }
+        // this.setState({ cursor: node });
+        if (this.state.prevNode !== '') {
+            let stateUpdate = Object.assign({}, this.state);
+            stateUpdate.prevNode.active = false;
+            this.setState(stateUpdate);
+          }
+          this.setState({prevNode: node});
+      
+          // Activate new node
+          node.active = true;
+          if(node.children) {
+            node.toggled = toggled;
+          }
+          this.setState({cursor: node});
+    
+        if(node.isOrg === true){
+             this.props.actions.FetchCopyMenuRoleAccess(node.tenantId,node.orgCopyRoleId);
+             this.props.actions.FetchCopyResourceRoleAccess(node.tenantId,node.orgCopyRoleId);
         }
-        if (node.isLoc === true) {
-            this.props.actions.FetchCopyMenuRoleAccess(node.tenantId, node.parentId, node.locCopyRoleId);
-            this.props.actions.FetchCopyResourceRoleAccess(node.tenantId, node.parentId, node.locCopyRoleId);
+        if(node.isLoc === true){
+            this.props.actions.FetchCopyMenuRoleAccess(node.tenantId,node.parentId,node.locCopyRoleId);
+            this.props.actions.FetchCopyResourceRoleAccess(node.tenantId,node.parentId,node.locCopyRoleId);
         }
-        if (node.isLast === true) {
+        if(node.isLast === true){
             //let tempOk= {};
             let copyRoleId = node.id;
             let filteredCopyRoleMenu = this.props.fetchCopyMenuRoleAccess.filter((item) => item.roleId == copyRoleId)
             let finalFilteredCopyMenu = filteredCopyRoleMenu.map(item => item.menuId);
             this.setState({
-                selectedMenu: [...finalFilteredCopyMenu],
+                selectedMenu:[...finalFilteredCopyMenu],
             });
 
 
             let filteredCopyRoleResource = this.props.fetchCopyResourceRoleAccess.filter((item) => item.resourceId == copyRoleId)
             let finalFilteredCopyResource = filteredCopyRoleResource.map(item => item.resourceId);
             this.setState({
-                selectedResource: [...finalFilteredCopyResource],
-                CopyRoleModal: false,
-                roleStatus: true,
-                selecteRole: node
+                selectedResource:[...finalFilteredCopyResource],
+                CopyRoleModal:false,
+                roleStatus:true,
+                selecteRole:node
             });
 
-        }
+    }
 
     }
     close = () => {
@@ -846,6 +930,16 @@ class TabsProject extends Component {
                                         : null
                                     }
                                 </div>
+				<Modal
+                                        header='Please Confirm '
+                                        id='LostDataModal'
+                                    >
+                                        <p>You haven't saved your data. Do you want to continue?</p>
+                                        <div className="col s12 m12 l12 xl12">
+                                            <button className="btn btn_secondary modal-close otherButtonAddDetUpt modalButton mb-2 ml-1">Cancel</button>
+                                            <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this.handleLostDataAlert} >Ok</Button>
+                                        </div>
+                                    </Modal>
                                 <p className={this.state.RoleNameAlreadyExist ? "show errorMessage col s12 m12 l12 xl12 m-0 pl-1" : "hide"} >
                                     This role name is already exist</p>
                                 <RolesDetails

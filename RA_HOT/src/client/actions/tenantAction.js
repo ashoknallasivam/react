@@ -34,13 +34,26 @@ const actions = {
 //         console.log(response);
 //     });
 // }
+let formatRoleData = (role) => {
+    let roleBody = {};
+    roleBody.id = role.id;
+    roleBody.name = role.name;
+    roleBody.description = role.description;
+    roleBody.orgId = role.orgId;
+    roleBody.isAssignable = role.isAssignable.data[0];
+    roleBody.isAutoAccess = role.isAutoAccess.data[0];
+    roleBody.isAutoAssignOnIntake = role.isAutoAssignOnIntake.data[0];
+    return roleBody;
+}
 export const getTenants = (data) => (dispatch) => {
     axios.all([axios.get(`${BACKEND_URL}/tenant`, {mode: 'cors'}, config), axios.get(`${BACKEND_URL}/organization`, {mode: 'cors'}, config), axios.get(`${BACKEND_URL}/role`, {mode: 'cors'}, config)]).
     then(axios.spread(function (tenantResponse, organizationResponse, roleResponse){
+        let allUnformattedRoles = roleResponse.data;
+        let formattedRoleData = allUnformattedRoles.map(item => formatRoleData(item));//formatting the api structure with internal structure
         let combinedInfo = {
             tenantResponse:[...tenantResponse.data],
             organizationResponse:[...organizationResponse.data],
-            roleResponse:[...roleResponse.data],
+            roleResponse:[...formattedRoleData],
         }
 
         dispatch(actions.getTenants(combinedInfo))

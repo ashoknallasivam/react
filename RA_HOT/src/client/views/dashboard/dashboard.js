@@ -69,7 +69,7 @@ class Dashboard extends React.Component {
                   <div className="dashboard-btn"><Button value="published" className={this.state.showPublished ? "selected" : null} onClick={this.handleDashboardBtn}>Published</Button><Button value="unpublished" className={this.state.showPublished ?  null: "selected"} onClick={this.handleDashboardBtn}>unpublished</Button></div>
                   {this.state.showPublished ?
                   <Fragment>
-                     <h2>Published Project</h2>
+                     <h2>Published </h2>
                      {
                      this.props.tenantData.map((i, index) =>
                            <CustomCard title={i.name} exportProjectPause={this.exportProjectPause} tenantID={i.id} newProj={this.props.newProject == i.id ? true: false} type={i.type} orgList={i.topLevelOrg} locList={i.lowerLevelOrg} key={index} />

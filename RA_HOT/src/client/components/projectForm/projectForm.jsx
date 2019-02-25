@@ -51,6 +51,11 @@ class ProjectForm extends Component {
             this.props.selectedOrg.lowerLevelOrg.map(lorg => this.props.actions.UpdateLocation(lorg));
             this.props.selectedOrg.roles.map(role => this.props.actions.AddRoleDetails(role));
             this.props.actions.FetchRaConfig(this.props.selectedOrg.id);
+			this.setState({
+                orgDefaultValue:'',
+                selectedDropdownOrg: '',
+				disabledSelectOrg:false
+			})
         }
     }
     handleorgLocBind = (e) => {
@@ -82,11 +87,12 @@ class ProjectForm extends Component {
             disabledSelectOrg:true,
             disabledSelectLoc: false
         });
-        if (this.props.ApplicationMode !== 'CREATE') {
+        if (this.props.ApplicationMode == 'VIEW') {
             var index = e.target.selectedIndex;
             var optionElement = e.target.childNodes[index]
-            var option =  optionElement.getAttribute('flag');
-            this.props.actions.SelectedDropdownOrg(e.target.value, option);
+            //var option =  optionElement.getAttribute('flag');
+            var option =  this.props.selectedOrg.topLevelOrg.filter(item => item.id == e.target.value);
+            this.props.actions.SelectedDropdownOrg(e.target.value, option[0].flag);
             this.props.actions.FetchMenuRoleAccess();
             this.props.actions.FetchResourceRoleAccess();
 
@@ -95,11 +101,26 @@ class ProjectForm extends Component {
             this.setState({ 
                 selectedTlOrg: filteredTlOrg[0]
             });
-        }else{
+        }else if(this.props.ApplicationMode == 'EDIT'){
             var index = e.target.selectedIndex;
             var optionElement = e.target.childNodes[index]
-            var option =  optionElement.getAttribute('flag');
-            this.props.actions.SelectedDropdownOrg(e.target.value, option);
+            //var option =  optionElement.getAttribute('flag');
+            var option =  this.props.selectedOrg.topLevelOrg.filter(item => item.id == e.target.value);
+            this.props.actions.SelectedDropdownOrg(e.target.value, "createFlag");
+            this.props.actions.FetchMenuRoleAccess();
+            this.props.actions.FetchResourceRoleAccess();
+
+            const selectedValue = e.target.value;
+            let filteredTlOrg = this.props.organizations.filter((tloOrg)=> tloOrg.id == selectedValue);
+            this.setState({ 
+                selectedTlOrg: filteredTlOrg[0]
+            });
+        }
+        else{
+            var index = e.target.selectedIndex;
+            var optionElement = e.target.childNodes[index]
+           // var option =  optionElement.getAttribute('flag');
+            this.props.actions.SelectedDropdownOrg(e.target.value, 'createFlag');
             const selectedValue = e.target.value;
             let filteredTlOrg = this.props.organizations.filter((tloOrg)=> tloOrg.id == selectedValue);
             this.setState({ 
@@ -112,8 +133,9 @@ class ProjectForm extends Component {
         if (this.props.ApplicationMode == 'VIEW') {
             var index = e.target.selectedIndex;
             var optionElement = e.target.childNodes[index]
-            var option =  optionElement.getAttribute('flag');
-            this.props.actions.SelectedDropdownLoc(e.target.value, option);
+            //var option =  optionElement.getAttribute('flag');
+            var option =  this.props.selectedOrg.lowerLevelOrg.filter(item => item.id == e.target.value);
+            this.props.actions.SelectedDropdownLoc(e.target.value, option[0].flag);
             this.props.actions.FetchMenuRoleAccess();
             this.props.actions.FetchResourceRoleAccess();
             this.props.actions.FetchEnrollmentTarget();
@@ -127,8 +149,8 @@ class ProjectForm extends Component {
         else{
             var index = e.target.selectedIndex;
             var optionElement = e.target.childNodes[index]
-            var option =  optionElement.getAttribute('flag');
-            this.props.actions.SelectedDropdownLoc(e.target.value, option);
+            //var option =  optionElement.getAttribute('flag');
+            this.props.actions.SelectedDropdownLoc(e.target.value, 'createFlag');
             this.props.actions.FetchEnrollmentTarget();
 	   const selectedValue = e.target.value;
         let filteredLlOrg = this.props.locations.filter((lloOrg)=> lloOrg.id == selectedValue);
@@ -312,7 +334,7 @@ class ProjectForm extends Component {
                                     </i>
                                 </Button>
 		                {
-                         this.props.selectedCurrentTTO != "" ?
+                         this.props.selectedCurrentTTO != "" && this.props.organizations != "" ?
                             <Fragment> 
                                 <Button className='orgIcon col s12 m2 l2 xl2 mt-8' onClick={() => {$('#DeleteOrganizationModal').modal('open')}}>
                                     <i className="material-icons" title='Delete'>
@@ -333,8 +355,8 @@ class ProjectForm extends Component {
                             id='OrganizationModal'
                         >
                         <Input label='Add Organization' 
-                        className={this.props.ApplicationMode == 'VIEW'? 'labelText mt-0':this.props.ApplicationMode == 'EDIT'? 'labelText mt-0' : 'mt-0 pl-2'} 
-                        s={12} m={12} l={12} xl={12} onChange={this.updateOrganizationName} value={this.state.organizationName} />
+                        className='mt-0 pl-2'
+                        s={12} m={12} l={12} xl={12} onChange={this.updateOrganizationName} value={this.state.organizationName} required/>
                         <div className="col s12 m12 l12 xl12">
                                     <button className="btn btn_secondary modal-close otherButtonAddDetUpt modalButton mb-2 ml-1">Cancel</button>
                                     <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this.updateOrganizations} >Add</Button>
@@ -344,7 +366,7 @@ class ProjectForm extends Component {
                             header='Update Organization'
                             id='UpdateOrganizationModal'
                         >
-                            <Input className={this.props.ApplicationMode == 'VIEW'? 'labelText mt-0':this.props.ApplicationMode == 'EDIT'? 'labelText mt-0' : 'mt-0 pl-2'}
+                            <Input className='mt-0 pl-2 labelText'
                             label='Update Organization' s={12} m={12} l={12} xl={12} onChange={this.updateOrganizationName} name="orgName" 
                             value={this.state.selectedTlOrg.name} />
                             <div className="col s12 m12 l12 xl12">
@@ -392,7 +414,7 @@ class ProjectForm extends Component {
                                             </i>
                                         </Button>
 			                    {
-                                    this.props.selectedCurrentLTO != "" ?
+                                    this.props.selectedCurrentLTO != "" && this.props.locations != "" ?
                                         <Fragment> 
                                             <Button className='col s12 m2 l2 xl2 orgIcon mt-8' onClick={() => {$('#DeleteLocationModal').modal('open')}}>
                                                 <i className="material-icons" title='Delete'>
@@ -411,7 +433,7 @@ class ProjectForm extends Component {
                             <Modal
                                 header='Add Location'
                                 id='LocationModal'>
-                                <Input className={this.props.ApplicationMode == 'VIEW'? 'labelText mt-0':this.props.ApplicationMode == 'EDIT'? 'labelText mt-0' : 'mt-0 pl-2'}
+                                <Input className='mt-0 pl-2'
                                 label='Add Location' s={12} m={6} l={6} xl={6} onChange={this.updateLocationName} value={this.state.locationName} />
                                 <select className="browser-default" onChange={this.handleorgLocBind} value={this.state.orgLocBind}>
                                     <option defaultValue disabled value="">Select a parent</option>
@@ -429,7 +451,7 @@ class ProjectForm extends Component {
 				            <Modal
                                 header='Update Location'
                                 id='UpdateLocationModal'>
-                                <Input className={this.props.ApplicationMode == 'VIEW'? 'labelText mt-0':this.props.ApplicationMode == 'EDIT'? 'labelText mt-0' : 'mt-0 pl-2' }
+                                <Input className='mt-0 pl-2 labelText'
                                 label='Update Location' s={12} m={6} l={6} xl={6} onChange={this.updateLocationName} 
                                 value={this.state.selectedLlOrg.name} />
                                 

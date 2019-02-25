@@ -9,9 +9,11 @@ class Angular extends Component {
 	constructor(props){
     super(props)
     this.state = {username:'default-username', password:'default-password'}
+	
   }
 
   componentDidMount() {
+	  
     this.nv.addEventListener("login", this.handleNvEnter);
 	
 	fetch('/getUsername')
@@ -36,7 +38,7 @@ class Angular extends Component {
         <header className="App-header">
           
           <h4 className="App-title">Angular Dynamic Data Forms Integration</h4>
-		  
+		  <h1>{`${process.env.SECRET}`}</h1>
 		  <div>
        
         

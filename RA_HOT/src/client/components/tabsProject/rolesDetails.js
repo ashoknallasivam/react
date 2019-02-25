@@ -6,20 +6,18 @@ export const RolesDetails = (props) => (
     <form onSubmit={props.SelectedDropdownRoleDetails}>
     <div className='col s12 m12 l12 xl12 pl-0 '>
         <Input s={4} label="Name" onChange={props.handleRoleInput} name="roleName" key={props.selectedRole.name} defaultValue={props.selectedRole.name} 
-         required = {true} readOnly={props.ApplicationMode == 'VIEW' ? true : false}/>
+         required = {true} readOnly={props.ApplicationMode == 'VIEW' ? true : false} id="roleName"/>
         <div className='col s4 ml-1'>
-            <Input s={12} label="Description" onChange={props.handleRoleInput} name="roleDescription" key={props.selectedRole.description}
+            <Input s={12} label="Description" onChange={props.handleRoleInput} name="roleDescription" id="roleDescription" key={props.selectedRole.description}
             defaultValue={props.selectedRole.description} />
         </div>
-        {props.ApplicationMode !== 'VIEW' ?
             <div className='col s12 m3 l3 xl3 pr-0 MapcheckboxLTo'>
                     <Input s={12} m={12} l={12} xl={12}   
-                    name='roleToLocation' type='checkbox' onChange={props.handleRoleToLto} checked={props.isBindToLto} 
-                    disabled={props.selectedCurrentLTO == '' ? true : false} value='red' 
+                    name='roleToLocation' type='checkbox' onChange={props.handleRoleToLto} checked={props.selectedRole.orgId == props.selectedCurrentLTO ? true : false} 
+                    disabled={props.ApplicationMode == 'VIEW' || props.selectedCurrentLTO == '' ? true : false}
                     label={props.selectedCurrentLTO == '' ? 'Mapping to Organization' : 'Map to Location'} 
                     />
-            </div>: null
-        }
+            </div>
     </div>
 <div>
     <div className='mb-2 col s4'>

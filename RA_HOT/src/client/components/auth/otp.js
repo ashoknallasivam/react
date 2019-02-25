@@ -3,9 +3,11 @@ import * as otplib from 'otplib';
 
 const secret = 'KBJVUJDPMESESUSK';
 
+
 class Otp extends React.Component {
 	
   constructor(props) {
+	 
     super(props);
     this.state = {
       token: otplib.authenticator.generate(secret)
@@ -14,6 +16,7 @@ class Otp extends React.Component {
   }
   
   componentDidMount() {
+	 
     this.intervalID = setInterval(
       () => this.fetchOtp(),
       10000

@@ -79,6 +79,8 @@ export const ProjectInfoReducer = (state = initialUserState, action) => {
             let selectedProject = state.filter(item => item.id == action.data);
             selectedProject[0].selected = true;
             selectedProject[0].roles.map(item => item['flag'] = 'view');
+            selectedProject[0].topLevelOrg.map(item => item['flag'] = 'viewFlag');
+            selectedProject[0].lowerLevelOrg.map(item => item['flag'] = 'viewFlag');
             return selectedProject;
         default:
             return state;

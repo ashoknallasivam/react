@@ -1,6 +1,7 @@
 import React, { Component, } from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Tab,Tabs } from 'react-materialize';
+import Spinner from 'react-spinner-material';
 import brand from '../../../../public/assets/images/logo/login-logo.png';
 import * as actions from '../../actions';
 
@@ -47,7 +48,9 @@ class Signin extends Component {
     }
 
   renderAlert() {
+	  //alert();
     if (this.props.errorMessage) {
+		this.setState({ submitted: false });
       return (
         <div className="alert alert-danger">
           <strong>Oops!</strong> {this.props.errorMessage}
@@ -59,20 +62,32 @@ class Signin extends Component {
   componentWillReceiveProps(newProps){
 	 // redirect to feature branch if auth status is true
 	 if(newProps.authStatus == true){
-	  
+	 
 	  this.props.history.push('/twofactor')
 	 }
+	 
   }
 
   render() {
         const { loggingIn } = this.props;
         const { username, password, submitted } = this.state;
-    return (
-   <div>
-  
-<Row id="login-page">
-		 
-         <Col className="z-depth-4 offset-xl4 " s={12} m={6} l={4} xl={4}>
+		if(this.state.submitted == true && this.props.authStatus == true && this.props.tokenStatus == false)
+		{
+			alert();
+			return(
+				<Row id="login-page" >
+					 <Col className="z-depth-0 offset-xl5 " s={12} m={6} l={5} xl={4}>
+					   <Row>
+						<Spinner size={50} spinnerColor={"#fd5633"} spinnerWidth={4} visible={true} />
+					   </Row>
+					  </Col>
+				</Row>
+		    );
+			
+		} else {
+			return(<div>
+ <Row id="login-page">
+		 <Col className="z-depth-4 offset-xl4 " s={12} m={6} l={4} xl={4}>
            <form className="col-md-4" onSubmit={this.handleSubmit} >
              <Row>
                <Col className="input-field center"s={12}>
@@ -117,8 +132,11 @@ class Signin extends Component {
        </Row>	   
 	
       
-     </div>
-    );
+     </div>);
+			
+		}	
+		 
+   
   }
 }
 

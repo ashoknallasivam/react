@@ -13,7 +13,7 @@ import users from '../../users.json';
 
 const RAPTER_URL = 'https://rapter-api.admin.mpr.works/api/v1';
 
-const { NODE_ENV = 'development', PORT = 3000 } = process.env;
+const { NODE_ENV = 'development', PORT = 8080 } = process.env;
 
 var config;
 
@@ -352,4 +352,6 @@ const server = http.createServer(app);
 
 server.listen(PORT, () => {
   console.log(`The server is running at http://localhost:${PORT}`);
+  console.log(process.env.SECRET);
+  
 });

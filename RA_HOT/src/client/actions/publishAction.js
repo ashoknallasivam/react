@@ -87,7 +87,7 @@ let createBounds = (tenantId, ttoId, ltoId) => {
     let boundsBody = {};
     boundsBody.tenantId = tenantId;
     boundsBody.ttoId = ttoId;
-    boundsBody.ltoId = ltoId;
+    ltoId == null ? null: boundsBody.ltoId = ltoId;
     return boundsBody;
 }
 
@@ -136,6 +136,56 @@ export const Publish = () => (dispatch, getState) => {
                                 projectFormReducer.roleDetails.map(item => {
                                     if(item.orgId == parentId){
                                         let RoleBody = createRoles(item.name, item.description, insertId_tto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
+                                        axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) =>{
+                                            //use insert id here
+                                            postResultBody.role = response.status;
+                                            let insertId_role = response.data.insertId;
+                                            let parentId = item.id;
+                                            if(role == 200){
+                                                console.log('Role created');
+                                                //option to post menu and role inside this if                                                
+                                            }else {
+                                                console.log('Role not created')
+                                            }
+                                            projectFormReducer.menuDetails.map(item => {
+                                                if(item.roleId == parentId){
+                                                    let boundsBody = createBounds(insertId_tenant, insertId_tto, insertId_lto);
+                                                    axios.post(`${API_URL}/api/v1/bounds`, boundsBody, config).then((response) => {
+                                                        console.log(response, 'bounds for menu');
+                                                        let x_rapter_bounds = response.data["x-rapter-bounds"];
+                                                        Object.keys(item.menuId).map(id => {
+                                                            let menuRoleBody = menuRoleCreate(insertId_role, id);
+                                                            //use x-rapter in here
+                                                            let newConfig = {headers: config.headers};
+                                                            newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+                                                            axios.post(`${API_URL}/api/v1/menu-role-access`, menuRoleBody, newConfig).then((response) => {
+                                                                console.log(response, 'menu role created');
+                                                            });
+                                                        });
+                                                    })
+                                                }
+                                            });
+                                            projectFormReducer.resourceDetails.map(item => {
+                                                if(item.roleId == parentId){
+                                                    let boundsBody = createBounds(insertId_tenant, insertId_tto, insertId_lto);
+                                                    axios.post(`${API_URL}/api/v1/bounds`, boundsBody, config).then((response) => {
+                                                        console.log(response, 'bounds for resource');
+                                                        let x_rapter_bounds = response.data["x-rapter-bounds"];
+                                                        Object.keys(item.resourceId).map(id => {
+                                                            let resourceRoleBody = resourceRoleCreate(insertId_role, id);
+                                                            //use x-rapter in here
+                                                            let newConfig = {headers: config.headers};
+                                                            newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+                                                            axios.post(`${API_URL}/api/v1/resource-role-access`, resourceRoleBody, newConfig).then((response) => {
+                                                                console.log(response, 'resource role created');
+                                                            })
+                                                        })
+                                                    })
+                                                }
+                                            })
+                                        })
+                                    }else {
+                                        let RoleBody = createRoles(item.name, item.description, insertId_lto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
                                         axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) =>{
                                             //use insert id here
                                             postResultBody.role = response.status;

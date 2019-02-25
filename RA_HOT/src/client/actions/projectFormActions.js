@@ -162,10 +162,24 @@ export const SelectedDropdownLoc = (ltoId, flag) => (dispatch, getState) => {
 export const UpdateLocation = (data) => (dispatch) => {
     dispatch(actions.UpdateLocation(data));
 };
-export const FetchRoles = (data) => (dispatch) => {    
+let formatRoleData = (role) => {
+    let roleBody = {};
+    roleBody.id = role.id;
+    roleBody.name = role.name;
+    roleBody.description = role.description;
+    roleBody.orgId = role.orgId;
+    roleBody.isAssignable = role.isAssignable.data[0];
+    roleBody.isAutoAccess = role.isAutoAccess.data[0];
+    roleBody.isAutoAssignOnIntake = role.isAutoAssignOnIntake.data[0];
+    return roleBody;
+}
+export const FetchRoles = () => (dispatch) => {    
     axios.get(`${BACKEND_URL}/role`, {mode: 'cors'}, config)
     .then(function (response) {
-        dispatch(actions.FetchRoles(response.data));
+        let allUnformattedRoles = response.data;
+        let formattedRoleData = allUnformattedRoles.map(item => formatRoleData(item));
+        console.log(formattedRoleData);
+        dispatch(actions.FetchRoles(formattedRoleData));
     })
     .catch(function (error) {
         console.log(error);
@@ -187,7 +201,7 @@ export const UpdateTlOrg = (dataTlOrg,updatedNewTlOrgData) => (dispatch,getState
     const state = getState();
     const updatedTlOrg = state.projectFormReducer.organizations.map((iteratedValue)=>{
         if(iteratedValue.id == dataTlOrg){
-            return iteratedValue = {...iteratedValue,name:updatedNewTlOrgData,flag:"UpdateFlag"};
+            return iteratedValue = {...iteratedValue,name:updatedNewTlOrgData,flag: iteratedValue.flag === "createFlag" ? iteratedValue.flag: "UpdateFlag"};
         }else{
             return iteratedValue;
         }
@@ -198,7 +212,7 @@ export const UpdateLlOrg = (dataLlOrg,updatedNewLlOrgData) => (dispatch,getState
     const state = getState();
     const updatedLlOrg = state.projectFormReducer.locations.map((iteratedValue)=>{
         if(iteratedValue.id == dataLlOrg){
-            return iteratedValue ={...iteratedValue,name:updatedNewLlOrgData, flag:"UpdateFlag"};
+            return iteratedValue ={...iteratedValue,name:updatedNewLlOrgData, flag:iteratedValue.flag === "createFlag" ? iteratedValue.flag: "UpdateFlag"};
         }else{
             return iteratedValue;
         }
