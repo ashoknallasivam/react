@@ -1,0 +1,87 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Email configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Name",
+      "options": {
+        "hint": "A unique element name",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Label",
+      "options": {
+        "hint": "The text the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "options",
+      "type": "panel",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "name": "hint",
+            "type": "text",
+            "label": "Hint",
+            "options": {
+              "hint": "Give user a hint",
+              "validation": {
+                "required": false
+              }
+            }
+          },
+          {
+            "name": "validation",
+            "type": "fieldset",
+            "label": "Validation",
+            "options": {
+              "fields": [
+                {
+                  "name": "required",
+                  "type": "checkbox",
+                  "label": "Required?",
+                  "options":{
+                    "align": "after",
+                    "validation":{
+                      "required": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "email"
+  }
+}

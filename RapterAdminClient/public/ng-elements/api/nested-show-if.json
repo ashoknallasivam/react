@@ -1,0 +1,171 @@
+{
+    "layout": [{
+            "type": "heading",
+            "label": "Dynamic Data demo",
+            "options": {
+                "level": 1
+            }
+        },
+        {
+            "name": "healthCareCoverage",
+            "type": "fieldset",
+            "label": "Healthcare coverage",
+            "options": {
+                "fields": [{
+                        "type": "checkbox-group",
+                        "name": "insuranceType",
+                        "label": "Insurance type",
+                        "options": {
+                            "showIf": {},
+                            "validation": {
+                                "requiredMin": 0
+                            },
+                            "fields": [{
+                                    "type": "checkbox",
+                                    "name": "mediCal",
+                                    "label": "Medi-Cal",
+                                    "options": {
+                                        "align": "after",
+                                        "specify": {
+                                            "type": "text",
+                                            "name": "mediCalID",
+                                            "label": "Medi-Cal Insurance ID",
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        },
+                                        "validation": {}
+                                    }
+                                },
+                                {
+                                    "type": "checkbox",
+                                    "name": "private",
+                                    "label": "Private (HMO/PPO)",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        },
+                                        "validation": {}
+                                    }
+                                },
+                                {
+                                    "type": "checkbox",
+                                    "name": "none",
+                                    "label": "No insurance",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        },
+                                        "validation": {}
+                                    }
+                                },
+                                {
+                                    "type": "checkbox",
+                                    "name": "dontKnow",
+                                    "label": "Don't know",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        },
+                                        "validation": {}
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "radio",
+                        "name": "healthPlan",
+                        "label": "Health Plan ",
+                        "options": {
+                            "showIf": {
+                                "property": "insuranceType.mediCal",
+                                "value": "true"
+                            },
+                            "vertical": true,
+                            "validation": {"required": true},
+                            "items": [{
+                                    "value": "access",
+                                    "label": "Access",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "value": "healthNet",
+                                    "label": "Health Net ",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "value": "liberty",
+                                    "label": "Liberty",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                {
+                                    "value": "fee",
+                                    "label": "Fee-for-service (FFS)",
+                                    "options": {
+                                        "specify": {
+                                            "options": {
+                                                "validation": {
+                                                    "requiredIf": {}
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "action-toolbar",
+            "options": {
+                "buttons": {
+                    "allowDelete": false,
+                    "allowCancel": false,
+                    "allowSubmit": true
+                }
+            }
+        }
+    ],
+    "entity": {}
+}

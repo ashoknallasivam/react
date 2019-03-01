@@ -1,0 +1,24 @@
+{
+  "name": "cra-ssr-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build/index.js",
+  "scripts": {
+    "build": "NODE_ENV=production webpack",
+    "start": "NODE_ENV=production node build/index",
+    "watch": "NODE_ENV=development PORT=3001 concurrently \"webpack --watch\" \"nodemon --watch build/index.js build/index.js\""
+  },
+  "author": "Vladimir Feskov",
+  "license": "MIT",
+  "dependencies": {
+    "finalhandler": "^1.1.0",
+    "serve-static": "^1.13.1"
+  },
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "json-loader": "^0.5.7",
+    "nodemon": "^1.14.0",
+    "webpack": "^3.10.0",
+    "webpack-node-externals": "^1.6.0"
+  }
+}

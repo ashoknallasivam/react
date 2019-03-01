@@ -1,0 +1,203 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Slider configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Name",
+      "options": {
+        "hint": "A unique element name",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Label",
+      "options": {
+        "hint": "The text the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "options",
+      "type": "panel",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "name": "validation",
+            "type": "fieldset",
+            "label": "Validation",
+            "options": {
+              "fields": [
+                {
+                  "name": "required",
+                  "type": "checkbox",
+                  "label": "Required?",
+                  "options": {
+                    "align": "after",
+                    "validation": {
+                      "required": false
+                    }
+                  }
+                },
+                {
+                  "name": "min",
+                  "type": "number",
+                  "label": "Minimum value",
+                  "options": {
+                    "hint": "The minimum value allowed",
+                    "validation": {
+                      "required": true,
+                      "min": 0
+                    }
+                  }
+                },
+                {
+                  "name": "max",
+                  "type": "number",
+                  "label": "Maximum value",
+                  "options": {
+                    "hint": "The maximum value allowed",
+                    "validation": {
+                      "required": true,
+                      "min": 1
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "step",
+            "type": "number",
+            "label": "Increment",
+            "options": {
+              "hint": "Thumb moves in increments of ...",
+              "validation": {
+                "required": true,
+                "min": 0
+              }
+            }
+          },
+          {
+            "name": "thumbLabel",
+            "type": "radio",
+            "label": "Display thumb label?",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true,
+                "disabled": true
+              },
+              "items": [
+                {
+                  "label": "Yes",
+                  "value": true
+                },
+                {
+                  "label": "No",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "vertical",
+            "type": "radio",
+            "label": "Orientation",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Vertical",
+                  "value": true
+                },
+                {
+                  "label": "Horizontal",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "invert",
+            "type": "radio",
+            "label": "Invert slider?",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true,
+                "disabled": true
+              },
+              "items": [
+                {
+                  "label": "Yes",
+                  "value": true
+                },
+                {
+                  "label": "No",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "tickInterval",
+            "type": "text",
+            "label": "Tick marks",
+            "options": {
+              "disabled": true,
+              "hint": "Show tick marks along thumb track",
+              "validation": {
+                "required": true
+              }
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "slider",
+    "options": {
+      "validation": {
+        "min": 0,
+        "max": 10
+      },
+      "step": 1,
+      "thumbLabel": true,
+      "vertical": false,
+      "invert": false,
+      "tickInterval": "auto"
+    }
+  }
+}

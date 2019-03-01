@@ -1,0 +1,124 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Checkbox configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Name",
+      "options": {
+        "hint": "A unique element name",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Label",
+      "options": {
+        "hint": "The text the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "options",
+      "type": "panel",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "name": "align",
+            "type": "radio",
+            "label": "Align box to...",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Start",
+                  "value": "start"
+                },
+                {
+                  "label": "End",
+                  "value": "end"
+                }
+              ]
+            }
+          },
+          {
+            "name": "disabled",
+            "type": "radio",
+            "label": "Default state",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Disabled",
+                  "value": true
+                },
+                {
+                  "label": "Enabled",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "validation",
+            "type": "fieldset",
+            "label": "Validation",
+            "options": {
+              "fields": [
+                {
+                  "name": "required",
+                  "type": "checkbox",
+                  "label": "Required?",
+                  "options":{
+                    "align": "after",
+                    "validation":{
+                      "required": false
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "checkbox",
+    "options": {
+      "disabled": false,
+      "align": "after"
+    }
+  }
+}
