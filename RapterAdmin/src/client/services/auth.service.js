@@ -22,11 +22,13 @@ function twoStepVerification(code) {
   console.log(code);
 		
 	return axios
-			.post(`${BACKEND_URL}/two-factor-validate`, { code },{mode: 'cors'},{ headers: authHeaderInitial() })
+			.post(`${BACKEND_URL}/two-factor-validate`, { code },{mode: 'cors'},{ headers: 'access-token' :localStorage.getItem('token')})
 			.then(onSuccess)
 			.catch(onError);
 	
 }
+
+sudo kill `sudo lsof -t -i:9001`
 
 function logout() {
     // remove user from local storage to log user out

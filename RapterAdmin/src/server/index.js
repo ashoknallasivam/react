@@ -113,8 +113,67 @@ apiRouter.post('/login', (req, res) => {
 });
 
 
+apiRouter.post('/two-factor-validate',(req, res, next) =>{
 
-apiRouter.post('/two-factor-validate', (req, res) => {
+    // check header for the token
+    var token = req.headers['access-token'];
+
+    // decode token
+    if (token) {
+
+    const requestOptions = {
+        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + token},
+        body: ({ code })
+    };          
+
+  axios.post(`${RAPTER_URL}/two-factor-validate`, requestOptions).then(function (response) {
+    
+    res.send(response.data);
+
+  }).catch(function (error) {
+	  
+	if (error.response) {
+     
+	  res.sendStatus(error.response.status);
+	  res.send(error.response.data);
+	  res.send(error.response.headers);
+
+    } else {
+      
+	  res.send(error.message);
+	  
+    }
+
+    //return Promise.reject(error.response || error.message); 
+    
+  });
+
+
+
+
+           
+          next();
+       
+     
+
+    } else {
+
+      // if there is no token  
+
+      res.send({ 
+
+          message: 'No token provided.' 
+      });
+
+    }
+  });
+
+
+
+
+
+
+apiRouter.post('/two-factor-validate11', (req, res) => {
 	
  if (req.body.username === "undefined" || req.body.username === "" || req.body.username === null ) {
     let rtnVal = {}
