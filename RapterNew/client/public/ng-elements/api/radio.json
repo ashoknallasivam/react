@@ -1,0 +1,273 @@
+{
+  "layout": [
+    {
+      "type": "heading",
+      "label": "Radio configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "name",
+      "type": "text",
+      "label": "Name",
+      "options": {
+        "hint": "A unique element name",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "label",
+      "type": "text",
+      "label": "Label",
+      "options": {
+        "hint": "The text the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    },
+    {
+      "name": "options",
+      "type": "panel",
+      "label": "Options",
+      "options": {
+        "fields": [
+          {
+            "name": "vertical",
+            "type": "radio",
+            "label": "List will be...",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Vertical",
+                  "value": true
+                },
+                {
+                  "label": "Horizontal",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "disabled",
+            "type": "radio",
+            "label": "Default state",
+            "options": {
+              "align": "after",
+              "vertical": true,
+              "validation": {
+                "required": true
+              },
+              "items": [
+                {
+                  "label": "Disabled",
+                  "value": true
+                },
+                {
+                  "label": "Enabled",
+                  "value": false
+                }
+              ]
+            }
+          },
+          {
+            "name": "validation",
+            "type": "fieldset",
+            "label": "Validation",
+            "options": {
+              "fields": [
+                {
+                  "name": "required",
+                  "type": "checkbox",
+                  "label": "Required?",
+                  "options": {
+                    "align": "after",
+                    "validation": {
+                      "required": false
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "name": "items",
+            "type": "array",
+            "label": "Items",
+            "options": {
+              "validation": {
+                "requiredMin": 2
+              },
+              "fields": [
+                {
+                  "name": "value",
+                  "type": "text",
+                  "label": "Value",
+                  "options": {
+                    "hint": "The value stored (e.g. 'NJ')",
+                    "validation": {
+                      "required": true
+                    }
+                  }
+                },
+                {
+                  "name": "label",
+                  "type": "text",
+                  "label": "Label",
+                  "options": {
+                    "hint": "What the user sees (e.g. 'New Jersey')",
+                    "validation": {
+                      "required": true
+                    }
+                  }
+                },
+                {
+                  "name": "options",
+                  "type": "panel",
+                  "label": "Options",
+                  "options": {
+                    "fields": [
+                      {
+                        "name": "specify",
+                        "type": "panel",
+                        "label": "Other specify",
+                        "options": {
+                          "fields": [
+                            {
+                              "name": "type",
+                              "type": "select",
+                              "label": "Element type",
+                              "options": {
+                                "validation": {
+                                  "required": false
+                                },
+                                "items": [
+                                  {
+                                    "label": "text",
+                                    "value": "text"
+                                  }
+                                ],
+                                "disabled": false
+                              }
+                            },
+                            {
+                              "name": "name",
+                              "type": "text",
+                              "label": "Name",
+                              "options": {
+                                "hint": "A unique element name",
+                                "validation": {
+                                  "required": false
+                                }
+                              }
+                            },
+                            {
+                              "name": "label",
+                              "type": "text",
+                              "label": "Label",
+                              "options": {
+                                "hint": "The text the user sees",
+                                "validation": {
+                                  "required": false
+                                }
+                              }
+                            },
+                            {
+                              "name": "options",
+                              "type": "panel",
+                              "label": "Options",
+                              "options": {
+                                "fields": [
+                                  {
+                                    "name": "hint",
+                                    "type": "text",
+                                    "label": "Hint",
+                                    "options": {
+                                      "hint": "Give the user a hint",
+                                      "validation": {
+                                        "required": false
+                                      }
+                                    }
+                                  },
+                                  {
+                                    "name": "validation",
+                                    "type": "fieldset",
+                                    "label": "Validation",
+                                    "options": {
+                                      "fields": [
+                                        {
+                                          "name": "required",
+                                          "type": "checkbox",
+                                          "label": "Required?",
+                                          "options": {
+                                            "align": "after",
+                                            "validation": {
+                                              "required": false
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "name": "minLength",
+                                          "type": "number",
+                                          "label": "Minimum number of characters",
+                                          "options": {
+                                            "validation": {
+                                              "required": false,
+                                              "min": "0"
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "name": "maxLength",
+                                          "type": "number",
+                                          "label": "Maximum number of characters",
+                                          "options": {
+                                            "validation": {
+                                              "required": false,
+                                              "min": "0"
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "entity": {
+    "type": "radio"
+  }
+}

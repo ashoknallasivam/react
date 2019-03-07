@@ -1,0 +1,276 @@
+{
+  "layout": [{
+    "type": "select",
+    "name": "demoType",
+    "label": "Demo API",
+    "options": {
+      "hint": "Select demo API",
+      "validation": {},
+      "items": [{
+          "value": "./api/default-value.json",
+          "label": "default value page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/nested-show-if.json",
+          "label": "nested show if page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/show-if.json",
+          "label": "show if page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/required-if.json",
+          "label": "required if page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/mock-page.json",
+          "label": "mock page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/editor-page.json",
+          "label": "editor page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/blank-editor.json",
+          "label": "blank page",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/action-toolbar.json",
+          "label": "action-toolbar",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/address.json",
+          "label": "address",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/button.json",
+          "label": "button",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/checkbox.json",
+          "label": "checkbox",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/checkbox-group.json",
+          "label": "checkbox-group",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/date.json",
+          "label": "date",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/email.json",
+          "label": "email",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/heading.json",
+          "label": "heading",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/number.json",
+          "label": "number",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/phone.json",
+          "label": "phone",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/radio.json",
+          "label": "radio",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/select.json",
+          "label": "select",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/slide-toggle.json",
+          "label": "slide-toggle",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/slider.json",
+          "label": "slider",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/static.json",
+          "label": "static",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/text.json",
+          "label": "text",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        },
+        {
+          "value": "./api/textarea.json",
+          "label": "textarea",
+          "options": {
+            "specify": {
+              "options": {
+                "validation": {}
+              }
+            }
+          }
+        }
+      ]
+    }
+  }]
+}

@@ -18,6 +18,14 @@ app.get('/hello', (req, res) => {
   return res.send('Can you hear me?')
 })
 
+
+app.get('/getList', (req, res) => {
+	  const list = ["item11", "item21", "item31"];
+    res.json(list);
+    console.log('Sent list of items');
+  });
+
+
 app.listen(config.PORT, () => {
   const log = console.log
   log('\n')

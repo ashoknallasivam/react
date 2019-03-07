@@ -1,0 +1,36 @@
+{
+  "layout": [
+    {
+      "type": "static",
+      "label": "Static text configuration",
+      "options": {
+        "level": 1
+      }
+    },
+    {
+      "name": "type",
+      "type": "text",
+      "label": "Element type",
+      "options": {
+        "validation": {
+          "required": true
+        },
+        "disabled": true
+      }
+    },
+    {
+      "name": "label",
+      "type": "textarea",
+      "label": "Label",
+      "options": {
+        "hint": "What the user sees",
+        "validation": {
+          "required": true
+        }
+      }
+    }
+  ],
+  "entity": {
+    "type": "static"
+  }
+}
