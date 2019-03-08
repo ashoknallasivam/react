@@ -7,7 +7,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const { NODE_ENV = 'production' } = process.env;
 
-const outputDirectory = '../dist';
+
 const ROOT = path.resolve(__dirname);
 const SRC = path.resolve(ROOT, 'src');
 
@@ -42,7 +42,7 @@ module.exports = {
   },
   output: {
     filename: `[name].[${HASH_TYPE}].js`,
-    path: path.resolve(outputDirectory, 'client'),
+    path: path.resolve(ROOT, 'build'),
     publicPath: '/',
 	filename: 'bundle.js'
   },
@@ -89,7 +89,7 @@ module.exports = {
 	contentBase: "public",
 	historyApiFallback:true,
     proxy: {
-      '/api': 'http://localhost:8080'
+      '/api': 'http://localhost:4000'
     }
   },
   resolve: {

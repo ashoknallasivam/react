@@ -13,7 +13,8 @@
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint index.js \"src/**/*.js\"",
-    "build:client": "rm -rf ../dist && webpack --mode production",
+    "build:client": "webpack --mode production && npm run move-build-to-server",
+    "move-build-to-server": "mv build _build && mv _build ../server && cd ../server && rm -rf public && mv _build public",
     "build": "cross-env NODE_ENV=production npm run build:client",
     "start": "npm run build && node ../dist/server/index.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",

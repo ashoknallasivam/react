@@ -20,4 +20,4 @@ const middlewares = [
 
 const server = http.createServer(chain(middlewares))
 
-server.listen(process.env.PORT || 3000)
+server.listen(process.env.PORT || 4000)

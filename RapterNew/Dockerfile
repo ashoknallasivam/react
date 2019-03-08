@@ -1,11 +1,10 @@
-FROM mhart/alpine-node:11 as build
+FROM node:8.9.1-alpine
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir -p /usr/src/app/server
+
+WORKDIR /usr/src/app
 ADD ./client ./client
 ADD ./server ./server
-
-ENV PATH /app/server/node_modules/.bin:$PATH
 
 RUN cd client && \
     npm install && \
@@ -15,17 +14,12 @@ RUN cd client && \
     cd server && \
     npm install && \
     npm run build && \
+    npm prune --production && \
     \
     rm -r ../client
 
-WORKDIR /app/server
+WORKDIR /usr/src/app/server
 
 CMD [ "npm", "start" ]
 
 EXPOSE 4000
-
-
-
-
-
-

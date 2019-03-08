@@ -4,6 +4,7 @@ const CLEAR_ORGANIZATIONS = 'CLEAR_ORGANIZATIONS';
 const IMPORT_ALL_PROJECT = 'IMPORT_ALL_PROJECT';
 
 import { API_URL, BACKEND_URL } from '../config';
+import { authHeaderFinal } from '../helpers';
 import axios from 'axios';
 
 const actions = {
@@ -38,13 +39,8 @@ let formatRoleData = (role) => {
 }
 export const getTenants = (data) => (dispatch) => {
 	
-	const requestOptions = {
-  
-        headers: { 'Content-Type': 'application/json', 'Authorization': "Bearer " + localStorage.getItem('finaltoken') }
-        
-    };
-	
-    axios.all([axios.get(`${BACKEND_URL}/tenant`, requestOptions), axios.get(`${BACKEND_URL}/organization`, requestOptions), axios.get(`${BACKEND_URL}/role`, requestOptions)]).
+
+    axios.all([axios.get(`${BACKEND_URL}/tenant`, { headers: authHeaderFinal() }), axios.get(`${BACKEND_URL}/organization`, { headers: authHeaderFinal() }), axios.get(`${BACKEND_URL}/role`, { headers: authHeaderFinal() })]).
     then(axios.spread(function (tenantResponse, organizationResponse, roleResponse){
         let allUnformattedRoles = roleResponse.data;
         let formattedRoleData = allUnformattedRoles.map(item => formatRoleData(item));//formatting the api structure with internal structure

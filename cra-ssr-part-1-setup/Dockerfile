@@ -22,4 +22,4 @@ WORKDIR /usr/src/app/server
 
 CMD [ "npm", "start" ]
 
-EXPOSE 3000
+EXPOSE 4000
