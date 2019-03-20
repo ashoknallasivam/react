@@ -21,8 +21,8 @@ const Routes = () => (
         <Route exact path='/' component={Signin} />
 		<Route path="/twofactor" component={Twofactor} />
 		<Route path="/page" component={RequireAuth(Page)} />
-		<Route path="/form" component={RequireAuth(Form)} />
-		<Route path="/FieldArraysForm" component={RequireAuth(FieldArraysForm)} />
+		<Route path="/form" component={(Form)} />
+		<Route path="/FieldArraysForm" component={(FieldArraysForm)} />
         <Route path="/dashboard" component={RequireAuth(Dashboard)} />
 		<Route exact path="/createProject" key="create-project" component={RequireAuth(CreateProject)} />
 		<Route exact path="/viewedit" key="view-edit-project" component={RequireAuth(CreateProject)} />

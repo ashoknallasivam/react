@@ -1,6 +1,7 @@
 import React from 'react'
 import { Field, reduxForm } from 'redux-form'
 
+
 const renderField = ({ input, field }) => {
   const { type, placeholder, label } = field
   if (type === 'text' || type === 'email' || type === 'number' || type === 'checkbox') {
