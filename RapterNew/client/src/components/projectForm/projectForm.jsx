@@ -49,7 +49,7 @@ class ProjectForm extends Component {
             this.props.actions.UpdateTenant(this.props.selectedOrg.name);
             this.props.selectedOrg.topLevelOrg.map(org => this.props.actions.UpdateOrganization(org));
             this.props.selectedOrg.lowerLevelOrg.map(lorg => this.props.actions.UpdateLocation(lorg));
-            this.props.selectedOrg.roles.map(role => this.props.actions.AddRoleDetails(role));
+            this.props.selectedOrg.roles.map(role => this.props.actions.AddRoleDetails(role));//room for improvement
             this.props.actions.FetchRaConfig(this.props.selectedOrg.id);
 			this.setState({
                 orgDefaultValue:'',
@@ -97,6 +97,7 @@ class ProjectForm extends Component {
             this.props.actions.FetchEnrollmentTarget();
             this.props.actions.FetchMenuRoleAccess();
             this.props.actions.FetchResourceRoleAccess();
+			this.props.actions.FetchBounds();
             const selectedValue = e.target.value;
             let filteredTlOrg = this.props.organizations.filter((tloOrg)=> tloOrg.id == selectedValue);
             this.setState({ 
@@ -111,7 +112,7 @@ class ProjectForm extends Component {
             this.props.actions.FetchEnrollmentTarget();
             this.props.actions.FetchMenuRoleAccess();
             this.props.actions.FetchResourceRoleAccess();
-
+			this.props.actions.FetchBounds();
             const selectedValue = e.target.value;
             let filteredTlOrg = this.props.organizations.filter((tloOrg)=> tloOrg.id == selectedValue);
             this.setState({ 
@@ -132,7 +133,7 @@ class ProjectForm extends Component {
     }
     handleLocDropdown = (e) => {
         this.setState({ selectedDropdownLoc: e.target.value,disabledSelectLoc:true  });
-        if (this.props.ApplicationMode == 'VIEW') {
+        if (this.props.ApplicationMode == 'VIEW') {//check where is edit option for loc dropdown
             var index = e.target.selectedIndex;
             var optionElement = e.target.childNodes[index]
             //var option =  optionElement.getAttribute('flag');
@@ -140,6 +141,7 @@ class ProjectForm extends Component {
             this.props.actions.SelectedDropdownLoc(e.target.value, option[0].flag);
             this.props.actions.FetchMenuRoleAccess();
             this.props.actions.FetchResourceRoleAccess();
+			this.props.actions.FetchBounds();
 			this.props.actions.FetchRaConfig(this.props.selectedOrg.id);
             const selectedValue = e.target.value;
             let filteredLlOrg = this.props.locations.filter((lloOrg)=> lloOrg.id == selectedValue);

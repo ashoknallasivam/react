@@ -50,17 +50,16 @@ class Pages extends Component {
 				
 				 <Row >
 				   <Col className="input-field center">	   
+				    <h6>Create Page</h6>
 				   </Col>
 				 </Row>
 			   <Row id="login-page">
-			   <Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={6} >
-				<PageGrid {...this.props}/>
-			   </Col>
+			  
 				<Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-				<PageJsonadd {...this.props}/>
+				
 			   </Col>
 			   <Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-				
+				<PageJsonadd {...this.props}/>
 			   </Col>
 			   </Row>
 			  </div>

@@ -74,7 +74,7 @@ class Twofactor extends Component {
            <form className="login-form" onSubmit={this.handleSubmit} >
              <Row>
                <Col className="input-field center"s={12}>
-                 <p className="center login-form-text"><Otp /></p>
+                 <p className="center login-form-text"><Otp {...this.props}/></p>
 
                </Col>
              </Row>

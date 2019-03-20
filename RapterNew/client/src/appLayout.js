@@ -3,9 +3,9 @@ import { Col, Row, Card } from 'react-materialize';
 import Routes from './routes/mainRoute';
 import Header from './components/header';
 import Footer from './components/footer';
-import Breadcrumbs from './components/breadcrumbs';
-import SideNav from "./components/sideNav";
-import RightSideNav from "./components/rightSideNav";
+//import Breadcrumbs from './components/breadcrumbs';
+//import SideNav from "./components/sideNav";
+//import RightSideNav from "./components/rightSideNav";
 import RequireAuth from './components/auth/require_auth';
 //import 'babel-polyfill'; 
 

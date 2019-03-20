@@ -16,7 +16,8 @@ import { UpdateTenant,
         UpdateTlOrg, 
         UpdateLlOrg,
         AddRoleDetails,
-        changeOrgDeletedStatus
+        changeOrgDeletedStatus,
+		FetchBounds
     } from '../../actions/projectFormActions';
 import { clearOrg, selectedOrg } from '../../actions/tenantAction';
 import { connect } from 'react-redux';
@@ -56,7 +57,8 @@ const mapDispatchToProps=(dispatch)=>{
                 UpdateLlOrg,
                 selectedOrg,
                 AddRoleDetails,
-                changeOrgDeletedStatus
+                changeOrgDeletedStatus,
+				FetchBounds
             },dispatch
         )
     };

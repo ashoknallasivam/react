@@ -16,7 +16,7 @@ class Otp extends React.Component {
   }
   
   componentDidMount() {
-	 
+	
     this.intervalID = setInterval(
       () => this.fetchOtp(),
       10000

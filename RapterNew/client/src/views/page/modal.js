@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
+import { Button, Icon, Row, Col, Card, Tab,Tabs } from 'react-materialize';
 
 const display = {
   display: 'block'

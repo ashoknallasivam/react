@@ -13,6 +13,7 @@ class Angular extends Component {
   }
 
   componentDidMount() {
+	  //this.props.history.push('/dashboard');
 	  
     this.nv.addEventListener("login", this.handleNvEnter);
 	
@@ -44,7 +45,7 @@ class Angular extends Component {
         
       </div>
         </header>
-          <dynamic-root ref={elem => this.nv = elem}></dynamic-root>
+         
         
           
       </div>

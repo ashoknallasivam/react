@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { ProfileActionTypes } from '../constants/actionTypes';
 import objectUtil from '../utils/objectUtil';
+import { authHeaderFinal } from '../helpers';
 import { API_URL, BACKEND_URL } from '../config';
 import { projectFormReducer } from '../reducers/projectFormReducer';
 
@@ -119,8 +120,9 @@ export const DeleteStudyConfig = (data) => (dispatch, getstate) => {
 };
 
 export const FetchRaConfig = (data) => (dispatch) =>{
-    let tempBody = {"tenant": data};
-    axios.post(`${BACKEND_URL}/ra-config`, tempBody, {mode: 'cors'}, config)
+    let tempBody = {"tenantId": data};
+		debugger;
+    axios.post(`${BACKEND_URL}/ra-config`, tempBody, { headers: authHeaderFinal() })
     .then(function (response) {
         let temp = [];
         response.data.map(item => {
@@ -142,7 +144,7 @@ export const FetchRaConfig = (data) => (dispatch) =>{
 export const FetchEnrollmentTarget = () => (dispatch, getState) => {//move this to tenant actions
     const { LtoReducers, createProj, projectFormReducer } = getState();
     if (LtoReducers.currentLtoFlag !== "createFlag") {
-        axios.get(`${BACKEND_URL}/enrollment-target`, { mode: 'cors' }, config).then((response) => {
+        axios.get(`${BACKEND_URL}/enrollment-target`, { headers: authHeaderFinal() }).then((response) => {
             dispatch(actions.FetchEnrollmentTarget(response.data));
             // let selectedEnrollment = createProj.enrollmentTargetList.filter(item => item.orgId == LtoReducers.currentLtoSelection);
             //     dispatch(actions.UpdateEnrollmentTarget(selectedEnrollment));//bug alert: loc dropdown match enrollment on 2nd time

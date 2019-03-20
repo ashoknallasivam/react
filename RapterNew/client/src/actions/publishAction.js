@@ -4,6 +4,8 @@ const NEW_PROJECT = 'NEW_PROJECT';
 import { API_URL, BACKEND_URL } from '../config';
 import { PublishActionTypes } from '../constants/actionTypes';
 import { clearOrg } from './tenantAction';
+import { authHeaderFinal } from '../helpers';
+
 
 let finalToken = localStorage.getItem('finaltoken');
 let config = {
@@ -117,14 +119,14 @@ let postResultBody = {};
 export const Publish = () => (dispatch, getState) => {
     const { projectFormReducer, projectInfo, createProj, LtoReducers, TtoReducers } = getState();
     let tenantBody = createTenant(projectFormReducer.tenant);
-    axios.post(`${BACKEND_URL}/tenant`, tenantBody, {mode: 'cors'}, config).then((response) => {
+    axios.post(`${BACKEND_URL}/tenant`, tenantBody, { headers: authHeaderFinal() }).then((response) => {
         postResultBody.tenant = response.status;
         let insertId_tenant = response.data.insertId;
         dispatch(actions.NewProject(insertId_tenant));
         projectFormReducer.organizations.map(item => {
             if(item.flag == "createFlag"){
                 let TTOBody = createTTO(item.name, insertId_tenant, item.ttoId, item.parentID, item.level);
-                axios.post(`${BACKEND_URL}/organization`, TTOBody, {mode: 'cors'}, config).then((response) => {
+                axios.post(`${BACKEND_URL}/organization`, TTOBody, { headers: authHeaderFinal() }).then((response) => {
                 postResultBody.tto = response.status;
                 let parentId = item.id;//internal ttoId which should be compared to create a ltos and roles
                 let insertId_tto = response.data.insertId; //save the insert id with hardcodded parent id, VERY IMPORTANT, THIS TTOID WILL BE USED FOR FURTHER PUBLISH
@@ -135,7 +137,7 @@ export const Publish = () => (dispatch, getState) => {
                         let insertId_lto;
                         if(item.ttoId == parentId || item == ''){ 
                             let LTOBody = createLTO(item.name, insertId_tenant, insertId_tto, insertId_tto, item.level);
-                            axios.post(`${BACKEND_URL}/organization`, LTOBody, {mode: 'cors'}, config).then((response) => {
+                            axios.post(`${BACKEND_URL}/organization`, LTOBody, { headers: authHeaderFinal() }).then((response) => {
                                 postResultBody.lto = response.status;
                                 //for roles
                                 let locationId = item.id;
@@ -143,7 +145,7 @@ export const Publish = () => (dispatch, getState) => {
                                 projectFormReducer.roleDetails.map(item => {
                                     if(item.orgId == parentId){
                                         let RoleBody = createRoles(item.name, item.description, insertId_tto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
-                                        axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) =>{
+                                        axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response) =>{
                                             //use insert id here
                                             postResultBody.role = response.status;
                                             let insertId_role = response.data.insertId;
@@ -158,7 +160,7 @@ export const Publish = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.menuId).map(id => {
                                                         let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         })
                                                     });
@@ -168,7 +170,7 @@ export const Publish = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.resourceId).map(id => {
                                                         let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         })
                                                     });
@@ -180,7 +182,7 @@ export const Publish = () => (dispatch, getState) => {
                                         });
                                     }else {
                                         let RoleBody = createRoles(item.name, item.description, insertId_lto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
-                                        axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) =>{
+                                        axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response) =>{
                                             //use insert id here
                                             postResultBody.role = response.status;
                                             let insertId_role = response.data.insertId;
@@ -195,7 +197,7 @@ export const Publish = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.menuId).map(id => {
                                                         let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         })
                                                     });
@@ -205,7 +207,7 @@ export const Publish = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.resourceId).map(id => {
                                                         let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         })
                                                     });
@@ -225,7 +227,7 @@ export const Publish = () => (dispatch, getState) => {
                                             raConfigBodyGroups.push(raConfigGroups(item.assignment, item.description, item.ratio, item.sequenceLimit));
                                         });
                                         let raConfigBody = raConfigCreate(insertId_tenant, item.description, item.blockSize, insertId_lto, raConfigBodyGroups);
-                                        axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, { headers: authHeaderFinal() }).then((response) => {
                                             console.log(response)
                                         }).catch(function (error) {
                                             console.log(error);
@@ -237,7 +239,7 @@ export const Publish = () => (dispatch, getState) => {
                                 enrollmentTargetData.map(item => {
                                     if(item.orgId == locationId){
                                         let enrollmentTargetBody = enrollmentTargetCreate(insertId_lto, item.month, item.target);
-                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, { headers: authHeaderFinal() }).then((response) => {
                                             console.log(response);
                                         }).catch(function (error) {
                                             console.log(error);
@@ -266,7 +268,7 @@ export const Publish = () => (dispatch, getState) => {
                     projectFormReducer.roleDetails.map(item => {
                         if(item.orgId == parentId){
                             let RoleBody = createRoles(item.name, item.description, insertId_tto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
-                            axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) =>{
+                            axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response) =>{
                                 //use insert id here
                                 postResultBody.role = response.status;
                                 let insertId_role = response.data.insertId;
@@ -282,7 +284,7 @@ export const Publish = () => (dispatch, getState) => {
                                     if(item.roleId == parentId){
                                         Object.keys(item.menuId).map(id => {
                                             let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                 console.log(response, 'menu role created');
                                             })
                                         });
@@ -292,7 +294,7 @@ export const Publish = () => (dispatch, getState) => {
                                     if(item.roleId == parentId){
                                         Object.keys(item.resourceId).map(id => {
                                             let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                 console.log(response, 'menu role created');
                                             })
                                         });

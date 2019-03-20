@@ -1,0 +1,18 @@
+[
+	{
+		"value": "text",
+		"label": "Text"
+	},
+	{
+		"value": "textarea",
+		"label": "Text Area"
+	},
+	{
+		"value": "number",
+		"label": "Numeric"
+	},
+	{
+		"value": "email",
+		"label": "Email"
+	}
+]

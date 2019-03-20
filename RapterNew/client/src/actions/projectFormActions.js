@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { ProfileActionTypes } from '../constants/actionTypes';
+import { authHeaderFinal } from '../helpers';
+
 import { API_URL, BACKEND_URL } from '../config';
 const UPADTE_TENANT = 'UPADTE_TENANT';
 const UPADTE_ORGANISATION = 'UPADTE_ORGANISATION';
@@ -24,6 +26,7 @@ const FETCH_RESOURCE_ROLE_ACCESS = 'FETCH_RESOURCE_ROLE_ACCESS';
 const FETCH_COPY_MENU_ROLE_ACCESS = 'FETCH_COPY_MENU_ROLE_ACCESS';
 const FETCH_COPY_RESOURCE_ROLE_ACCESS = 'FETCH_COPY_RESOURCE_ROLE_ACCESS';
 const CHANGE_MODE = 'CHANGE_MODE';
+const UPDATE_BOUNDS = 'UPDATE_BOUNDS';
 
 let finalToken = localStorage.getItem('finaltoken');
 var config = {
@@ -63,6 +66,10 @@ const actions = {
         type: SELECTED_DROPDOWN_LOC,
         data: payload
     }),
+	FetchBounds:(payload) => ({
+		type: UPDATE_BOUNDS,
+        data: payload
+	}),
     FetchMenus: (payload) => ({
         type: FETCH_MENUS,
         data: payload
@@ -180,7 +187,7 @@ let formatRoleData = (role) => {
     return roleBody;
 }
 export const FetchRoles = () => (dispatch) => {    
-    axios.get(`${BACKEND_URL}/role`, {mode: 'cors'}, config)
+    axios.get(`${BACKEND_URL}/role`, { headers: authHeaderFinal() })
     .then(function (response) {
         let allUnformattedRoles = response.data;
         let formattedRoleData = allUnformattedRoles.map(item => formatRoleData(item));
@@ -322,7 +329,7 @@ export const DeleteLocDetails = (data) => (dispatch,getState) => {
 
 export const FetchMenus = (data) => (dispatch) => {    
 
-    axios.get(`${BACKEND_URL}/menu`, {mode: 'cors'}, config)
+    axios.get(`${BACKEND_URL}/menu`, { headers: authHeaderFinal() })
     .then(function (response) {
         dispatch(actions.FetchMenus(response.data));
     })
@@ -331,7 +338,7 @@ export const FetchMenus = (data) => (dispatch) => {
 
 
 export const FetchResource = (data) => (dispatch) => {    
-    axios.get(`${BACKEND_URL}/resource`, {mode: 'cors'}, config)
+    axios.get(`${BACKEND_URL}/resource`, { headers: authHeaderFinal() })
     .then(function (response) {
         dispatch(actions.FetchResource(response.data));
     })
@@ -349,7 +356,7 @@ let createBounds = (tenantId, ttoId, ltoId) => {
 export const FetchMenuRoleAccess = () => (dispatch,getState) => {
     const { projectInfo, TtoReducers, LtoReducers } = getState();
     let boundsBody = createBounds(projectInfo[0].id, TtoReducers.currentTtoSelection, LtoReducers.currentLtoSelection);
-    axios.post(`${BACKEND_URL}/menu-role-access`, boundsBody,{mode: 'cors'}, config).then((response) => {
+    axios.post(`${BACKEND_URL}/menu-role-access`, boundsBody,{ headers: authHeaderFinal() }).then((response) => {
         //this response will have all the roles and its subsiquent 
         //menu id combination for the selected tenant, tto, lto
         dispatch(actions.FetchMenuRoleAccess(response.data));
@@ -362,7 +369,7 @@ export const FetchMenuRoleAccess = () => (dispatch,getState) => {
 export const FetchResourceRoleAccess = () => (dispatch,getState) => {
     const { projectInfo, TtoReducers, LtoReducers } = getState();
     let boundsBody = createBounds(projectInfo[0].id, TtoReducers.currentTtoSelection, LtoReducers.currentLtoSelection);
-    axios.post(`${BACKEND_URL}/resource-role-access`, boundsBody,{mode: 'cors'}, config).then((response) => {
+    axios.post(`${BACKEND_URL}/resource-role-access`, boundsBody,{ headers: authHeaderFinal() }).then((response) => {
         //this response will have all the roles and its subsiquent 
         //resource id combination for the selected tenant, tto, lto
         dispatch(actions.FetchResourceRoleAccess(response.data));
@@ -376,7 +383,7 @@ export const FetchResourceRoleAccess = () => (dispatch,getState) => {
 export const FetchCopyMenuRoleAccess = (tenantId, orgId, locId) => (dispatch) => {
     
     let boundsBody = createBounds(tenantId, orgId, locId);
-    axios.post(`${BACKEND_URL}/menu-role-access`, boundsBody,{mode: 'cors'}, config).then((response) => {
+    axios.post(`${BACKEND_URL}/menu-role-access`, boundsBody,{ headers: authHeaderFinal() }).then((response) => {
         //this response will have all the roles and its subsiquent 
         //menu id combination for the selected tenant, tto, lto
         dispatch(actions.FetchCopyMenuRoleAccess(response.data));
@@ -388,10 +395,23 @@ export const FetchCopyMenuRoleAccess = (tenantId, orgId, locId) => (dispatch) =>
 
 export const FetchCopyResourceRoleAccess = (tenantId, orgId, locId) => (dispatch) => {
     let boundsBody = createBounds(tenantId, orgId, locId);
-    axios.post(`${BACKEND_URL}/resource-role-access`, boundsBody,{mode: 'cors'}, config).then((response) => {
+    axios.post(`${BACKEND_URL}/resource-role-access`, boundsBody,{ headers: authHeaderFinal() }).then((response) => {
         //this response will have all the roles and its subsiquent 
         //resource id combination for the selected tenant, tto, lto
         dispatch(actions.FetchCopyResourceRoleAccess(response.data));
+    }).catch(function (error) {
+        console.log(error);
+        return error.response
+    })
+};
+
+export const FetchBounds = (tenantId, orgId, locId) => (dispatch, getState) => {
+	const { projectInfo, TtoReducers, LtoReducers } = getState();
+    let boundsBody = createBounds(projectInfo[0].id, TtoReducers.currentTtoSelection, LtoReducers.currentLtoSelection);
+    axios.post(`${BACKEND_URL}/bounds`, boundsBody,{ headers: authHeaderFinal() }).then((response) => {
+        //this response will have all the roles and its subsiquent 
+        //resource id combination for the selected tenant, tto, lto
+        dispatch(actions.FetchBounds(response.data));
     }).catch(function (error) {
         console.log(error);
         return error.response

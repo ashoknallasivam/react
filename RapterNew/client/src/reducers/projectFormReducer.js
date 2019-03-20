@@ -10,6 +10,7 @@ const intialData = {
     menuDetails: [],
     resourceDetails: [],
     roles: [],
+	bounds:'',
     menuRoleAccessDetails: [],
     resourceRoleAccessDetails: [],
     functionsList: [],
@@ -57,6 +58,12 @@ export const projectFormReducer = (state = intialData, action) => {
             state = {
                 ...state,
                 menuList: data
+            };
+            return state;
+		case "UPDATE_BOUNDS":
+            state = {
+                ...state,
+                bounds: data
             };
             return state;
         case "FETCH_COPY_MENU_ROLE_ACCESS":

@@ -5,9 +5,9 @@ import * as actions from '../../actions';
 import { Row, Col,Card,Input,Tabs,Tab, Preloader, Button } from 'react-materialize';
 import CustomCard from '../../components/base/card';
 import CloneCard from '../../components/base/cloneCard';
-import DasboardSearch from './dashboard_search';
+//import DasboardSearch from './dashboard_search';
 import './dashboard.scss';
-import Search from '../../components/search/search';
+//import Search from '../../components/search/search';
 
 class Dashboard extends React.Component {
    constructor(props){

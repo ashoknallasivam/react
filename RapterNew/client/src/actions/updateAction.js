@@ -3,6 +3,8 @@ const TENANT_POST_SUCCESS = 'TENANT_POST_SUCCESS';
 import { API_URL, BACKEND_URL } from '../config';
 import { PublishActionTypes } from '../constants/actionTypes';
 import { clearOrg } from './tenantAction';
+import { authHeaderFinal } from '../helpers';
+
 
 let finalToken = localStorage.getItem('finaltoken');
 let config = {
@@ -104,7 +106,7 @@ export const Update = () => (dispatch, getState) => {
     console.log('update is set');
     const { projectFormReducer, projectInfo, createProj, LtoReducers, TtoReducers } = getState();
     let tenantBody = updateTenant(projectFormReducer.tenant);
-    axios.put(`${BACKEND_URL}/tenant/`+ projectInfo[0].id, tenantBody, {mode: 'cors'}, config).then((response) => {
+    axios.put(`${BACKEND_URL}/tenant/`+ projectInfo[0].id, tenantBody, { headers: authHeaderFinal() }).then((response) => {
         console.log(response);
         let insertId_tenant = projectInfo[0].id;
         updateResultBody.tenant = response.status;
@@ -112,7 +114,7 @@ export const Update = () => (dispatch, getState) => {
         projectFormReducer.organizations.map(item => {
             if (item.flag == "createFlag") {//if org is newely created
                 let TTOBody = updateTTO(item.name, projectInfo[0].id, item.ttoId, item.parentID, item.level);
-                axios.post(`${BACKEND_URL}/organization`, TTOBody, {mode: 'cors'}, config).then((response) => {
+                axios.post(`${BACKEND_URL}/organization`, TTOBody, { headers: authHeaderFinal() }).then((response) => {
                     console.log(response);
                     alert("new org is added");
                     updateResultBody.tto = response.status;
@@ -123,7 +125,7 @@ export const Update = () => (dispatch, getState) => {
                     projectFormReducer.roleDetails.map(item => {
                         if (item.flag == 'createFlag' && item.orgId == orgId && item.parentFlag == "createFlag") {// if mapped to tto
                             let RoleBody = updateRoles(item.name, item.description, insertId_tto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake)
-                            axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response => {
+                            axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response => {
                                 console.log(response);
                                 let insertId_role = response.data.insertId;
                                 let parentId = item.id;
@@ -131,7 +133,7 @@ export const Update = () => (dispatch, getState) => {
                                     if(item.roleId == parentId){
                                         Object.keys(item.menuId).map(id => {
                                             let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                 console.log(response, 'menu role created');
                                             }).catch(function (error) {
                                                 console.log(error);
@@ -144,7 +146,7 @@ export const Update = () => (dispatch, getState) => {
                                     if(item.roleId == parentId){
                                         Object.keys(item.resourceId).map(id => {
                                             let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                 console.log(response, 'menu role created');
                                             }).catch(function (error) {
                                                 console.log(error);
@@ -165,7 +167,7 @@ export const Update = () => (dispatch, getState) => {
                         projectFormReducer.locations.map(item => {
                             if (item.flag == "createFlag" && (item.ttoId == orgId || item == '')) {//when a new location is added
                                 let LTOBody = updateLTO(item.name, projectInfo[0].id, insertId_tto, insertId_tto, item.level);
-                                axios.post(`${BACKEND_URL}/organization`, LTOBody, {mode: 'cors'}, config).then((response) => {
+                                axios.post(`${BACKEND_URL}/organization`, LTOBody, { headers: authHeaderFinal() }).then((response) => {
                                     updateResultBody.lto = response.status;
                                     //for roles
                                     let locationId = item.id;
@@ -173,7 +175,7 @@ export const Update = () => (dispatch, getState) => {
                                     projectFormReducer.roleDetails.map(item => {
                                         if (item.flag == 'createFlag' && item.orgId == locationId && item.parentFlag == "createFlag") {// if mapped to lto
                                             let RoleBody = updateRoles(item.name, item.description, insertId_lto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake)
-                                            axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response => {
+                                            axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response => {
                                                 console.log(response);
                                                 let insertId_role = response.data.insertId;
                                             let parentId = item.id;
@@ -181,7 +183,7 @@ export const Update = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.menuId).map(id => {
                                                         let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         }).catch(function (error) {
                                                             console.log(error);
@@ -194,7 +196,7 @@ export const Update = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.resourceId).map(id => {
                                                         let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         }).catch(function (error) {
                                                             console.log(error);
@@ -216,7 +218,7 @@ export const Update = () => (dispatch, getState) => {
                                                 raConfigBodyGroups.push(raConfigGroups(item.assignment, item.description, item.ratio, item.sequenceLimit));
                                             });
                                             let raConfigBody = raConfigCreate(insertId_tenant, item.description, item.blockSize, insertId_lto, raConfigBodyGroups);
-                                            axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, {mode: 'cors'}, config).then((response) => {
+                                            axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, { headers: authHeaderFinal() }).then((response) => {
                                                 console.log(response)
                                             }).catch(function (error) {
                                                 console.log(error);
@@ -230,7 +232,7 @@ export const Update = () => (dispatch, getState) => {
                                     createProj.studyConfigList && createProj.studyConfigList.map(item => {
                                         if (item.flag == 'createFlag' && item.ltoId == locationId) {
                                             let enrollmentTargetBody = enrollmentTargetCreate(insertId_lto, item.month, item.target);
-                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, { headers: authHeaderFinal() }).then((response) => {
                                             console.log(response);
                                         }).catch(function (error) {
                                             console.log(error);
@@ -255,7 +257,7 @@ export const Update = () => (dispatch, getState) => {
                     projectFormReducer.locations.map(item => {
                         if (item.flag == "createFlag" && (item.ttoId == parentId || item == '')) {// new location is created
                             let LTOBody = updateLTO(item.name, projectInfo[0].id, item.ttoId, item.parentID, item.level);
-                            axios.post(`${BACKEND_URL}/organization`, LTOBody, {mode: 'cors'}, config).then((response) => {
+                            axios.post(`${BACKEND_URL}/organization`, LTOBody, { headers: authHeaderFinal() }).then((response) => {
                                 updateResultBody.lto = response.status;
                                 //for roles
                                 let locationId = item.id;
@@ -263,7 +265,7 @@ export const Update = () => (dispatch, getState) => {
                                     projectFormReducer.roleDetails.map(item => {
                                         if (item.flag == 'createFlag' && item.orgId == locationId && item.parentFlag == "createFlag") {// if mapped to lto
                                             let RoleBody = updateRoles(item.name, item.description, insertId_lto, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake)
-                                            axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response => {
+                                            axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response => {
                                                 console.log(response);
                                                 let insertId_role = response.data.insertId;
                                             let parentId = item.id;
@@ -271,7 +273,7 @@ export const Update = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.menuId).map(id => {
                                                         let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         }).catch(function (error) {
                                                             console.log(error);
@@ -284,7 +286,7 @@ export const Update = () => (dispatch, getState) => {
                                                 if(item.roleId == parentId){
                                                     Object.keys(item.resourceId).map(id => {
                                                         let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                                                        axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                                             console.log(response, 'menu role created');
                                                         }).catch(function (error) {
                                                             console.log(error);
@@ -303,7 +305,7 @@ export const Update = () => (dispatch, getState) => {
                                     if (item.flag == 'createFlag' && item.orgId == locationId) {
                                         // if(item.orgId == insertId_lto){
                                         let enrollmentTargetBody = enrollmentTargetCreate(insertId_lto, item.month, item.target);
-                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, { headers: authHeaderFinal() }).then((response) => {
                                             console.log(response);
                                             if (response.status == 200) {
                                                 console.log('okay');
@@ -329,7 +331,7 @@ export const Update = () => (dispatch, getState) => {
                                             studyConfigGroups.push(raConfigGroupsUpdate(item.assignment, item.description, item.ratio, item.sequenceLimit));
                                         });
                                         let raConfigBody = raConfigUpdate(insertId_tenant, item.description, item.blockSize, insertId_lto, studyConfigGroups);
-                                        axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, { headers: authHeaderFinal() }).then((response) => {
                                             console.log(response);
                                             // alert("ra-config created old org new loc");
                                             clearOrg();
@@ -354,7 +356,7 @@ export const Update = () => (dispatch, getState) => {
                                         studyConfigGroups.push(raConfigGroupsUpdate(item.assignment, item.description, item.ratio, item.sequenceLimit));
                                     });
                                     let raConfigBody = raConfigUpdate(insertId_tenant, item.description, item.blockSize, ltoId, studyConfigGroups);
-                                    axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, {mode: 'cors'}, config).then((response) => {
+                                    axios.post(`${BACKEND_URL}/create-ra-config`, raConfigBody, { headers: authHeaderFinal() }).then((response) => {
                                         console.log('ra-config created');
                                         // alert("ra-config created old org old loc");
                                         clearOrg();
@@ -367,7 +369,7 @@ export const Update = () => (dispatch, getState) => {
                             createProj.enrollmentTargetData && createProj.enrollmentTargetData.map(item => {
                                 if (item.flag == 'createFlag' && item.orgId == ltoId) {
                                         let enrollmentTargetBody = enrollmentTargetCreate(ltoId, item.month, item.target);
-                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, {mode: 'cors'}, config).then((response) => {
+                                        axios.post(`${BACKEND_URL}/create-enrollment-target`, enrollmentTargetBody, { headers: authHeaderFinal() }).then((response) => {
                                             if (response.status == 200) {
                                                 alert('enrollment created for old org and old loc');
                                                 clearOrg();
@@ -391,14 +393,14 @@ export const Update = () => (dispatch, getState) => {
 
         if (item.flag == 'createFlag' && (item.parentFlag == "updateFlag" || item.parentFlag == "viewFlag")) {
             let RoleBody = updateRoles(item.name, item.description, item.orgId, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
-            axios.post(`${BACKEND_URL}/role`, RoleBody, {mode: 'cors'}, config).then((response) => {
+            axios.post(`${BACKEND_URL}/role`, RoleBody, { headers: authHeaderFinal() }).then((response) => {
                 let insertId_role = response.data.insertId;
                 let parentId = item.id;
                 projectFormReducer.menuDetails.map(item => {
                     if(item.roleId == parentId){
                         Object.keys(item.menuId).map(id => {
                             let menuBody = menuRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, {mode: 'cors'}, config).then((response) => {
+                            axios.post(`${BACKEND_URL}/create-menu-role-access`, menuBody, { headers: authHeaderFinal() }).then((response) => {
                                 console.log(response, 'menu role created');
                             }).catch(function (error) {
                                 console.log(error);
@@ -411,7 +413,7 @@ export const Update = () => (dispatch, getState) => {
                     if(item.roleId == parentId){
                         Object.keys(item.resourceId).map(id => {
                             let resourceBody = resourceRoleCreate(insertId_tenant, insertId_tto, insertId_lto, insertId_role,id);
-                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, {mode: 'cors'}, config).then((response) => {
+                            axios.post(`${BACKEND_URL}/create-resource-role-access`, resourceBody, { headers: authHeaderFinal() }).then((response) => {
                                 console.log(response, 'menu role created');
                             }).catch(function (error) {
                                 console.log(error);
@@ -426,7 +428,7 @@ export const Update = () => (dispatch, getState) => {
             });
         } else if (item.flag == 'viewFlag') { //roles are edited of an existing org
             let RoleBody = updateRoles(item.name, item.description, item.orgId, item.isAssignable, item.isAutoAccess, item.isAutoAssignOnIntake);
-            axios.put(`${BACKEND_URL}/role/` + item.id, RoleBody, {mode: 'cors'}, config).then((response) => {
+            axios.put(`${BACKEND_URL}/role/` + item.id, RoleBody, { headers: authHeaderFinal() }).then((response) => {
                 console.log(response);
             }).catch(function (error) {
                 console.log(error);
@@ -468,7 +470,7 @@ export const Update = () => (dispatch, getState) => {
     projectFormReducer.organizations.map(item => {
         if (item.flag == 'UpdateFlag') {
             let TTOBody = updateTTO(item.name, projectInfo[0].id, item.ttoId, item.parentId, item.level);
-            axios.put(`${BACKEND_URL}/organization/` + item.id, TTOBody, {mode: 'cors'}, config).then((response) => {
+            axios.put(`${BACKEND_URL}/organization/` + item.id, TTOBody, { headers: authHeaderFinal() }).then((response) => {
                 console.log(response);
                 alert("org updated");
                 updateResultBody.tto = response.status;
@@ -482,7 +484,7 @@ export const Update = () => (dispatch, getState) => {
     projectFormReducer.locations.map(item => {
         if (item.flag == 'UpdateFlag') {
             let LTOBody = updateLTO(item.name, projectInfo[0].id, item.ttoId, item.parentId, item.level);
-            axios.put(`${BACKEND_URL}/organization/` + item.id, LTOBody, {mode: 'cors'}, config).then((response) => {
+            axios.put(`${BACKEND_URL}/organization/` + item.id, LTOBody, { headers: authHeaderFinal() }).then((response) => {
                 console.log(response);
                 alert("loc updated");
                 updateResultBody.tto = response.status;
@@ -518,7 +520,7 @@ export const Update = () => (dispatch, getState) => {
     createProj.enrollmentTargetData.map(item => {
         if (item.flag == 'updateFlag') {
             let enrollmentTargetBody = enrollmentTargetCreate(item.orgId, item.month, item.target);
-            axios.put(`${BACKEND_URL}/enrollment-target/` + item.id, enrollmentTargetBody, {mode: 'cors'}, config).then((response) => {
+            axios.put(`${BACKEND_URL}/enrollment-target/` + item.id, enrollmentTargetBody, { headers: authHeaderFinal() }).then((response) => {
                 console.log(response);
                 alert("enrollment updated");
                 //updateResultBody.tto = response.status;
