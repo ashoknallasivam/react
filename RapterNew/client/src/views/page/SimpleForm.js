@@ -1,11 +1,10 @@
 import React from 'react'
 import { Field, reduxForm } from 'redux-form'
 
-
 const renderField = ({ input, field }) => {
-  const { type, placeholder, label } = field
+  const { type, placeholder, label, value } = field
   if (type === 'text' || type === 'email' || type === 'number' || type === 'checkbox') {
-    return <input {...input} placeholder={placeholder} type={type} id={label} />
+    return <input {...input} placeholder={placeholder} type={type} id={label} value={value} />
   } else if (type === 'select') {
     const { options } = field
     return (
@@ -21,6 +20,7 @@ const renderField = ({ input, field }) => {
 }
 
 const SimpleForm = ({ handleSubmit, fields }) => {
+	
   return (
     <div>
       {fields.map(field => (
@@ -29,7 +29,8 @@ const SimpleForm = ({ handleSubmit, fields }) => {
 		    id = {field.name}
             name={field.name}
 			label={field.label}
-            component={renderField}
+			component={renderField}
+			value={field.value}
             field={field}
             />
         </div>
