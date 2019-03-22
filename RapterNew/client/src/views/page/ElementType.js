@@ -4,62 +4,285 @@ import { Row, Col, Tab,Tabs,Input,Icon } from 'react-materialize';
 import env from './controls.json';
 const scaryAnimals = env;
 
+		const schema1 = {
+		  key: 'profile',
+		  collection: 'cases',
+		  title: 'Participant profile',
+		  subtitle: 'Edit participant’s profile with new or changed contact information.',
+		  layout: [
+			{
+			  type: 'text',
+			  name: 'firstName',
+			  label: 'First name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {
+				  required: true,
+				  minLength: 2,
+				  maxLength: 30
+				}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'middleName',
+			  label: 'Middle name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'lastName',
+			  label: 'Last name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {
+				  required: true,
+				  minLength: 2,
+				  maxLength: 30
+				}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'nickname',
+			  label: 'Nickname',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {}
+			  }
+			},
+			{
+				  type: 'radio',
+				  name: 'gender',
+				  label: 'Gender',
+				  options: {
+					vertical: true,
+					validation: {
+					  required: true
+					},
+					items: [
+					  {
+						value: 'female',
+						label: 'Female',
+						options: {
+						  specify: {
+							options: {
+							  validation: {}
+							}
+						  }
+						}
+					  },
+					  {
+						value: 'male',
+						label: 'Male',
+						options: {
+						  specify: {
+							options: {
+							  validation: {}
+							}
+						  }
+						}
+					  },
+					  {
+						value: 'other',
+						label: 'Other',
+						options: {
+						  specify: {
+							type: 'text',
+							name: 'genderOther',
+							label: 'Please specify',
+							options: {
+							  validation: {
+								requiredIf: {
+								  property: 'gender',
+								  value: 'other'
+								}
+							  }
+							}
+						  }
+						}
+					  }
+					],
+					disabled: false
+				  }
+				},			
+				{
+					  type: 'checkbox',
+					  name: 'noContact',
+					  label: 'Applicant does not have any contacts.',
+					  options: {
+						align: 'start',
+						disabled: false,
+						validation: {}
+					  }
+				},
+				{
+					type: 'email',
+					name: 'email',
+					label: 'Email',
+					options: {
+					  validation: {
+						requiredIf: {
+						  property: 'noEmail',
+						  value: 'false'
+						}
+					  }
+					}
+				},
+				  {
+					type: 'select',
+					name: 'relationshipType',
+					label: 'Relationship type',
+					options: {
+					  validation: {},
+					  items: [
+						{
+						  value: 'mother',
+						  label: 'Mother',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'father',
+						  label: 'Father',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'friend',
+						  label: 'Friend',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'grandparent',
+						  label: 'Grandmother/grandfather',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'sibling',
+						  label: 'Sister/brother',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'child',
+						  label: 'Son/daughter',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'spouse',
+						  label: 'Spouse/partner',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'other',
+						  label: 'Other',
+						  options: {
+							specify: {
+							  type: 'text',
+							  name: 'relationshipOther',
+							  label: 'Please specify',
+							  options: {
+								validation: {
+								  requiredIf: {
+									property: 'relationshipType',
+									value: 'other'
+								  }
+								}
+							  }
+							}
+						  }
+						}
+					  ]
+					}
+				  },				
+				  {
+					  type: 'date',
+					  name: 'startDate',
+					  label: 'Actual start date',
+					  options: {
+						hint: 'MM/DD/YYYY',
+						startAt: {},
+						validation: {
+						  required: true,
+						  minDate: {},
+						  maxDate: {}
+						}
+					  }
+				  },
+				  {
+					  type: 'time',
+					  name: 'startTime',
+					  label: 'Actual start time',
+					  options: {
+						validation: {
+						  required: true
+						}
+					  }
+				  },			
+		  ]
+		}
 
-const fields = [
-      { name: 'name', label: 'Name', type: 'text', value: 'Ashok', placeholder: 'Enter Name1' },
-      { name: 'age', label: 'Age', type: 'number', placeholder: 'Enter age' },
-      { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
-      { name: 'employed', label: 'Employed', type: 'checkbox' },
-      {
-        name: 'favouriteColors',
-		label: 'Color',
-        type: 'select',
-        options: [
-          { label: 'Red', value: 'red' },
-          { label: 'Yellow', value: 'yellow' },
-          { label: 'Green', value: 'green' },
-        ],
-      },
-    ]
-
-const schema = {
-  key: 'participant',
-  collection: 'cases',
-  title: 'Applicant',
-  subtitle: 'Gather some basic information',
-  layout: [
-    {
-      type: 'text',
-      name: 'firstName',
-      label: 'First name',
-      options: {
-        items: [
-          {}
-        ],
-        validation: {
-          required: true,
-          minLength: 2,
-          maxLength: 30
-        }
-      }
-    }
-    
-  ]
-};
 
 class NewForm extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+	 
+    super(props);
 	
 	this.state = {
-            key: '',
-            collection: '',
-			title: '',
             submitted: false,
-			subtitle: '',
-			name:'',
-            shareholders: [{ name: "" }],
-			schema: {schema}
+			shareholders: [{ name: "" }],
+            schema: [{ schema1 }]
         };
 	
 	this.handleChange = this.handleChange.bind(this);
@@ -106,31 +329,103 @@ class NewForm extends React.Component {
 
   render() {
 	  
-	const { schema, submitted, key, collection, title, subtitle } = this.state; 
-	  
-    return (
-	  /* {schema.map(field => (
-	   <div key={field.key}>
-	    <h1>{field.key}</h1>
-		  
-        </div>
-	   
-	   ))} */
-          <form className="col-md-4" onSubmit={this.handleSubmit} >
- 		
-		 <Row>
-			  <Input s={12} label="Key" id="key" name="key" type="text" value={key} validate defaultValue='case-access-denied' onChange={this.handleChange} required/>
+	const { submitted,schema } = this.state; 
+	 
+	    console.log(this.state.schema);
+		console.log(schema1);
+	 
+        return (
+		<form className="col-md-4" onSubmit={this.handleSubmit} >
+		<Row>
+			  <Input s={12} label="Key" id="key" name="key" type="text" value={schema1.key} validate defaultValue='case-access-denied' onChange={this.handleChange} required/>
 		 </Row>
 		 <Row>
-			  <Input s={12} label="Collection" id="collection" name="collection" type="text" value={collection} validate defaultValue='cases' onChange={this.handleChange} required/>
+			  <Input s={12} label="Collection" id="collection" name="collection" type="text" value={schema1.collection} validate defaultValue='cases' onChange={this.handleChange} required/>
 		 </Row>
 		 <Row>
-			  <Input s={12} label="Title" id="title" name="title" type="text" value={title} validate defaultValue='Access denied' onChange={this.handleChange} required/>
+			  <Input s={12} label="Title" id="title" name="title" type="text" value={schema1.title} validate defaultValue='Access denied' onChange={this.handleChange} required/>
 		 </Row>
 		 <Row>
-			  <Input s={12} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate defaultValue='You do not have access to the details of this case.' onChange={this.handleChange} required />
+			  <Input s={12} label="Sub Title" id="subtitle" name="subtitle" type="text" value={schema1.subtitle} validate defaultValue='You do not have access to the details of this case.' onChange={this.handleChange} required />
 		 </Row>
+		 <Row>
 		
+            {schema1.layout.map(value => {
+				const { type, label, name } = value
+				
+				if (type == 'text') {
+					 return <div >
+					   <Input
+						 s={6}
+						 label={value.label}
+						 id={value.name}
+						 name={value.name}
+						 type={value.type}
+						 minLength={value.options.validation.minLength}
+						 maxLength={value.options.validation.maxLength}
+						 onChange={this.handleChange}
+						/>
+						</div>;
+				} else if (type == 'radio') {
+					 return <div >
+					     <h5>{value.label}</h5>
+						 {value.options.items.map(itemval => {
+					     return   <Input name={value.name} type={value.type} value={itemval.value} label={itemval.label} onChange={this.handleChange}/>
+							
+					     })}
+					    </div>;
+				} else if (type == 'checkbox') {
+					 return <div >
+					     <Input s={12} name={value.name} type={value.type} label={value.label} onChange={this.handleChange}/>
+ 					     </div>;
+				} else if (type == 'email') {
+					 return <div >
+					   <Input
+						 s={6}
+						 label={value.label}
+						 id={value.name}
+						 name={value.name}
+						 type={value.type}
+						 onChange={this.handleChange}
+						/>
+						</div>;
+				} else if (type == 'select') {
+					 return <div >
+					     <Input s={6} name={value.name} type={value.type} label={value.label} defaultValue='' onChange={this.handleChange}>
+						 {value.options.items.map(itemval => {
+					     return   <option value={itemval.value}>{itemval.label}</option>
+							
+					     })}
+						 </Input>
+					    </div>;
+						
+				} else if (type == 'date') {
+					 return <div >
+					     <Input s={6} type={value.type} label={value.label} format='dd/mm/yyyy' onChange={this.handleChange}>
+						 
+						 
+						 </Input>
+					    </div>;
+						
+				}else if (type == 'time') {
+					 return <div >
+					     <Input s={6} type={value.type} label={value.label} onChange={this.handleChange}>
+						 
+						 
+						 </Input>
+					    </div>;
+						
+				}
+				
+				
+               
+            })}
+        
+		</Row>
+		
+ 		
+		
+		{/*
         {this.state.shareholders.map((shareholder, idx) => (
 		
           <div className="shareholder">
@@ -160,7 +455,7 @@ class NewForm extends React.Component {
 			
 			
 			<Row>
-				<Input name='group1' type='checkbox' value='Required' label='Required' className='filled-in' defaultChecked='checked' />
+				<Input name='group1' type='checkbox' value='Required' label='Required' className='filled-in' />
 			</Row>
 
 			
@@ -187,11 +482,21 @@ class NewForm extends React.Component {
 		
 		 <button className="btn waves-effect waves-light" type="submit" name="action">
                           Submit <i className="mdi-content-send right"></i>
-                      </button>
+  </button> */}
         
-       </form>
-          
-    );
+       </form> 		
+		
+		
+		
+		
+		);
+	 
+	 
+	
+
+	
+	
+
   }
 }
 

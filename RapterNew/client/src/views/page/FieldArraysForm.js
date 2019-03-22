@@ -8,7 +8,6 @@ import env from './controls.json';
 import PageJsonadd from './pagejsonadd';
 //const scaryAnimals = env;
 
-
 const fields = [
       { name: 'name', label: 'Name', type: 'text', value: 'Ashok', placeholder: 'Enter Name1' },
       { name: 'age', label: 'Age', type: 'number', placeholder: 'Enter age' },
@@ -26,6 +25,10 @@ const fields = [
       },
     ]
 
+	
+
+	
+	
 class Pages extends Component {
 	
      constructor(props) {
@@ -33,7 +36,6 @@ class Pages extends Component {
 		this.state = {
 			jsonEditor: '',
 			controls: null,
-            
         };
 	  this.CreatePage = this.CreatePage.bind(this);
       this.handleChange = this.handleChange.bind(this);
@@ -55,7 +57,7 @@ class Pages extends Component {
 		this.setState({ submitted: true });
 		//const { controls } = this.state;
 		//alert(controls);
-		console.log(this.state);
+		
     } 
 	
    CreatePage(event){
@@ -76,7 +78,7 @@ class Pages extends Component {
    render(props) {
 	   
 	  	   const customStyles = { input: styles => {  return { ...styles, height: '1.7em'};  }}
-	  	   const { submitted, controls } = this.state;
+	  	   const { schema, submitted, controls } = this.state;
 		  
            let inputfield;
 
@@ -138,6 +140,8 @@ class Pages extends Component {
 		   
 		   
 		   return ( 
+		    
+		   
 			 <div>
 			  <Row >
 				   <Col className="input-field center">	   
