@@ -1,4 +1,4 @@
-import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE } from './types';
+import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE,UPDATE_JSON} from './types';
 import { pageService } from '../services';
 
 export function createBounds({ params }) {
@@ -83,6 +83,7 @@ export function updatePage(params,id) {
  
 }
 
+
 export function createPage(params) {
 
 	return function(dispatch) {
@@ -112,8 +113,19 @@ export function viewEditor() {
 }
 
 export function test() {
+	alert();
         return {
 			type: TEST_MESSAGE,
 			payload: 'Test'
 		};    
+}
+
+
+export function updateJson(params){
+
+	   
+	   return function(dispatch) {
+		 dispatch({ type: UPDATE_JSON, payload: params});
+	   };
+           
 }

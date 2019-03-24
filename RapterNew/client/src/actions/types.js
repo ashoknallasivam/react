@@ -10,3 +10,4 @@ export const GET_PAGE = 'get_page';
 export const UPDATE_PAGE = 'update_page';
 export const DISPLAY_EDITOR = 'display_editor';
 export const TEST_MESSAGE = 'test_message';
+export const UPDATE_JSON = 'update_json';

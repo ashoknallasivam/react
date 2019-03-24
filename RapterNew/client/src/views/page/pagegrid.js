@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/page.actions';
 import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -79,7 +81,7 @@ class PageGrid extends Component {
 			
 			 return ( 
 			
-				<div style={{ height: '330px', width: '450px' }} className="ag-theme-balham">
+				<div style={{ height: '330px', width: '400px' }} className="ag-theme-balham">
 					<AgGridReact
 						columnDefs={columnDefs}
 		rowData={rowData} rowSelection= 'single' getRowNodeId={(data) => data.id} onRowClicked={this.RowSelected} animateRows={true}>
@@ -95,4 +97,13 @@ class PageGrid extends Component {
 }
 
 
-export default PageGrid;
+function mapStateToProps(state) {
+  return { bounds: state.page.bounds, 
+  pageContent: state.page.pages, 
+  pageJson: state.page.pagejson , 
+  pageId: state.page.pageid, 
+  pageStatus: state.page.pagestatus, 
+  editor: state.page.editor };
+}
+
+export default connect(mapStateToProps, actions)(PageGrid);

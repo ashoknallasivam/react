@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import { Link, withRouter } from 'react-router-dom';
 import PageGrid from './pagegrid';
 import PageJson from './pagejson';
-import PageJsonadd from './pagejsonadd';
-import PageForm from './pageform';
-import Modal from './modal';
+import ElementType from './ElementType';
+import * as actions from '../../actions';
 
 class Pages extends Component {
 	
@@ -39,89 +39,54 @@ class Pages extends Component {
 	
 
    render(props) {
+    var jEditor = '';
+    var dynamicForm = '';
+   	if (this.props.editor == 'Edit')
+	    {
+	    	jEditor = 
+	    	<Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
+	    		<PageJson /> 
+	    	</Col>;
+
+	    	dynamicForm = 
+	    	<Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
+	    		<ElementType/>
+	    	</Col>;
+    	
+	    }
 	   
-	  	   
-	   if (this.state.jsonEditor == 'Add')
-	   {
-	   
-	   
-	   return ( 
-			 <div>
+	return (	   
+		<Row id="login-page">
+		   <Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
+			<PageGrid /> 
+		   </Col>
+		   {jEditor}{dynamicForm}
 				
-				 <Row >
-				   <Col className="input-field center">	   
-				    <h6>Create Page</h6>
-				   </Col>
-				 </Row>
-			   <Row id="login-page">
-			  
-				<Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-				
-			   </Col>
-			   <Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-				<PageJsonadd {...this.props}/>
-			   </Col>
-			   </Row>
-			  </div>
-		 );
-	   
-	   
-	   
-       } else if(this.state.jsonEditor == 'Edit'){
-		  
+		</Row>
+       )
 
-		return ( 
-			 <div>
-				 <Row >
-				   <Col className="input-field center">
-				   <button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.CreatePage}>Create Page</button>
+       
 
-				   </Col>
-				 </Row>
-				 <Row >
-				   <Col className="input-field center">	   
-				   </Col>
-				 </Row>
-			   <Row id="login-page">
-			   <Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={6} >
-				<PageGrid {...this.props}/>
-			   </Col>
-				<Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-				<PageJson {...this.props}/>
-			   </Col>
-			  
-			   </Row>
-			  </div>
-		 );
+
+	 
 
 
 
-		  
-	   } else {
-		   return ( 
-			 <div>
-				 <Row >
-				   <Col className="input-field center">
-				   <button className="btn waves-effect waves-light" type="submit" name="action" onClick={this.CreatePage}>Create Page</button>
-                   <Modal />
-				   </Col>
-				 </Row>
-				 <Row >
-				   <Col className="input-field center">	   
-				   </Col>
-				 </Row>
-			   <Row id="login-page">
-			   <Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={6} >
-				<PageGrid {...this.props}/>
-			   </Col>
-			
-			   </Row>
-			  </div>
-		 );
-	   }
-		 
+
+
+
 	}
 
 }
 
-export default Pages;
+
+function mapStateToProps(state) {
+  return { bounds: state.page.bounds, 
+  pageContent: state.page.pages, 
+  pageJson: state.page.pagejson , 
+  pageId: state.page.pageid, 
+  pageStatus: state.page.pagestatus, 
+  editor: state.page.editor };
+}
+
+export default connect(mapStateToProps, actions)(Pages);

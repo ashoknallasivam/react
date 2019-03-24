@@ -6,24 +6,279 @@ import ElementType from './ElementType';
 import Select from 'react-select';
 import env from './controls.json';
 import PageJsonadd from './pagejsonadd';
+import PageForm from './pageform';
+import PageJson from './pagejson_copy';
+
 //const scaryAnimals = env;
 
-const fields = [
-      { name: 'name', label: 'Name', type: 'text', value: 'Ashok', placeholder: 'Enter Name1' },
-      { name: 'age', label: 'Age', type: 'number', placeholder: 'Enter age' },
-      { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter Email' },
-      { name: 'employed', label: 'Employed', type: 'checkbox' },
-      {
-        name: 'favouriteColors',
-		label: 'Color',
-        type: 'select',
-        options: [
-          { label: 'Red', value: 'red' },
-          { label: 'Yellow', value: 'yellow' },
-          { label: 'Green', value: 'green' },
-        ],
-      },
-    ]
+const schema = {
+		  key: 'profile',
+		  collection: 'cases',
+		  title: 'Participant profile',
+		  subtitle: 'Edit participant’s profile with new or changed contact information.',
+		  layout: [
+			{
+			  type: 'text',
+			  name: 'firstName',
+			  label: 'First name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {
+				  required: true,
+				  minLength: 2,
+				  maxLength: 30
+				}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'middleName',
+			  label: 'Middle name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'lastName',
+			  label: 'Last name',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {
+				  required: true,
+				  minLength: 2,
+				  maxLength: 30
+				}
+			  }
+			},
+			{
+			  type: 'text',
+			  name: 'nickname',
+			  label: 'Nickname',
+			  options: {
+				items: [
+				  {}
+				],
+				validation: {}
+			  }
+			},
+			{
+				  type: 'radio',
+				  name: 'gender',
+				  label: 'Gender',
+				  options: {
+					vertical: true,
+					validation: {
+					  required: true
+					},
+					items: [
+					  {
+						value: 'female',
+						label: 'Female',
+						options: {
+						  specify: {
+							options: {
+							  validation: {}
+							}
+						  }
+						}
+					  },
+					  {
+						value: 'male',
+						label: 'Male',
+						options: {
+						  specify: {
+							options: {
+							  validation: {}
+							}
+						  }
+						}
+					  },
+					  {
+						value: 'other',
+						label: 'Other',
+						options: {
+						  specify: {
+							type: 'text',
+							name: 'genderOther',
+							label: 'Please specify',
+							options: {
+							  validation: {
+								requiredIf: {
+								  property: 'gender',
+								  value: 'other'
+								}
+							  }
+							}
+						  }
+						}
+					  }
+					],
+					disabled: false
+				  }
+				},			
+				{
+					  type: 'checkbox',
+					  name: 'noContact',
+					  label: 'Applicant does not have any contacts.',
+					  options: {
+						align: 'start',
+						disabled: false,
+						validation: {}
+					  }
+				},
+				{
+					type: 'email',
+					name: 'email',
+					label: 'Email',
+					options: {
+					  validation: {
+						requiredIf: {
+						  property: 'noEmail',
+						  value: 'false'
+						}
+					  }
+					}
+				},
+				  {
+					type: 'select',
+					name: 'relationshipType',
+					label: 'Relationship type',
+					options: {
+					  validation: {},
+					  items: [
+						{
+						  value: 'mother',
+						  label: 'Mother',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'father',
+						  label: 'Father',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'friend',
+						  label: 'Friend',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'grandparent',
+						  label: 'Grandmother/grandfather',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'sibling',
+						  label: 'Sister/brother',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'child',
+						  label: 'Son/daughter',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'spouse',
+						  label: 'Spouse/partner',
+						  options: {
+							specify: {
+							  options: {
+								validation: {}
+							  }
+							}
+						  }
+						},
+						{
+						  value: 'other',
+						  label: 'Other',
+						  options: {
+							specify: {
+							  type: 'text',
+							  name: 'relationshipOther',
+							  label: 'Please specify',
+							  options: {
+								validation: {
+								  requiredIf: {
+									property: 'relationshipType',
+									value: 'other'
+								  }
+								}
+							  }
+							}
+						  }
+						}
+					  ]
+					}
+				  },				
+				  {
+					  type: 'date',
+					  name: 'startDate',
+					  label: 'Actual start date',
+					  options: {
+						hint: 'MM/DD/YYYY',
+						startAt: {},
+						validation: {
+						  required: true,
+						  minDate: {},
+						  maxDate: {}
+						}
+					  }
+				  },
+				  {
+					  type: 'time',
+					  name: 'startTime',
+					  label: 'Actual start time',
+					  options: {
+						validation: {
+						  required: true
+						}
+					  }
+				  },			
+		  ]
+		}
 
 	
 
@@ -36,6 +291,7 @@ class Pages extends Component {
 		this.state = {
 			jsonEditor: '',
 			controls: null,
+			schema: schema
         };
 	  this.CreatePage = this.CreatePage.bind(this);
       this.handleChange = this.handleChange.bind(this);
@@ -80,64 +336,7 @@ class Pages extends Component {
 	  	   const customStyles = { input: styles => {  return { ...styles, height: '1.7em'};  }}
 	  	   const { schema, submitted, controls } = this.state;
 		  
-           let inputfield;
-
-		if (controls == 'text') {
-			
-		  inputfield = <div class="row">
-					   <Input
-						 hasLabel='true'
-						 htmlFor='textInput'
-						 label='Text input'
-						 required='true'
-						 type='text'
-						/>
-						</div>;
-		} else if(controls == 2)  {
-		  inputfield = <div class="row">
-					   <Textarea
-						 hasLabel='true'
-					 htmlFor='textarea'
-						 label='Textarea'
-						 required='true'
-						/>
-					    </div>;
-		} else if(controls == 'number')  {
-		  inputfield = <div class="row">
-					   <Input
-						 hasLabel='true'
-						 htmlFor='numberInput'
-						 label='Number input'
-						 required='true'
-						 type='number'
-						 min='0.5'
-						 max='100'
-						 step='0.5'
-						/>
-					    </div>;
-		} else if(controls == 4)  {
-		  inputfield = <div class="row">
-					   <Input
-						 hasLabel='true'
-						 htmlFor='emailInput'
-						 label='Email input'
-						 required='true'
-						 type='email'
-						/>
-					    </div>;
-		} else if(controls == 5)  {
-		  inputfield = <div class="row">
-					   <Input
-						 hasLabel='true'
-						 htmlFor='emailInput'
-						 label='Email input'
-						 required='true'
-						 type='email'
-						/>
-					    </div>;
-		}
-		   
-		   
+           
 		   
 		   return ( 
 		    
@@ -173,13 +372,15 @@ class Pages extends Component {
 			   <Row id="login-page">
 					<Col className="z-depth-4 " s={12} m={6} l={4} xl={4}>
 						
-						<ElementType fields={fields}/>
+						<ElementType pageJson={schema}/>
 						{/*<NewForm/>*/}
 						
 					   
 				   </Col>
 				   <Col className="z-depth-4 " s={12} m={6} l={4} xl={6}>
-						<PageJsonadd {...this.props}/>
+				        <PageJson pageJson={schema}/>
+						
+
 				   </Col>
 			   </Row>
 			  </div>

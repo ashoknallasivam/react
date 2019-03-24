@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/page.actions';
 import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
+import LoadingSpinner from './loadingSpinner';
 
 class PageJson extends Component {
 	
@@ -24,10 +27,13 @@ class PageJson extends Component {
 	jsonValue(e, data) {
 		// console.log("Json: " + e.plainText);
 		//alert(JSON.stringify(e.json));
+		
         this.setState({ 
           json: e.json
         });
-		
+        
+		this.props.updateJson(JSON.parse(e.json));
+	   
       }	
 	
 	
@@ -70,8 +76,10 @@ class PageJson extends Component {
 	
 	
 	   render() {
-        
 	   	
+        
+	   	if(this.props.pageContent)
+        {
 			//alert(JSON.stringify(this.props.pageJson));
 			 return ( 
 			    
@@ -79,7 +87,7 @@ class PageJson extends Component {
 				<form className="col-md-4" onSubmit={this.handleSubmit} >
 				<Row className="margin">
                   <Col className="input-field p-0" s={12}>
-					<JSONInput
+                    <JSONInput
 					  placeholder={this.props.pageJson} // data to display
 					  theme="light_mitsuketa_tribute"
 					  id = 'json_content'
@@ -89,7 +97,7 @@ class PageJson extends Component {
 						string: "#990099" // overrides theme colors with whatever color value you want
 					  }}
 					  height="250px"
-					  width="450px"
+					  width="400px"
 					  onKeyPressUpdate = {false}
 					/>
 					</Col>
@@ -101,10 +109,12 @@ class PageJson extends Component {
 						</button> {this.renderAlert()}
 				</Row>
 				</form>	
+				
 				</div>
                
 			 );
-				
+		} else {return <LoadingSpinner />;}
+
 	   }
 	
    
@@ -112,4 +122,13 @@ class PageJson extends Component {
 }
 
 
-export default PageJson;
+function mapStateToProps(state) {
+  return { bounds: state.page.bounds, 
+  pageContent: state.page.pages, 
+  pageJson: state.page.pagejson , 
+  pageId: state.page.pageid, 
+  pageStatus: state.page.pagestatus, 
+  editor: state.page.editor };
+}
+
+export default connect(mapStateToProps, actions)(PageJson);

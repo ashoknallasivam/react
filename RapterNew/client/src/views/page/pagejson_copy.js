@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import * as actions from '../../actions/page.actions';
 import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
@@ -82,6 +84,7 @@ class PageJsonadd extends Component {
 				<Row className="margin">
                   <Col className="input-field p-0" s={12}>
 					<JSONInput
+					  placeholder={this.props.pageJson} // data to display
 					  theme="light_mitsuketa_tribute"
 					  id = 'json_content_add'
 					  locale={locale}
