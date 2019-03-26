@@ -17,7 +17,8 @@ class DynamicForm extends React.Component {
 			collection:'',
 			title:'',
 			subtitle:'',
-			layout: []
+			layout: [],
+      schema: this.props.pageJson
 			
 			
     };
@@ -39,6 +40,19 @@ class DynamicForm extends React.Component {
 		});
 			
 	}
+
+  componentWillReceiveProps(nextProps) {
+    
+    this.setState({
+      key: nextProps.pageJson.key,
+      collection: nextProps.pageJson.collection,
+      title: nextProps.pageJson.title,
+      subtitle: nextProps.pageJson.subtitle,
+      layout: nextProps.pageJson.layout
+    });
+  }
+
+  
 
  createUI(){
      return this.state.values.map((el, i) => 
