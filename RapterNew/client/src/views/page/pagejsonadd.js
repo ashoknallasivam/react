@@ -89,7 +89,7 @@ class PageJsonadd extends Component {
 					  colors={{
 						string: "#990099" // overrides theme colors with whatever color value you want
 					  }}
-					  height="250px"
+					  height="280px"
 					  width="450px"
 					  onKeyPressUpdate = {false}
 					/>
@@ -97,7 +97,7 @@ class PageJsonadd extends Component {
 					
 				</Row>
 			    <Row className="center submit-container">
-						<button className="btn waves-effect waves-light btn_primary" type="submit" name="action">Save
+						<button className="btn waves-light" type="submit" name="action">Save
 						  
 						</button> {this.renderAlert()}
 				</Row>

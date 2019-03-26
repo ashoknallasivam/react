@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import * as actions from '../../actions/page.actions';
-import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
+import { Row, Col, Card, Tab,Tabs,Input } from 'react-materialize';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
@@ -22,7 +22,16 @@ class PageGrid extends Component {
         };
         
      this.RowSelected = this.RowSelected.bind(this);
-	  
+	 this.handleChange = this.handleChange.bind(this);
+	 
+    }
+
+     handleChange(e) {
+        const { name, value } = e.target;
+		//alert(value);
+        this.setState({ [name]: value }, () => console.log(name, value));
+		this.props.getPage(value);
+		
     }	
 	
 	
@@ -80,12 +89,22 @@ class PageGrid extends Component {
 			
 			
 			 return ( 
-			
-				<div style={{ height: '330px', width: '400px' }} className="ag-theme-balham">
-					<AgGridReact
+				
+				<div>
+				   <Input s={12} name='pages' type='select' label='Pages' onChange={this.handleChange}>
+							 {rowData.map(itemval => {
+							   return   <option value={itemval.id}>{itemval.title}-{itemval.collection}</option>
+							  
+							   })}
+     			   </Input>
+               
+				
+				
+				
+				{/*<div style={{ height: '330px', width: '400px' }} className="ag-theme-balham"><AgGridReact
 						columnDefs={columnDefs}
 		rowData={rowData} rowSelection= 'single' getRowNodeId={(data) => data.id} onRowClicked={this.RowSelected} animateRows={true}>
-					</AgGridReact>
+				</AgGridReact></div>*/}
 				</div>
 
 			 );

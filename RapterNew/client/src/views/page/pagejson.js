@@ -5,6 +5,7 @@ import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
 import LoadingSpinner from './loadingSpinner';
+import DynamicForm from './dynamicform';
 
 class PageJson extends Component {
 	
@@ -15,12 +16,13 @@ class PageJson extends Component {
         this.state = {
 			tenantId: '1',
 			json: '',
-			jsonEditor: ''
-            
+			jsonEditor: '',
+            pageId:''
         };
 		
      this.jsonValue = this.jsonValue.bind(this);   
      this.handleSubmit = this.handleSubmit.bind(this);
+	 this.showForm = this.showForm.bind(this);
 	  
     }
 	
@@ -32,11 +34,17 @@ class PageJson extends Component {
           json: e.json
         });
         
-		this.props.updateJson(JSON.parse(e.json));
+		//this.props.updateJson(JSON.parse(e.json));
 	   
       }	
 	
-	
+	showForm(event) {
+		//console.log(event);
+		
+		this.setState({
+	     pageId: this.props.pageId
+		});
+    }
 	handleSubmit(e) {
 		
         e.preventDefault();
@@ -76,42 +84,63 @@ class PageJson extends Component {
 	
 	
 	   render() {
-	   	
+		
+	   	var dynamicForm = '';
+   	    if (this.state.pageId != '')
+	    {
+	    	
+			dynamicForm =  <DynamicForm pageId={this.state.pageId}/> ;
+		}  
         
 	   	if(this.props.pageContent)
         {
-			//alert(JSON.stringify(this.props.pageJson));
-			 return ( 
+		
+			return ( 
 			    
-				<div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
-				<form className="col-md-4" onSubmit={this.handleSubmit} >
-				<Row className="margin">
-                  <Col className="input-field p-0" s={12}>
-                    <JSONInput
-					  placeholder={this.props.pageJson} // data to display
-					  theme="light_mitsuketa_tribute"
-					  id = 'json_content'
-					  locale={locale}
-					  onChange={this.jsonValue}
-					  colors={{
-						string: "#990099" // overrides theme colors with whatever color value you want
-					  }}
-					  height="250px"
-					  width="400px"
-					  onKeyPressUpdate = {false}
-					/>
-					</Col>
-					
-				</Row>
-			    <Row className="center submit-container">
-						<button className="btn waves-effect waves-light btn_primary" type="submit" name="action">Update
-						  
-						</button> {this.renderAlert()}
-				</Row>
-				</form>	
+				
+				
+            <Row id="login-page">
+			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
+				 
+				 
+				 <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+				
+						<form className="col-md-4" onSubmit={this.handleSubmit} >
+						<Row className="margin">
+						  <Col className="input-field p-0" s={12}>
+							<JSONInput
+							  placeholder={this.props.pageJson} // data to display
+							  theme="light_mitsuketa_tribute"
+							  id = 'json_content'
+							  locale={locale}
+							  onChange={this.jsonValue}
+							  colors={{
+								string: "#990099" // overrides theme colors with whatever color value you want
+							  }}
+							  height="280px"
+							  width="450px"
+							  onKeyPressUpdate = {false}
+							/>
+							</Col>
+							
+						</Row>
+						<Row className="center submit-container">
+						 <button className="btn " type="submit" name="action">Update</button> {this.renderAlert()}
+						 <button className="btn " type="button" name="action" onClick={this.showForm}>Preview</button> 
+						</Row>
+						
+						
+						</form>	
 				
 				</div>
-               
+
+				 
+			   </Col>
+			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
+				   {dynamicForm}
+			   </Col>
+			   </Row>
+			   
 			 );
 		} else {return <LoadingSpinner />;}
 

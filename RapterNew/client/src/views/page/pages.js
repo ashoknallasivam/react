@@ -4,7 +4,8 @@ import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import { Link, withRouter } from 'react-router-dom';
 import PageGrid from './pagegrid';
 import PageJson from './pagejson';
-import ElementType from './ElementType';
+import PageJsonadd from './pagejsonadd';
+import Modal from './modal';
 import * as actions from '../../actions';
 
 class Pages extends Component {
@@ -40,39 +41,43 @@ class Pages extends Component {
 
    render(props) {
     var jEditor = '';
-    var dynamicForm = '';
+	var dynamicForm = '';
+	
+    
    	if (this.props.editor == 'Edit')
 	    {
-	    	jEditor = 
-	    	<Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
-	    		<PageJson /> 
-	    	</Col>;
-
-	    	dynamicForm = 
-	    	<Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
-	    		<ElementType/>
-	    	</Col>;
-    	
-	    }
+	    	jEditor = <PageJson /> ;
+	    	
+		}
+    if (this.props.editor == 'Add')
+	    {
+	    	jEditor = <PageJsonadd /> ;
+	    	
+		}			
 	   
-	return (	   
-		<Row id="login-page">
-		   <Col className="z-depth-4 mr-0" s={12} m={6} l={4} xl={4} >
-			<PageGrid /> 
-		   </Col>
-		   {jEditor}{dynamicForm}
-				
-		</Row>
+	return (
+       <div style={{height: '600px'}}>
+				 
+			   <Row id="login-page">
+			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={2} >
+				 <button className="btn waves-light" type="button" name="createpage" onClick={this.CreatePage}>Create Page</button>{/*<Modal />*/}
+			   </Col>
+			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
+				<PageGrid {...this.props}/>
+			   </Col>
+			   <Col className="z-depth-8 mr-0" s={12} >
+				{jEditor}
+			   </Col>
+			  
+			   </Row>
+			   
+			  </div>
+	
+		        
+      
+            
+		
        )
-
-       
-
-
-	 
-
-
-
-
 
 
 	}
