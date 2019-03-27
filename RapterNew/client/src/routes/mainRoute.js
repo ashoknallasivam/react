@@ -5,7 +5,6 @@ import NotFound from './../views/404/notFound';
 import CreateProject from './../views/createProject';
 import Page from './../views/page';
 import Form from './../views/page/form';
-import Test from './../views/test/Dynamic';
 import FieldArraysForm from './../views/page/FieldArraysForm';
 import Angular from './../components/auth/angular';
 import Signin from './../components/auth/signin';
@@ -24,7 +23,6 @@ const Routes = () => (
 		<Route path="/page" component={RequireAuth(Page)} />
 		<Route path="/form" component={RequireAuth(Form)} />
 		<Route path="/FieldArraysForm" component={RequireAuth(FieldArraysForm)} />
-		<Route path="/test" component={RequireAuth(Test)} />
         <Route path="/dashboard" component={RequireAuth(Dashboard)} />
 		<Route exact path="/createProject" key="create-project" component={RequireAuth(CreateProject)} />
 		<Route exact path="/viewedit" key="view-edit-project" component={RequireAuth(CreateProject)} />

@@ -5,6 +5,7 @@ import { Link, withRouter } from 'react-router-dom';
 import PageGrid from './pagegrid';
 import PageJson from './pagejson';
 import PageJsonadd from './pagejsonadd';
+import Modal from './modal';
 import * as actions from '../../actions';
 
 class Pages extends Component {
@@ -16,12 +17,8 @@ class Pages extends Component {
             
         };
 	  this.CreatePage = this.CreatePage.bind(this);
-
-	  
 	  
     }	
-
-    
 	
 	  componentDidMount() {
 		//this.props.test();
@@ -44,7 +41,9 @@ class Pages extends Component {
 
    render(props) {
     var jEditor = '';
-	    
+	var dynamicForm = '';
+	
+    
    	if (this.props.editor == 'Edit')
 	    {
 	    	jEditor = <PageJson /> ;
@@ -57,18 +56,10 @@ class Pages extends Component {
 		}			
 	   
 	return (
-
-     
-
-
-       <div style={{height: '600px'}}>
+       <div style={{maxHeight: "100%",height: '600px'}}>
 				 
 			   <Row id="login-page">
 			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={2} >
-
-
-        
-
 				 <button className="btn waves-light" type="button" name="createpage" onClick={this.CreatePage}>Create Page</button>{/*<Modal />*/}
 			   </Col>
 			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >

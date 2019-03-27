@@ -1,4 +1,4 @@
-import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE,UPDATE_JSON } from '../actions/types';
+import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE } from '../actions/types';
 
 export default function(state = {}, action) {
 	
@@ -13,15 +13,9 @@ export default function(state = {}, action) {
       return { ...state, pagestatus: action.payload  };  
 	case DISPLAY_EDITOR:
       return { ...state, editor: action.payload  };   
-  case TEST_MESSAGE:
-      return { ...state, testmessage: action.payload };	
-  case UPDATE_JSON:
-       console.log(action.payload)
-      return { ...state, pagejson: action.payload }; 
-
-
+    case TEST_MESSAGE:
+      return { ...state, testmessage: action.payload };	  
   }
-
 
   return state;
 }

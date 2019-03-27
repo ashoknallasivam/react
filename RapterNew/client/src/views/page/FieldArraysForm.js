@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
 import { Link, withRouter } from 'react-router-dom';
 import SimpleForm from './SimpleForm';
-import ElementType from './ElementType';
 import Select from 'react-select';
 import env from './controls.json';
 import PageJsonadd from './pagejsonadd';
@@ -372,7 +371,7 @@ class Pages extends Component {
 			   <Row id="login-page">
 					<Col className="z-depth-4 " s={12} m={6} l={4} xl={4}>
 						
-						<ElementType pageJson={schema}/>
+						
 						{/*<NewForm/>*/}
 						
 					   

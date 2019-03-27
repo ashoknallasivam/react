@@ -1,4 +1,4 @@
-import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE,UPDATE_JSON} from './types';
+import { UPDATE_BOUNDS,GET_PAGES,GET_PAGE,UPDATE_PAGE,DISPLAY_EDITOR,TEST_MESSAGE } from './types';
 import { pageService } from '../services';
 
 export function createBounds({ params }) {
@@ -72,17 +72,16 @@ export function updatePage(params,id) {
 				response => { 
 				    dispatch({ type: UPDATE_PAGE, payload: response.statusText});
 					dispatch(getPages());
-					// alert(JSON.stringify(data));
+					 alert(JSON.stringify(data));
 				},
 				error => {
 					dispatch(authError('Unable to Fetch Pages'));
-					// alert(JSON.stringify(error));
+					 alert(JSON.stringify(error));
 				}
 			);
 	};
  
 }
-
 
 export function createPage(params) {
 
@@ -113,19 +112,8 @@ export function viewEditor() {
 }
 
 export function test() {
-	alert();
         return {
 			type: TEST_MESSAGE,
 			payload: 'Test'
 		};    
-}
-
-
-export function updateJson(params){
-
-	   
-	   return function(dispatch) {
-		 dispatch({ type: UPDATE_JSON, payload: params});
-	   };
-           
 }

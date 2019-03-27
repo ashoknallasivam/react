@@ -22,22 +22,20 @@ class PageJson extends Component {
 		
      this.jsonValue = this.jsonValue.bind(this);   
      this.handleSubmit = this.handleSubmit.bind(this);
+	 this.showForm = this.showForm.bind(this);
 	 this.showModal = this.showModal.bind(this);
      this.id = 'yo'
 	  
     }
+	
+	showModal (event) {
+    $(`#${this.id}`).modal('open');
 
-    showModal (event) {
-    //$(`#${this.id}`).modal('open');
-
-    this.setState({
-	     pageId: this.props.pageId
-		});
+    //this.setState({
+	 //    pageId: this.props.pageId
+	//	});
 
     }
-
-
-
 	
 	jsonValue(e, data) {
 		// console.log("Json: " + e.plainText);
@@ -51,7 +49,13 @@ class PageJson extends Component {
 	   
       }	
 	
-	
+	showForm(event) {
+		//console.log(event);
+		
+		this.setState({
+	     pageId: this.props.pageId
+		});
+    }
 	handleSubmit(e) {
 		
         e.preventDefault();
@@ -93,11 +97,11 @@ class PageJson extends Component {
 	   render() {
 		
 	   	var dynamicForm = '';
-   	    if (this.state.pageId != '')
-	    {
+   	    //if (this.state.pageId != '')
+	   // {
 	    	
 			dynamicForm =  <DynamicForm pageId={this.state.pageId}/> ;
-		}  
+		//}  
         
 	   	if(this.props.pageContent)
         {
@@ -108,10 +112,8 @@ class PageJson extends Component {
 				
             <Row id="login-page">
 			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
+				  <Modal id={this.id} modalOptions={ { dismissible: true, inDuration: 30 } }>{dynamicForm}</Modal>
 				 
-				 
-        <Modal id={this.id} modalOptions={ { dismissible: true, inDuration: 30 } }><p>test</p></Modal>
-      
 				 <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
 				
 						<form className="col-md-4" onSubmit={this.handleSubmit} >
@@ -146,7 +148,7 @@ class PageJson extends Component {
 				 
 			   </Col>
 			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
-				   {dynamicForm}
+				   
 			   </Col>
 			   </Row>
 			   
