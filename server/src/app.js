@@ -15,6 +15,7 @@ let raConfigService = require('./routes/raConfig');
 let enrollementTargetService = require('./routes/enrollmentTarget');
 let loginService = require('./routes/login');
 let dashBoardService = require('./routes/dashboard');
+let pageService = require('./routes/page');
 
 /**
 * Module dependencies.
@@ -72,6 +73,9 @@ app.use('/', resourceRoleAccessService);
 app.use('/', raConfigService);
 app.use('/', enrollementTargetService);
 app.use('/', dashBoardService);
+app.use('/', pageService);
+
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

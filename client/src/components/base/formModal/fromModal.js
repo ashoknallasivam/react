@@ -131,7 +131,7 @@ class FormModal extends Component {
                 header= {this.props.header} 
                 handleModalClose={this.props.handleModalClose}
                 > 
-                {this.props.name ==  "addOrg" || this.props.name == "addLoc" && <Fragment>
+               
                 <Input s={12} m={12} l={12} xl={12} 
                         label={(this.props.name == 'addLoc')? 'Add Location' : 'Add Organization' }
                         className='mt-0 pl-2' 
@@ -160,7 +160,6 @@ class FormModal extends Component {
                                         onClick={ this._handleOrg }>Add</Button>
                                     } 
                         </div>
-                        </Fragment>}
          </Modal>  
       
 

@@ -32,7 +32,7 @@ const actions = {
 export const fetchSingleTenant = (id) => (dispatch, getState) => {
     const state = getState();
    
-        axios.get(`${BACKEND_URL}/dashboard_data/${id}`, config).then(response => {
+       return axios.get(`${BACKEND_URL}/dashboard_data/${id}`, config).then(response => {
             if(response.status === 200){
                 // let project = state.projectList.Projects
                 // project={
@@ -40,7 +40,8 @@ export const fetchSingleTenant = (id) => (dispatch, getState) => {
                 // [id] : response.data
                 // } 
                 console.log(response.data)
-                return dispatch(actions.GetSingleTenantSuccess(response.data))
+                 dispatch(actions.GetSingleTenantSuccess(response.data))
+                 return true
                 }
              
         })

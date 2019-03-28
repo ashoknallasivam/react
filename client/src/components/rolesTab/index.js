@@ -1,5 +1,5 @@
 import RolesTab  from './rolesTab'
-import { fetchResourceList, fetchMenuList } from '../../actions';
+import { fetchResourceList, fetchMenuList,SaveRoles } from '../../actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -8,7 +8,8 @@ const mapDispatchToProps=(dispatch)=>{
         actions:bindActionCreators(
             {
                 fetchResourceList,
-                fetchMenuList
+                fetchMenuList,
+                SaveRoles
 
             },
             dispatch

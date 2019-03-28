@@ -21,20 +21,23 @@ class StudyConfigTab extends Component {
         // objectUtil.bindAction(HeaderData, "DeleteColumn", );
     }
     componentDidMount() {
+        if(this.props.StudyConfig != undefined ){
         this.setState({
             StudyConfig: this.props.StudyConfig
         });
         this.setState({
             groups: this.props.StudyConfig[0] && this.props.StudyConfig[0].groups
-        });
+        });}
     }
     componentWillReceiveProps(props) {
+        if(props.StudyConfig != undefined){
         let StudyConfig = props.StudyConfig;
         let groups = props.StudyConfig[0].groups;
         this.setState({
             StudyConfig,
             groups
         });
+    }
     }
     // Input handler for Description and Blocksize
     studyConfigChangeHandler = (e) => {
@@ -78,7 +81,7 @@ class StudyConfigTab extends Component {
     render() {
         return (
             <Fragment>
-                {this.state.StudyConfig && this.state.StudyConfig.length > 0 &&
+                {this.state.StudyConfig && this.state.StudyConfig.length > 0 ? 
                     <div>
                         <Modal open={this.state.openModal}
                             actions={
@@ -133,8 +136,9 @@ class StudyConfigTab extends Component {
                                     {localConstant.commonConstants.CANCEL}</Button>
                             </div>
                             : null}
-                    </div>
-                }
+                    </div> 
+                
+            : <div>select location...</div> }
             </Fragment>
         )
     }

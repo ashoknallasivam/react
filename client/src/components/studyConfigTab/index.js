@@ -1,5 +1,5 @@
 import StudyConfigTab  from './studyConfigTab';
-import {fetchStudyConfig} from  '../../actions'
+import {SaveStudyConfig} from  '../../actions'
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -7,7 +7,7 @@ const mapDispatchToProps=(dispatch)=>{
     return{
         actions:bindActionCreators(
             {
-                fetchStudyConfig
+                SaveStudyConfig
             },
             dispatch
         )
@@ -15,4 +15,3 @@ const mapDispatchToProps=(dispatch)=>{
 };
 
 export default connect(null, mapDispatchToProps)(StudyConfigTab);
-// export default StudyConfigTab;

@@ -3,7 +3,9 @@ import { Row, Input, Button, Preloader, Col } from 'react-materialize';
 import objectUtil from '../../utils/objectUtil';
 import PropTypes from "prop-types";
 import FormModal from '../../components/base/formModal';
-import TabsProject from '../../components/tabsProject'
+import TabsProject from '../../components/tabsProject';
+import FormEditModal from '../../components/base/formEditModal';
+
 // import FormModal from '../base/formModal';
 
 const localConstant = objectUtil.getlocalizeData();
@@ -24,6 +26,7 @@ class CreateProject extends Component {
       selectedLocation: {
         value:''
       },
+      fetched:false,
       applicationMode:'',
       addOrg: false,
       addLoc: false,
@@ -41,7 +44,13 @@ class CreateProject extends Component {
   }
   componentDidMount() {
     if (this.props.location.state !== undefined) {
-      this.props.actions.fetchSingleTenant(this.props.location.state.id);
+      this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response=>{ 
+        this.setState({
+            fetched : response,
+            applicationMode: "VIEW"
+
+        }) 
+    });
       if(this.props.projectList[this.props.location.state.id] != undefined ){
       let currentProject = this.props.projectList[this.props.location.state.id]
       this.setState({
@@ -177,18 +186,14 @@ _populateLocation = (data) =>{
   render() {
     return (
       <Fragment>
-         {(Object.keys( this.state.currentProject).length > 2 || this.state.applicationMode == "CREATE") ? 
+         {( this.state.fetched == true || this.state.applicationMode == "CREATE") ? 
       <Row className="create-project-page">
         <Col className="z-depth-4 col-centered mt-2" s={12} m={12} l={12} xl={12}>
             <Row className="project-form">
               <Col s={12} m={12} l={12} xl={12} className=' mt-1'>
                 <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false} />
                 {/* <p className={ this.state.validations.name ? "red-text darken-4" : "hide"  } > Please fill the Project name to add Organisation  </p> */}
-                {(this.state.applicationMode == 'CREATE' && this.state.name !== '') || this.state.applicationMode == 'EDIT' ?
-                  <Button className="btn waves-effect waves-light right" onClick={this._discard} >Discard</Button>
-                  : null}
-                {(this.state.applicationMode === 'VIEW') ?
-                  <Button className="btn waves-effect waves-light right " name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}> EDIT </Button> : null}
+                
               </Col>
              
               <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
@@ -216,15 +221,15 @@ _populateLocation = (data) =>{
                        />
                       {this.state.selectedOrganisation.value != "" ?
                         <Fragment>
-                          <Button className='orgIcon col s12 m2 l2 xl2 mt-8' onClick={this._handleDelete} >
+                          <Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="delOrg" onClick={this._handleDelete} >
                             <i className="material-icons" title='Delete'>delete</i>
                           </Button>
 
 
-                          <Button className='orgIcon col s12 m2 l2 xl2 mt-8' >
+                          <Button className='orgIcon col s12 m2 l2 xl2 mt-8'  name="editOrg" onClick={this._handleModal}  >
                             <i className="material-icons" title='Update'>edit</i>
                           </Button>
-                          <FormModal header={"Edit Organization"}  name="editOrg" open={this.state.editOrg} 
+                          <FormEditModal header={"Edit Organization"}  name="editOrg" open={this.state.editOrg} 
                               setValues={this._setValues}  
                               handleModalClose={this._handleModalClose} 
                               allOrganisations={this.state.allOrganisations} 
@@ -260,18 +265,18 @@ _populateLocation = (data) =>{
                       allLocations={this.state.allLocations} 
                       orgsList={this.state.orgsList} />
                         {
-                          (this.state.selectedLocation.value !== "") ?
+                          (this.state.selectedLocation.id !== "") ?
                             <Fragment>
                               <Button className='col s12 m2 l2 xl2 orgIcon mt-8' >
                                 <i className="material-icons" title='Delete'>
                                   delete
                                                 </i>
                               </Button>
-                              <Button className='col s12 m2 l2 xl2 orgIcon mt-8' >
+                              <Button className='col s12 m2 l2 xl2 orgIcon mt-8' name="editLoc" onClick={this._handleModal} >
                                 <i className="material-icons" title='Update'>
                                   edit</i>
                               </Button>
-                              <FormModal header={"Edit Location"}  name="editLoc" open={this.state.editLoc} 
+                              <FormEditModal header={"Edit Location"}  name="editLoc" open={this.state.editLoc} 
                               setValues={this._setValues}  
                               handleModalClose={this._handleModalClose} 
                               allOrganisations={this.state.allOrganisations} 
@@ -295,13 +300,23 @@ _populateLocation = (data) =>{
           </Col>
         }
         <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
-          {this.state.applicationMode !== 'CREATE' ? null :
-            <Button className="mb-5  mr-2 CreateProjectSave btn_primary" waves='light'>Save </Button>
-          }
-          {this.state.applicationMode == 'EDIT' ?
-            <Button className="mb-5 CreateProjectPublish btn_primary" onClick={this.finalUpdate} waves='light'>Update</Button>
-            : this.state.applicationMode == 'CREATE' || this.state.applicationMode == 'CLONE' ?
-              <Button className="mb-5 CreateProjectPublish btn_primary" onClick={this.finalPublish} waves='light'>Publish</Button>
+        {/* Display Edit in view mode */}
+        {this.state.applicationMode == "VIEW" && 
+           <Button className="mt-3 CreateProjectPublish btn_primary"  name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}  waves='light'>Edit</Button>}
+             
+             {/* {(this.state.applicationMode == 'CREATE') || this.state.applicationMode == 'EDIT'  && 
+              <Button className="mb-3 CreateProjectPublish btn_primary" onClick={this._discard} waves='light'>Discard</Button>
+              } */}
+
+          {/* Display publish in create and edit mode */}
+          {this.state.applicationMode !== 'VIEW' ?
+          <Fragment>
+              <Button className="mt-3 CreateProjectPublish btn_primary" onClick={this.finalPublish} waves='light'>Publish</Button>
+            {/* Display Discard in if project name is not empty */}
+             {this.state.name != '' &&
+             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard} waves='light'>Discard</Button> }
+
+              </Fragment>
               : null
           }
         </Col>

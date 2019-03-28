@@ -1,5 +1,5 @@
 import EnrollmentTab  from './enrollmentTab'
-import { fetchEnrollment} from '../../actions';
+import { SaveEnrollment} from '../../actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -7,7 +7,7 @@ const mapDispatchToProps=(dispatch)=>{
     return{
         actions:bindActionCreators(
             {
-                fetchEnrollment
+                SaveEnrollment
             },
             dispatch
         )

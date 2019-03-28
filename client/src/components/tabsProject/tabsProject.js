@@ -37,7 +37,7 @@ class TabsProject extends Component {
                         </TabPanel>
 
                         <TabPanel>
-                             <PagesTab bounds = {this.props.selectedLocation.bounds}/>
+                             <PagesTab bounds={this.props.selectedLocation.bounds} pages={this.props.selectedLocation.pages} />
                         </TabPanel>
 
                         <TabPanel>

@@ -5,8 +5,12 @@ class FormEditModal extends Component {
     constructor(props){
         super(props);
         this.state={
-            orgName:'',
-            locName:'',
+          selectedOrganisation:{
+            name:''
+          },
+          selectedLocation:{
+            name:''
+          },
             parenOfLoc:{
               value:''
             },
@@ -15,9 +19,16 @@ class FormEditModal extends Component {
   
   }
   componentWillReceiveProps(props){
+    let selectedOrganisation={};
+    props.orgsList.map((item,i)=>{
+      if(item.id == props.selectedOrganisation)
+      {
+        selectedOrganisation = item
+      }
+    })
     this.setState({
       orgsList : props.orgsList,
-      selectedOrganisation: props.selectedOrganisation,
+      selectedOrganisation,
       selectedLocation : props.selectedLocation
     })
   }
@@ -26,24 +37,30 @@ class FormEditModal extends Component {
        
       if(e.target.name === "parenOfLoc"){ 
         let data =  this.props.orgsList.filter(item =>{
-          return   (item.id == e.target.value) ? item : null ;
+          return (item.id == e.target.value) ? item : null ;
           })
           this.setState({
-            parenOfLoc : data[0]
+            selectedLocation : {
+                    ...this.state.selectedLocation,
+                    parentId: data[0].id
+            }
         })
-      }
-     
-      else if (e.target.name === "locName"){
+      }else{
         this.setState({
-          [selectedLocation[name]] :e.target.value
-      })
+          [e.target.name]: {
+                        ...this.state[e.target.name],
+                        name: e.target.value
+            }
+          });
+
       }
-      else if (e.target.name === "ogName"){
-        this.setState({
-          [selectedOrganisation[name]] :e.target.value
-      })
+        
+        
       }
-    }
+      
+      
+ 
+    
 
     _handleClose = () =>{
         this.setState({
@@ -57,16 +74,16 @@ class FormEditModal extends Component {
     }
     _handleOrg = () => {
         let newOrg = {};
-        if (this.state.orgName !== '') {
+        if (this.state.selectedOrganisation.id !== '') {
           newOrg.id =this.state.selectedOrganisation.id;
-          newOrg.level = 0;
+          newOrg.level = this.state.selectedOrganisation.level;
           newOrg.name = this.state.selectedOrganisation.name;
-          newOrg.tenantID = 0;
-          newOrg.ttoId = null;
-          newOrg.parentId = null;
-          newOrg.flag = 'modified';
+          newOrg.tenantId = this.state.selectedOrganisation.tenantId;
+          newOrg.ttoId = this.state.selectedOrganisation.ttoId;
+          newOrg.parentId = this.state.selectedOrganisation.parentId;
+          newOrg.statusFlag = 'modified';
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
-            if (iteratedValue.name === this.state.orgName) {
+            if (iteratedValue.name === this.state.selectedOrganisation.name) {
               return true
             }
           });
@@ -75,24 +92,26 @@ class FormEditModal extends Component {
           } else {
 
             let allOrganisations ={...this.props.allOrganisations}
-            allOrganisations[id] = newOrg;
+            allOrganisations[this.state.selectedOrganisation.id] = {
+              ...allOrganisations[this.state.selectedOrganisation.id],
+             ...newOrg};
             let orgsList =this.props.orgsList
             orgsList.map((item,i)=>{
                 if(item.id == this.state.selectedOrganisation.id){
-                    orgsList[i] = newOrg
+                    orgsList[i] = {
+                                    ...orgsList[i],
+                                  ...newOrg
+                                }
                 }
             })
             this.setState({ 
-              orgName:'',
-              newOrg : this.state.newOrg+1 ,
-              parenOfLoc:{
-                value:''
+              selectedOrganisation:{
+                name:''
               },
-
+              selectedLocation:{
+                name:''
+              }
          });
-
-        console.log(allOrganisations)
-        console.log(orgsList)
          this.props.setValues('allOrganisations',allOrganisations) 
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
@@ -101,30 +120,32 @@ class FormEditModal extends Component {
       }
       _handleLoc = () => {
         let newLoc = {};
-        if (this.state.locName !== '') {
+        if (this.state.selectedLocation.id !== '') {
             // const parent = this.props.allOrganisations.concat(this.props.allLocations);
-            newLoc.id = "L" + this.state.newOrg;
-            newLoc.level = this.state.parenOfLoc.level + 1;
-            newLoc.parentId = this.state.parenOfLoc.id;
-            newLoc.ttoId = this.state.parenOfLoc.ttoId == null ? this.state.parenOfLoc.id : this.state.parenOfLoc.ttoId;
-            newLoc.name = this.state.locName;
-            newLoc.tenantID = this.state.parenOfLoc.tenantID;
-            newOrg.flag = 'modified';
-            const isDuplicatte = this.props.orgsList.map((iteratedValue)=>{
-                if(iteratedValue.name === this.state.locName){
+            newLoc.id =  this.state.selectedLocation.id;
+            newLoc.level = this.state.selectedLocation.level;
+            newLoc.parentId = this.state.selectedLocation.parentId;
+            newLoc.ttoId = this.state.selectedLocation.ttoId;
+            newLoc.name = this.state.selectedLocation.name;
+            newLoc.statusFlag = this.state.selectedLocation.tenantId;
+            newLoc.flag = 'modified';
+            const isDuplicate = this.props.orgsList.map((iteratedValue)=>{
+                if(iteratedValue.name === this.state.selectedLocation.name){
                     return true
                 }
             });
 
-            if (isDuplicatte.includes(true)) {
+            if (isDuplicate.includes(true)) {
                 window.Materialize.toast('Already Exist', 5000)
                 return false;
-            } else if(this.state.parenOfLoc.value !== '') {
-              let allLocations ={...this.props.allLocations, ...{[newLoc.id]: {...newLoc}}}
+            } else if(this.state.selectedLocation.parentId !== '') {
+              let allLocations ={...this.props.allLocations}
+              allLocations[this.state.selectedLocation.id] = {
+                  ...allLocations[this.state.selectedLocation.id],
+                  ...newLoc
+              } 
               let orgsList =[...this.props.orgsList,{...newLoc}]
               this.setState({ 
-                locName:'',
-                newOrg : this.state.newOrg+1 ,
                 parenOfLoc:{
                   value:''
                 }
@@ -145,16 +166,16 @@ class FormEditModal extends Component {
                 header= {this.props.header} 
                 handleModalClose={this.props.handleModalClose}
                 > 
-                {this.props.name ==  "editOrg" || this.props.name == "editLoc" && <Fragment>
+                 
                 <Input s={12} m={12} l={12} xl={12} 
-                        label={(this.props.name == 'editLoc')? 'Edit Location' : 'Edit Organization' }
+                        // label={(this.props.name == 'editLoc')? 'Edit Location' : 'Edit Organization' }
                         className='mt-0 pl-2' 
-                        name={(this.props.name == 'editLoc')? "locName" : "orgName"  }  
+                        name={(this.props.name == 'editLoc')? "selectedLocation" : "selectedOrganisation"  }  
                         value={(this.props.name == 'editLoc')? this.state.selectedLocation.name : this.state.selectedOrganisation.name }
                         onChange={this._input} 
                         required />
                 {this.props.name == "editLoc" &&
-                   <select name="parenOfLoc" onChange={this._input} value={this.state.parenOfLoc.value}>
+                   <select name="parenOfLoc" onChange={this._input} value={this.state.selectedLocation.parentId}>
                         <option value="" disabled> Choose option </option>
                         {
                             this.props.orgsList.map(data=>
@@ -165,16 +186,16 @@ class FormEditModal extends Component {
                 }
                         <div className="col s12 m12 l12 xl12">
                                     <Button className="btn_secondary  otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this._handleClose}>Cancel</Button>
-                                    {this.props.name == "addLoc"&&  
+                                    {this.props.name == "editLoc"&&  
                                         <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' 
-                                        onClick={this._handleLoc }>Add</Button>
+                                        onClick={this._handleLoc }>save</Button>
                                     }
-                                    { this.props.name =="addOrg"  &&
+                                    { this.props.name =="editOrg"  &&
                                         <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' 
-                                        onClick={ this._handleOrg }>Add</Button>
+                                        onClick={ this._handleOrg }>save</Button>
                                     } 
                         </div>
-                        </Fragment>}
+                    
          </Modal>  
       
 
