@@ -1,0 +1,15 @@
+[
+  type: 'text',
+  name: 'firstName',
+  label: 'First name',
+  options: {
+	items: [
+	  {}
+	],
+	validation: {
+	  required: true,
+	  minLength: 2,
+	  maxLength: 30
+	}
+  }
+]

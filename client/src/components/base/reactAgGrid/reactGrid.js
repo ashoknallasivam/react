@@ -26,7 +26,7 @@ class ReactGrid extends Component {
         const selectedData = this.gridApi.getSelectedRows();
         return selectedData;
     }
-    refreshCells = (params) =>{
+    refreshCells = (params) => {
         this.gridApi.refreshCells(params);
     }
     removeSelectedRows = (data) => {
@@ -43,9 +43,9 @@ class ReactGrid extends Component {
                         // rowHeight="30"
                         rowClassRules={this.state.rowClassRules}
                         rowSelection={this.props.gridColData.rowSelection}
-                        rowMultiSelectWithClick={true}
+                        // rowMultiSelectWithClick={true}
                         rowDeselection={true}
-                        rowMultiSelectWithClick={true}
+                        //rowMultiSelectWithClick={true}
                         frameworkComponents={this.state.frameworkComponents} >
                     </AgGridReact>
                 </div>

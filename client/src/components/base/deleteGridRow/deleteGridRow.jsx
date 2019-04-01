@@ -5,7 +5,7 @@ class DeleteGridRow extends Component {
     }
     render() {
         return (
-                <a className="orgIcon" onClick={this.selectedRow}><i className="material-icons" title='Delete'>delete</i></a>
+            <a className="orgIcon" onClick={this.selectedRow}><i className="material-icons" title='Delete'>delete</i></a>
         );
     }
 }

@@ -31,22 +31,22 @@ const actions = {
 
 export const fetchSingleTenant = (id) => (dispatch, getState) => {
     const state = getState();
-   
+    
+//    if(state.projectList.Projects[id])
+//    {
+//     return true   
+//    }
+//    else {
        return axios.get(`${BACKEND_URL}/dashboard_data/${id}`, config).then(response => {
             if(response.status === 200){
-                // let project = state.projectList.Projects
-                // project={
-                //     ...project,
-                // [id] : response.data
-                // } 
                 console.log(response.data)
                  dispatch(actions.GetSingleTenantSuccess(response.data))
                  return true
                 }
              
         })
-    }
-
+    // }
+}
 
     
 export const fetchMenuList = () => (dispatch, getState) => {

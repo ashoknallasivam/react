@@ -26,11 +26,33 @@ class Header extends Component {
         this.props.actions.ChangeMode(e.target.name);
     }
     render() {
+		var homeLink = '';
+		var createLink = '';
+		var importButton = '';
+		var profileButton = '';
+		var userMenu = '';
+		
+		if (this.props.tokenStatus == true)
+		{
+			homeLink =  <Link to={"/dashboard"} onClick={this.handleClick} name="VIEW">{"Home"}</Link> ;
+			createLink =  <Link to={"/createProject"} onClick={this.handleClick} name="CREATE">{"Create"}</Link> ;
+			importButton = <Button onClick={this.handleImport}>Import project(s)</Button>;
+			profileButton = <ul className="right hide-on-med-and-down">
+								<li>
+									<a onClick={this.toggleProfileDropDown} className="waves-effect waves-block waves-light profile-button" data-activates="profile-dropdown">
+										<span className="avatar-status avatar-online">
+											<img src={profileImg} alt="avatar" />
+										</span>
+									</a>
+								</li>
+							</ul>;
+		userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen}/>;					
+							
+		}
+		
         return (
             <Fragment>
-
-                {this.props.tokenStatus == true ?
-                    <header id="header" className="page-topbar">
+                   <header id="header" className="page-topbar">
                         <Col className="navbar-fixed">
                             <nav className="navbar-color">
                                 <Col className="nav-wrapper">
@@ -38,25 +60,14 @@ class Header extends Component {
                                         <Link to="/dashboard" className="mpr-logo">
                                             <img src={logo} alt="logo" />
                                         </Link>
-                                        <Link to={"/dashboard"} onClick={this.handleClick} name="VIEW">{"Home"}</Link>
-                                        <Link to={"/createProject"} onClick={this.handleClick} name="CREATE">{"Create"}</Link>
-                                        <Button onClick={this.handleImport}>Import project(s)</Button>
+									    {homeLink}{createLink}{importButton}
                                     </span>
-                                    <ul className="right hide-on-med-and-down">
-                                        <li>
-                                            <a onClick={this.toggleProfileDropDown} className="waves-effect waves-block waves-light profile-button" data-activates="profile-dropdown">
-                                                <span className="avatar-status avatar-online">
-                                                    <img src={profileImg} alt="avatar" />
-                                                </span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <UserMenu isprofileDropDown={this.state.isdropDownOpen} />
+									{profileButton} {userMenu}
                                 </Col>
                             </nav>
                         </Col>
                     </header>
-                    : null}
+                  
 
             </Fragment>
         );

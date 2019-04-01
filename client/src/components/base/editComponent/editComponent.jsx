@@ -6,7 +6,7 @@ class EditComponent extends Component {
     }
     render() {
         return (
-                <a className="orgIcon" onClick={this.selectedRow}><i className="material-icons" title='Edit'>edit</i></a>           
+            <a className="orgIcon" onClick={this.selectedRow}><i className="material-icons" title='Edit'>edit</i></a>
         );
     }
 }

@@ -1,2 +1,2 @@
-import DeleteGridRow from './deleteGridRow'
+import DeleteGridRow from './deleteGridRow';
 export default DeleteGridRow;

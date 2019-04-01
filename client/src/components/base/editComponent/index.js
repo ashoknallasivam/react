@@ -1,2 +1,2 @@
-import EditComponent from './editComponent'
+import EditComponent from './editComponent';
 export default EditComponent;

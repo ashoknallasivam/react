@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Input, Button, Modal } from 'react-materialize';
+import uuid from 'uuid';
 
 class FormModal extends Component {
     constructor(props){
@@ -10,16 +11,19 @@ class FormModal extends Component {
             parenOfLoc:{
               value:''
             },
-            newOrg:0
+            newOrg:0,
+            orgsList:[]
+
     }
   
   }
   componentWillReceiveProps(props){
+    if(props.orgsList !== undefined && props.selectedOrganisation !== undefined && props.selectedLocation !== undefined){
     this.setState({
       orgsList : props.orgsList,
       selectedOrganisation: props.selectedOrganisation,
       selectedLocation : props.selectedLocation
-    })
+    })}
   }
 
     _input =(e)=>{
@@ -53,33 +57,34 @@ class FormModal extends Component {
     _handleOrg = () => {
         let newOrg = {};
         if (this.state.orgName !== '') {
-          newOrg.id = "c" + this.state.newOrg;
+          newOrg.id = uuid.v4();
           newOrg.level = 0;
           newOrg.name = this.state.orgName;
-          newOrg.tenantID = 0;
+          newOrg.tenantId = this.props.tenantId;
           newOrg.ttoId = null;
           newOrg.parentId = null;
-          let isDuplicate = this.props.orgsList.map((iteratedValue) => {
+
+          let isDuplicate = this.state.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.orgName) {
               return true
             }
           });
           if (isDuplicate.includes(true) )  {
                 window.Materialize.toast('Already Exist', 5000)
-          } else {
+          } 
+          else {
 
             let allOrganisations ={...this.props.allOrganisations, ...{[newOrg.id]: {...newOrg}}}
-            let orgsList =[...this.props.orgsList,{...newOrg}]
+            let orgsList =[...this.state.orgsList,{...newOrg}]
             this.setState({ 
               orgName:'',
               newOrg : this.state.newOrg+1 ,
               parenOfLoc:{
                 value:''
               },
-
          });
 
-
+         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
          this.props.setValues('allOrganisations',allOrganisations)
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
@@ -89,13 +94,12 @@ class FormModal extends Component {
       _handleLoc = () => {
         let newLoc = {};
         if (this.state.locName !== '') {
-            // const parent = this.props.allOrganisations.concat(this.props.allLocations);
-            newLoc.id = "L" + this.state.newOrg;
+            newLoc.id = uuid.v4();
             newLoc.level = this.state.parenOfLoc.level + 1;
             newLoc.parentId = this.state.parenOfLoc.id;
             newLoc.ttoId = this.state.parenOfLoc.ttoId == null ? this.state.parenOfLoc.id : this.state.parenOfLoc.ttoId;
             newLoc.name = this.state.locName;
-            newLoc.tenantID = this.state.parenOfLoc.tenantID;
+            newLoc.tenantId = this.state.parenOfLoc.tenantId;
             const isDuplicatte = this.props.orgsList.map((iteratedValue)=>{
                 if(iteratedValue.name === this.state.locName){
                     return true
@@ -110,11 +114,11 @@ class FormModal extends Component {
               let orgsList =[...this.props.orgsList,{...newLoc}]
               this.setState({ 
                 locName:'',
-                newOrg : this.state.newOrg+1 ,
                 parenOfLoc:{
                   value:''
                 }
            });   
+           this.props.actions.SaveLocation(newLoc.tenantId, newLoc)
            this.props.setValues('allLocations',allLocations)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)

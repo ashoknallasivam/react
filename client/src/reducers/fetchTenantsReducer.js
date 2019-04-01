@@ -35,7 +35,8 @@ const store = (state = initialState , action ) =>{
         return state;
 
         case 'FETCH_SINGLE_TENANT_SUCCESS':
-        state = {...state,
+        state = {
+            ...state,
             Projects:{
                 ...state.Projects,
                 [action.payload.id] :action.payload
@@ -84,7 +85,36 @@ const store = (state = initialState , action ) =>{
             error: action.payload
         };
         return state;
+
+        case 'SAVE_TENANT':
+        state = {
+            ...state,
+            Projects:{
+                ...state.Projects,
+                [action.payload.id] :action.payload
+            }  
+         }
+        return state;
+
+        case 'SAVE_ORGANIZATION':
+        state = {
+            ...state,
+            Projects:{
+                ...state.Projects,
+                [action.payload.id] :action.payload
+            }  
+         }
+        return state;
         
+        case 'SAVE_LCOATION':
+        state = {
+            ...state,
+            Projects:{
+                ...state.Projects,
+                [action.payload.id] :action.payload
+            }  
+         }
+        return state;
         
         default:
         return state;

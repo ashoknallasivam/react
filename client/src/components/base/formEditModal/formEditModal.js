@@ -19,16 +19,16 @@ class FormEditModal extends Component {
   
   }
   componentWillReceiveProps(props){
-    let selectedOrganisation={};
-    props.orgsList.map((item,i)=>{
-      if(item.id == props.selectedOrganisation)
-      {
-        selectedOrganisation = item
-      }
-    })
+    // let selectedOrganisation={};
+    // props.orgsList.map((item,i)=>{
+    //   if(item.id == props.selectedOrganisation)
+    //   {
+    //     selectedOrganisation = item
+    //   }
+    // })
     this.setState({
       orgsList : props.orgsList,
-      selectedOrganisation,
+      selectedOrganisation:  props.selectedOrganisation,
       selectedLocation : props.selectedLocation
     })
   }
@@ -81,7 +81,7 @@ class FormEditModal extends Component {
           newOrg.tenantId = this.state.selectedOrganisation.tenantId;
           newOrg.ttoId = this.state.selectedOrganisation.ttoId;
           newOrg.parentId = this.state.selectedOrganisation.parentId;
-          newOrg.statusFlag = 'modified';
+          newOrg.statusFlag = this.state.selectedOrganisation.statusFlag !=='' ? 'modified' : this.state.selectedOrganisation.statusFlag ;
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.selectedOrganisation.name) {
               return true
@@ -112,6 +112,7 @@ class FormEditModal extends Component {
                 name:''
               }
          });
+         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
          this.props.setValues('allOrganisations',allOrganisations) 
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
@@ -127,8 +128,8 @@ class FormEditModal extends Component {
             newLoc.parentId = this.state.selectedLocation.parentId;
             newLoc.ttoId = this.state.selectedLocation.ttoId;
             newLoc.name = this.state.selectedLocation.name;
-            newLoc.statusFlag = this.state.selectedLocation.tenantId;
-            newLoc.flag = 'modified';
+            newLoc.tenantId = this.state.selectedLocation.tenantId;
+            newLoc.statusFlag = this.state.selectedLocation.statusFlag !=='' ? 'modified' : this.state.selectedLocations.statusFlag ;
             const isDuplicate = this.props.orgsList.map((iteratedValue)=>{
                 if(iteratedValue.name === this.state.selectedLocation.name){
                     return true
@@ -149,7 +150,8 @@ class FormEditModal extends Component {
                 parenOfLoc:{
                   value:''
                 }
-           });   
+           });
+           this.props.actions.SaveLocation(newLoc.tenantId, newLoc)   
            this.props.setValues('allLocations',allLocations)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)

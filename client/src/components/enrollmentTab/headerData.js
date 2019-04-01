@@ -4,13 +4,13 @@ export const HeaderData = {
             {
                 "headerName": "Month",
                 "field": "month",
-                "width": 350
+                "width": 500
 
             },
             {
                 "headerName": "Target",
                 "field": "target",
-                "width": 350
+                "width": 480
             },
         ],
          "rowSelection":"single"
@@ -20,13 +20,13 @@ export const HeaderData = {
             {
                 "headerName": "Month",
                 "field": "month",
-                "width": 350
+                "width": 400
 
             },
             {
                 "headerName": "Target",
                 "field": "target",
-                "width": 350
+                "width": 400
             },
             {
                 "headerName": "",
@@ -36,14 +36,14 @@ export const HeaderData = {
                 },
                 "width": 75
             },
-            // {
-            //     "headerName": "",
-            //     "field": "DeleteColumn",
-            //     "cellRenderer": "DeleteComponent",
-            //     "cellRendererParams": {
-            //     },
-            //     "width": 75
-            // }
+            {
+                "headerName": "",
+                "field": "DeleteColumn",
+                "cellRenderer": "DeleteComponent",
+                "cellRendererParams": {
+                },
+                "width": 75
+            }
         ],
         //  "gridHeight": 30,
         // "gridWidth": 140,

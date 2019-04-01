@@ -7,7 +7,7 @@ class PagePreview extends React.Component {
 
     super(props);
 	
-	this.props.test();
+	
 	this.state = {
             submitted: false,
 			values: [],
@@ -118,12 +118,10 @@ class PagePreview extends React.Component {
  
   
   return (
-    <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
-  <form onSubmit={this.handleSubmit} >
+   <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+   <form onSubmit={this.handleSubmit} >
     <Row>
-	
      <Input s={8} label="Key" id="key" name="key" type="text" value={this.state.key} validate onChange={this.handleChange} required/>
-
      </Row>
      <Row>
         <Input s={8} label="Collection" id="collection" name="collection" type="text" value={this.state.collection} validate onChange={this.handleChange} required/>
@@ -134,10 +132,7 @@ class PagePreview extends React.Component {
      <Row>
         <Input s={8} label="Sub Title" id="subtitle" name="subtitle" type="text" value={this.state.subtitle} validate onChange={this.handleChange} required />
      </Row>
-   
-
-
-    <Row>
+     <Row>
     
     {this.state.layout.map(value => {
         const { type, label, name } = value

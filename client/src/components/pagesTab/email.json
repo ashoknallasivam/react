@@ -1,0 +1,30 @@
+[
+	
+	{
+		"value": 1,
+		"label": "DEV"
+	},
+	{
+		"value": 2,
+		"label": "TEST"
+	},
+	{
+		"value": 3,
+		"label": "UAT"
+	},
+	{
+		"value": 4,
+		"label": "DEMO"
+	},
+	{
+		"value": 5,
+		"label": "Training"
+	},
+	
+	{
+		"value": 6,
+		"label": "RAPTER"
+	}
+	
+
+]

@@ -1,10 +1,9 @@
-import React, { Component, } from 'react';
+import React, { Component, Fragment } from 'react';
+import { Row, Input, Button, Modal, Col } from 'react-materialize';
 import { connect } from 'react-redux';
-import { Row, Col, Tab,Tabs } from 'react-materialize';
 import Spinner from 'react-spinner-material';
 import brand from '../../../public/assets/images/logo/login-logo.png';
 import * as actions from '../../actions';
-import Select from 'react-select';
 import env from '../../../env.json';
 
 const scaryAnimals = env;
@@ -96,30 +95,31 @@ class Signin extends Component {
 		{
 			return(
 				<Row id="login-page" >
-					 <Col className="z-depth-0 offset-xl5 " s={12} m={6} l={5} xl={4}>
-					   <Row>
-						<Spinner size={50} spinnerColor={"#fd5633"} spinnerWidth={4} visible={true} />
-					   </Row>
-					  </Col>
+				 <Col className="z-depth-0 offset-xl5 " s={12} m={6} l={5} xl={4}>
+				   <Row>
+					<Spinner size={50} spinnerColor={"#fd5633"} spinnerWidth={4} visible={true} />
+				   </Row>
+				  </Col>
 				</Row>
 		    );
-			
 		} else { 
 			return(<div>
-      <Row id="login-page">
+       <Row id="login-page">
 		 <Col className="z-depth-4 offset-xl4 " s={12} m={6} l={4} xl={4}>
            <form className="col-md-4" onSubmit={this.handleSubmit} >
              <Row>
                <Col className="input-field center"s={12}>
-                 
-                 <p className="center login-form-text">Admin Login</p>
+                 <p className="center login-form-text"><h5>Rapter Configurator</h5></p>
                </Col>
              </Row>
 			  <Row className="margin">
                <Col className="input-field p-0" s={12}>
-			   
-                <Select styles={customStyles} options={scaryAnimals} onChange={opt => this.setState({ environment: opt.value }) } required/>
-               
+			    <Input s={12} name='environment' id='environment' type='select' icon='storage' className="pl-0" label='Environment' onChange={this.handleChange} required>
+				  <option value=''>Select Environment</option>
+				   {env.map(itemval => {
+				   return <option value={itemval.value}>{itemval.label}</option>
+				   })}
+				</Input>
                </Col>
              </Row>
              <Row className="margin">
@@ -146,7 +146,6 @@ class Signin extends Component {
                   <i className="material-icons right">send</i>
                 </button>
              </Row>
-             
            </form>
          </Col>
        </Row>	   

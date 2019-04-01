@@ -2,13 +2,16 @@ export const localeConstants_en = {
     commonConstants: {
         ADD: "ADD",
         EDIT: "EDIT",
-        DELETE: "DELETE",
+        DELETE: "Delete",
         DISCARD: "DISCARD",
-        SELECT_AN_LTO: "Select an LTO from the dropdown",
+        SELECT_AN_LTO: "Select the location",
         OK: "Ok",
         SUBMIT: "Submit",
         CANCEL: "Cancel",
-        SAVE: "Save"
+        SAVE: "Save",
+        YES: "Yes",
+        NO: "No",
+        NO_DATA: "No data to display"
     },
     functions: {
         FUNCTIONS: "Functions",
@@ -33,15 +36,11 @@ export const localeConstants_en = {
     },
     warningMessages: {
         //Study-Config
-        EMPTY_FIELD_VALIDATION: "Please fill the details",
-        DELETE_ROWS: "Please Select a row to delete",
-        CUMULATIVE_RATIO_VALIDATION: "Cumulative Ratio should not be more than 1",
-        PUBLISH_CUMULATIVE_RATIO: "Cumulative Ratio must be 1 in Study Config tab",
+        CUMULATIVE_RATIO_VALIDATION: "Cumulative Ratio should be equal to 1",
         RATIO_VALIDATION: "Ratio should not be more than 1",
-        SEQUENCE_LIMIT_VALIDATION: "Sequence Limit should not be less than 0",
-        BLOCKSIZE_VALIDATION: "Blocksize should not be less than 0",
-        SAVING_DATA: "Study Config Saved Successfully",
-        DELETING_DATA: "Study Config Deleted Successfully",
-        RA_CONFIG_VALIDATION: "Please fill the mandatory fields in Study Config tab"
+        //Common
+        MANDATORY_VALIDATION: "Please fill the mandatory fields",
+        DELETE_CONFIRMATION: "Are you sure you want to delete ?",
+        SAVING_DATA: "Saved Successfully"
     } 
 }
