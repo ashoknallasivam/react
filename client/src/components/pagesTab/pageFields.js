@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Row, Col, Tab,Tabs,Input,Icon } from 'react-materialize';
+import TextInput from './text';
 
 class PagePreview extends React.Component {
   constructor(props) {
@@ -41,29 +42,7 @@ class PagePreview extends React.Component {
      return this.state.values.map((el, i) => 
           <div key={i}>
 		    <a className="btn-floating btn-small grey" onClick={this.removeClick.bind(this, i)}><i className="material-icons">delete_outline</i></a>
-		   <Col className="input-field p-0" s={12}>
-		         <input id="name" name="name" type="text" className="pl-0" defaultValue='' onChange={this.handleChange} required/>
-                 <label htmlFor="name" className="center-align">Name</label>
-            </Col>
-			<Col className="input-field p-0" s={12}>
-                 <input id="label" name="label" type="text" className="pl-0" defaultValue='' onChange={this.handleChange} required/>
-                 <label htmlFor="label" className="center-align">Label</label>
-            </Col>
-			<Col className="input-field p-0" s={12}>
-                 <input id="minLength" name="minLength" type="number" className="pl-0" defaultValue='' onChange={this.handleChange} required/>
-                 <label htmlFor="min" className="center-align">Minimum Length</label>
-            </Col>
-			<Col className="input-field p-0" s={12}>
-                 <input id="maxLength" name="maxLength" type="number" className="pl-0" defaultValue='' onChange={this.handleChange} required/>
-                 <label htmlFor="max" className="center-align">Maximum Length</label>
-            </Col>
-			<Col className="input-field p-0" s={12}>
-                 <Input s={12} name='required' id='required' type='select' className="pl-0" label='Required' defaultValue='' onChange={this.handleChange} required>
-				   <option value=''>Select</option>
-				   <option value='true'>Yes</option>
-				   <option value='false'>No</option>
-				  </Input>
-            </Col>
+		   <Text />
 			
     	    
          </div>            
@@ -139,6 +118,7 @@ class PagePreview extends React.Component {
    <form onSubmit={this.handleSubmit} >
     <Row>
 	 <Col className="input-field p-0" s={12} m={6} l={4} xl={6} > 
+	 <TextInput />
 	<Input s={12} name='type' id='type' type='select' className="pl-0" label='Controls' onChange={this.handleChange} required>
 	  <option value=''>Select Control</option>
 	   <option value='input'>Input</option>
