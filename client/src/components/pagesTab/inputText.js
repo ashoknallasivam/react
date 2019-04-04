@@ -119,6 +119,29 @@ class IntputText extends Component {
 			
 			
 			
+        } else if (type == 'panel') {
+           return <div >
+               <h5>{value.label}</h5>
+             {options.fields.map(itemval => {
+               if (itemval.name == 'items') {
+               return	<h6>{itemval.label}</h6>
+                 {itemval.options.fields.map(itemvalauto => {
+                   return <h4>asdd</h4>
+                  //return  <Input name={itemvalauto.name} type={itemvalauto.type} defaultValue={itemvalauto.value} label={itemvalauto.label} onChange={this.handleChange}/>
+
+                 })}
+
+
+
+               
+               } else { 
+
+               return  <Input name={itemval.name} type={itemval.type} defaultValue={itemval.value} label={itemval.label} onChange={this.handleChange}/>
+               }
+                   
+               })}
+              </div>;
+              
         } else if (type == 'radio') {
            return <div >
                <h5>{value.label}</h5>
