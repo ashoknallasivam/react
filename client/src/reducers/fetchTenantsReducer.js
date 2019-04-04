@@ -68,7 +68,10 @@ const store = (state = initialState , action ) =>{
         case 'SAVE_ENROLLMENT':
         state = {
             ...state,
-            error: action.payload
+            Projects:{
+                ...state.Projects,
+                [action.payload.id] :action.payload
+            } 
         };
         return state;
 

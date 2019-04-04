@@ -1,15 +1,14 @@
 'use strict';
 let express = require('express');
-let axios = require('axios');
 let router = express.Router();
 let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let raConfigBiz = require('../biz/raConfigBiz');
 
- 
 // create ra-config.
-router.post('/create-ra-config', (req, res) => {
+router.post('/ra-config', (req, res) => {
     // token validation.
     let token = req.token
     if (token === undefined || token === "" || token === null) {
@@ -26,13 +25,15 @@ router.post('/create-ra-config', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/ra-config?tenantId=`+ req.query.tenantId, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-    res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });    });
+    raConfigBiz.createRaConfig(requestOptions, req.query.tenantId, inpParam).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response);
+        }
+    });
 });
- 
+
 // find ra-config by using id.
 router.get('/ra-config/:id', (req, res) => {
     // token validation.
@@ -43,11 +44,14 @@ router.get('/ra-config/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    axios.get(`${config.RAPTER_URL}/ra-config/`+req.params.id+ '?tenantId='+ req.query.tenantId, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-    res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });    });
+    // calling rapter ra-config find one api.
+    raConfigBiz.getRaConfig(requestOptions, req.params.id, req.query.tenantId).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
+    });
 });
 // find ra-config list.
 router.get('/ra-config', (req, res) => { //Not using as of now
@@ -59,13 +63,17 @@ router.get('/ra-config', (req, res) => { //Not using as of now
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    let inpParam = req.params;
+    let inpParam = req.query;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/ra-config?tenantId=` + inpParam.tenantId , requestOptions).then(function (response) {
-            res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });        });
+        // calling rapter ra-config list api.
+        raConfigBiz.getRaConfigList(requestOptions, inpParam.tenantId).then(response => {
+            if (response.status === 200) {
+                res.status(200).send(response.data);
+            } else {
+                res.status(500).send(response);
+            }
+        });
+
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
         rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
@@ -73,7 +81,7 @@ router.get('/ra-config', (req, res) => { //Not using as of now
         return;
     }
 });
- 
+
 //update ra-config.
 router.put('/ra-config/:id', (req, res) => {
     // token validation.
@@ -93,11 +101,14 @@ router.put('/ra-config/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/ra-config/` + inpParam.id+ '?tenantId=' + query_string, req.body, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-    res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });    });
+    // calling ra-config update api.
+    raConfigBiz.updateRaConfig(requestOptions, inpParam, query_string, req.body).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
+    });
 });
 // delete ra-config.
 router.delete('/ra-config/:id', (req, res) => {
@@ -118,11 +129,14 @@ router.delete('/ra-config/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/ra-config/` + inpParam.id + '?tenantId=' + query_string, requestOptions).then(function (response) {
-        res.send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-    res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });    });
+    // calling rapter ra-config delete api.
+    raConfigBiz.deleteRaConfig(requestOptions, inpParam.id, query_string).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
+    });
 });
- 
+
 module.exports = router;

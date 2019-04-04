@@ -55,7 +55,7 @@ function mapping(requestOptions) {
     let allTenants = [];
     let allOrganization = [];
     let allRoles = [];
-    let allEnrollemntTarget = [];
+    let allEnrollmentTarget = [];
     return axios.get(`${config.RAPTER_URL}/tenant`, requestOptions).then(response => {
         response.data.map(item => { item.orgs = new Map(); item.orgsList = []; allTenants.push(item) });
         var mapProjects = new Map();
@@ -111,7 +111,7 @@ function mapToObjectRec(m) {
 // selected project information will return.
 function selectedProjectInfo(projects, projectId, requestOptions) {
     let allRoles = [];
-    let allEnrollemntTarget = [];
+    let allEnrollmentTarget = [];
     let allRaConfig = [];
     var promises = {};
     var menuPromises = {};
@@ -142,7 +142,6 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
         return axios.all(Object.values(pagePromises)).then(function (results) {
             results.forEach(function (response, index) {
                 mapOrgs.get(parseInt(Object.keys(promises)[index])).pages = [...response.data]
-                console.log(response.data);
             })
             // listing the selected project role.
         return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
@@ -203,8 +202,8 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                     })
                     // listing the selected project enrollment-target.
                     return axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
-                        allEnrollemntTarget = [...response.data];
-                        for (var enrollmentTarget of allEnrollemntTarget) {
+                        allEnrollmentTarget = [...response.data];
+                        for (var enrollmentTarget of allEnrollmentTarget) {
                             for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
                                 if (org.id == enrollmentTarget.orgId) {
                                     mapOrgs.get(org.id).enrollmentTargets.push(enrollmentTarget);

@@ -1,13 +1,12 @@
 'use strict';
 let express = require('express');
-let axios = require('axios');
 let router = express.Router();
 let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
-let test = require('../routes/bounds');
-let x_rapter_bounds = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWRlYjJkMzFiZjYwMGMyYjRkZDU2MiIsImlzRnVsbHlBdXRoZW50aWNhdGVkIjp0cnVlLCJpYXQiOjE1NTM2NTk3MjMsImV4cCI6MTU1Mzc0NjEyM30.udJ2PJyyYchtPTa-L-DD3_MD-G5RDLyPFemWa-YH2s8";//  req.bounds.
+let x_rapter_bounds = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc1JlYWR5IjoxMCwibHRvSWQiOjEwLCJ0ZW5hbnRJZCI6MSwidHRvSWQiOjEsImlhdCI6MTU1Mzc3NDgzMCwiZXhwIjoxNTUzODYxMjMwfQ.dn7HIw4hfAlEK7MG7OSuSKmifRUmyKnw9xMtBqurpA0";//  req.bounds.
+let pageBiz = require('../biz/pageBiz');
 
 // create page.
 router.post('/page', (req, res) => {
@@ -28,22 +27,15 @@ router.post('/page', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-
-    // call the common create bounds function. todo or getting from the request body
-    /*test.getBoundsInfo(token, inpParam).then(response=>{
-        x_rapter_bounds  = response.x-rapter-bounds;
-        console.log(x_rapter_bounds);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-    });*/
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-    axios.post(`${config.RAPTER_URL}/page`, inpParam, newConfig).then(response=> {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    
+    pageBiz.createPage(newConfig, inpParam).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -59,11 +51,12 @@ router.get('/page', (req, res) => {
     requestOptions.headers.Authorization = "Bearer " + token;
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-    axios.get(`${config.RAPTER_URL}/page`, newConfig).then(response=> {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    pageBiz.getPageList(newConfig).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -81,11 +74,12 @@ router.get('/page/:id', (req, res) => {
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/page/` + inpParam.id, newConfig).then(response=> {
-            res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        pageBiz.getPage(newConfig, inpParam.id).then(response=>{
+            if(response.status===200){
+                res.status(200).send(response.data);
+            }else{
+                res.status(500).send(response)
+            }
         });
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
@@ -115,11 +109,12 @@ router.put('/page/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/page/` + inpParam.id, req.body, requestOptions).then(response=> {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    pageBiz.updatePage(newConfig, inpParam.id, req.body).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -143,11 +138,12 @@ router.delete('/page/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/page/` + inpParam.id, requestOptions).then(response=> {
-        res.send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    pageBiz.deletePage(newConfig, inpParam.id).then(response =>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 

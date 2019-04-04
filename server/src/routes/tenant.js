@@ -1,11 +1,11 @@
 'use strict';
 let express = require('express');
-let axios = require('axios');
 let router = express.Router();
 let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let tenantBiz = require('../biz/tenantBiz');
 
 
 // create tenant.
@@ -27,11 +27,12 @@ router.post('/tenant', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/tenant`, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    tenantBiz.createTenant(requestOptions,inpParam).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -45,11 +46,12 @@ router.get('/tenant', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    axios.get(`${config.RAPTER_URL}/tenant`, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    tenantBiz.getTenantList(requestOptions).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -66,11 +68,12 @@ router.get('/tenant/:id', (req, res) => {
 
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/tenant/` + inpParam.id, requestOptions).then(function (response) {
-            res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        tenantBiz.getTenant(requestOptions, inpParam.id).then(response=>{
+            if(response.status===200){
+                res.status(200).send(response.data);
+            }else{
+                res.status(500).send(response)
+            }
         });
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
@@ -99,11 +102,12 @@ router.put('/tenant/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/tenant/` + inpParam.id, req.body, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    tenantBiz.updateTenant(requestOptions, inpParam.id, req.body).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -126,11 +130,12 @@ router.delete('/tenant/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/tenant/` + inpParam.id, requestOptions).then(function (response) {
-        res.send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    tenantBiz.deleteTenant(requestOptions, inpParam.id).then(response =>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 

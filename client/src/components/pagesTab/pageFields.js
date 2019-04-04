@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Row, Col, Tab,Tabs,Input,Icon } from 'react-materialize';
-import TextInput from './text';
+import InputText from './inputText';
 
 class PagePreview extends React.Component {
   constructor(props) {
@@ -37,12 +37,20 @@ class PagePreview extends React.Component {
     
    
   }
+  
+  // Function to get data from child component
+	getInput(inputJSON){
+       console.log(inputJSON);
+	  //Send the data to store via action 
+	 // this.props.actions.SavePages(this.state.tenantId,pageJSON)
+      console.log('Send this in a POST request:', inputJSON);
+    }
 
  createUI(){
      return this.state.values.map((el, i) => 
           <div key={i}>
 		    <a className="btn-floating btn-small grey" onClick={this.removeClick.bind(this, i)}><i className="material-icons">delete_outline</i></a>
-		   <Text />
+		   <InputText selected={this.state.type} sendInput={this.getInput}/>
 			
     	    
          </div>            
@@ -54,15 +62,6 @@ class PagePreview extends React.Component {
         this.setState({ [name]: value }, () => console.log(name, value));
    }
    
-   handleChange1(i, event) {
-     let values = [...this.state.values];
-	  const { name, value } = event.target;
-     values[i][{name}] = {value};
-     this.setState({ values });
-	 
-     
-     ///this.setState({ values[i][name]:value });
-   }
   
   
   
@@ -80,15 +79,14 @@ class PagePreview extends React.Component {
    
     e.preventDefault();
 	const formPayload = {
+			type : this.state.type,
 			name: this.state.name,
-			label: this.state.label,
-			min: this.state.min,
-			max: this.state.max,
-			required: this.state.required,
+			label: this.state.label
+			
 			
 	};
      
-	console.log('Send this in a POST request:', formPayload);
+	//console.log('Send this in a POST request:', formPayload);
 	//console.log(this.props.pageJson);
 	//console.log(this.state);
 	
@@ -118,12 +116,12 @@ class PagePreview extends React.Component {
    <form onSubmit={this.handleSubmit} >
     <Row>
 	 <Col className="input-field p-0" s={12} m={6} l={4} xl={6} > 
-	 <TextInput />
+	
 	<Input s={12} name='type' id='type' type='select' className="pl-0" label='Controls' onChange={this.handleChange} required>
 	  <option value=''>Select Control</option>
-	   <option value='input'>Input</option>
-	   <option value='email'>Email</option>
-	   {/*<option value='radio'>Radio</option>
+	   <option value='text'>Text</option>
+	   {/*<option value='email'>Email</option>
+	   <option value='radio'>Radio</option>
 	   <option value='checkbox'>Checkbox</option>
 	   <option value='textarea'>TextArea</option>
 	   <option value='numeric'>Numeric</option>
@@ -147,12 +145,7 @@ class PagePreview extends React.Component {
   
     
 
-	<Row>
-	 <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={8} >
-         
-      <input type="submit" className="btn" value="Submit" />
-	  </Col>
-    </Row> 
+	
 	 	
     
     </form>

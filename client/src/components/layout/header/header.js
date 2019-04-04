@@ -22,7 +22,7 @@ class Header extends Component {
     handleImport = () => {
         this.props.actions.ImportAlltheProjects();
     }
-    handleClick= (e) =>{
+	handleClick= (e) =>{
         this.props.actions.ChangeMode(e.target.name);
     }
     render() {

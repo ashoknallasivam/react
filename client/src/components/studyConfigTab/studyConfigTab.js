@@ -11,8 +11,9 @@ class StudyConfigTab extends Component {
         super(props)
         this.state = {
             openModal: false,
-            description: '',
-            blockSize: '',
+            _id: "",
+            description: "",
+            blockSize: "",
             groups: [],
             groupStatus: "",
             deleteModal: false,
@@ -20,7 +21,7 @@ class StudyConfigTab extends Component {
         }
         this.updatedData = {};
         this.editedRowData = {};
-        this.isExistStudyConfig = "";
+        this.groupIndex = 0;
         objectUtil.bindAction(HeaderData.Headerdata, "EditColumn", this.editStudyConfigModal);
         objectUtil.bindAction(HeaderData.Headerdata, "DeleteColumn", this.deleteGroupsModal);
     }
@@ -29,6 +30,7 @@ class StudyConfigTab extends Component {
             if (this.props.StudyConfig.length > 0) {
                 this.setState({
                     StudyConfig: this.props.StudyConfig,
+                    _id: this.props.StudyConfig[0]._id,
                     groups: this.props.StudyConfig[0].groups,
                     description: this.props.StudyConfig[0].description,
                     blockSize: this.props.StudyConfig[0].blockSize
@@ -37,37 +39,25 @@ class StudyConfigTab extends Component {
         }
     }
     componentWillReceiveProps(props) {
-        if (props.applicationMode == "CREATE"){
-        if (this.props.StudyConfig != undefined) {
-            if (this.props.StudyConfig.length > 0) {
-                this.setState({
-                    StudyConfig: this.props.StudyConfig,
-                    groups: this.props.StudyConfig[0].groups,
-                    description: this.props.StudyConfig[0].description,
-                    blockSize: this.props.StudyConfig[0].blockSize
-                });
-            }
-        }
-    }
-    else {
-        this.setState({
-            StudyConfig: props.StudyConfig
-        });
-    }
         if (props.StudyConfig != undefined) {
+            this.setState({
+                StudyConfig: props.StudyConfig,
+            });
             if (props.StudyConfig.length > 0) {
-                this.setState({
-                    groups: props.StudyConfig[0].groups,
-                    description: props.StudyConfig[0].description,
-                    blockSize: props.StudyConfig[0].blockSize
-                });
+                if (props.StudyConfig[0].statusFlag == "delete" || props.StudyConfig[0].statusFlag == "ignore") {
+                    this.clearStudyConfig();
+                }
+                else {
+                    this.setState({
+                        _id: props.StudyConfig[0]._id,
+                        groups: props.StudyConfig[0].groups,
+                        description: props.StudyConfig[0].description,
+                        blockSize: props.StudyConfig[0].blockSize
+                    });
+                }
             }
             else {
-                this.setState({
-                    groups: [],
-                    description: "",
-                    blockSize: ""
-                });
+                this.clearStudyConfig();
             }
         }
     }
@@ -92,23 +82,37 @@ class StudyConfigTab extends Component {
                 e.target.value = "";
             else {
                 e.target.value = "";
-                window.Materialize.toast(localConstant.warningMessages.RATIO_VALIDATION, 1000);
+                window.Materialize.toast(localConstant.warningMessages.RATIO_VALIDATION, 2000);
             }
         }
         this.updatedData.ratio = e.target.value;
     }
-    // Add Groups - Modal open
-    addStudyConfigModal = () => {
+    // Clearing all Study Config fields
+    clearStudyConfig = () => {
+        this.setState({
+            _id: "",
+            description: "",
+            blockSize: "",
+            groups: []
+        });
+    }
+    // Clearing fields of Groups Modal
+    clearModal = () => {
         this.editedRowData.assignment = "";
         this.editedRowData.description = "";
         this.editedRowData.ratio = "";
         this.editedRowData.sequenceLimit = "";
+    }
+    // Add Groups - Modal open
+    addStudyConfigModal = () => {
+        this.clearModal();
         this.setState({ openModal: true, groupStatus: "add" });
     }
     // Edit Groups - Modal open
     editStudyConfigModal = (data) => {
         this.setState({ openModal: true, groupStatus: "" });
         this.editedRowData = data;
+        this.groupIndex = this.state.groups.findIndex(item => item == this.editedRowData);
     }
     // Delete StudyConfig - Modal open
     deleteStudyConfigModal = () => {
@@ -120,7 +124,6 @@ class StudyConfigTab extends Component {
     }
     // Add Groups - Ok Button
     submitStudyConfigGroups = () => {
-
         if (!objectUtil.isEmpty(this.updatedData.assignment) && !objectUtil.isEmpty(this.updatedData.description) &&
             !objectUtil.isEmpty(this.updatedData.ratio) && !objectUtil.isEmpty(this.updatedData.sequenceLimit)) {
             this.setState({
@@ -128,22 +131,21 @@ class StudyConfigTab extends Component {
             });
             this.cancelStudyConfigModal();
         }
-        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 1000);
+        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
     }
     // Edit Groups - Ok Button
     editStudyConfigGroups = () => {
-        debugger
-        const combinedData = Object.assign(this.editedRowData, this.updatedData);
+        let newGroups = [];
+        this.state.groups.map(item => newGroups.push(item));
+        const combinedData = {...this.editedRowData, ...this.updatedData};
+        newGroups[this.groupIndex] = combinedData;
         if (!objectUtil.isEmpty(combinedData.assignment) && !objectUtil.isEmpty(combinedData.description) &&
             combinedData.ratio != "" && combinedData.sequenceLimit != "") {
-            this.gridChild.refreshCells(true);
+            this.setState({ groups: newGroups });
             this.cancelStudyConfigModal();
-            this.editedRowData.assignment = "";
-            this.editedRowData.description = "";
-            this.editedRowData.ratio = "";
-            this.editedRowData.sequenceLimit = "";
+            this.clearModal();
         }
-        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 1000);
+        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
     }
     // Modal close
     cancelStudyConfigModal = () => {
@@ -160,7 +162,7 @@ class StudyConfigTab extends Component {
     }
     // StudyConfig Save
     studyConfigSaveHandler = () => {
-        if (!objectUtil.isEmpty(this.state.description) && !objectUtil.isEmpty(this.state.blockSize) && !objectUtil.isEmpty(this.state.groups)) {
+        if (!objectUtil.isEmpty(this.state.description) && this.state.blockSize != "" && !objectUtil.isEmpty(this.state.groups)) {
             let sum = 0;
             this.state.groups.map(item => {
                 if (item.ratio)
@@ -170,10 +172,12 @@ class StudyConfigTab extends Component {
                 let _id = 0;
                 let stratum = [];
                 let statusFlag = "";
-                if (this.isExistStudyConfig == "yes") {
+                if (this.state._id != "") {
                     _id = this.state.StudyConfig[0]._id;
                     stratum = this.state.StudyConfig[0].stratum;
-                    statusFlag = "modified";
+                    if (this.state.StudyConfig[0].statusFlag == undefined || this.state.StudyConfig[0].statusFlag == "modified")
+                        statusFlag = "modified";
+                    else statusFlag = "new";
                 }
                 else {
                     _id = uuid.v4();
@@ -191,15 +195,18 @@ class StudyConfigTab extends Component {
                 StudyConfig.stratum = stratum;
                 StudyConfig.statusFlag = statusFlag;
                 this.props.actions.SaveStudyConfig(this.props.selectedLocation.tenantId, StudyConfig);
-                window.Materialize.toast(localConstant.warningMessages.SAVING_DATA, 1000);
+                this.props.SaveStudyConfig(StudyConfig);
+                this.setState({ _id: "" });
+                window.Materialize.toast(localConstant.warningMessages.SAVING_DATA, 2000);
+
             }
-            else window.Materialize.toast(localConstant.warningMessages.CUMULATIVE_RATIO_VALIDATION, 1000);
+            else window.Materialize.toast(localConstant.warningMessages.CUMULATIVE_RATIO_VALIDATION, 2000);
         }
-        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 1000);
+        else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
     }
     // StudyConfig Cancel
     studyConfigCancelHandler = () => {
-        if (this.isExistStudyConfig == "yes") {
+        if (this.state._id != "") {
             this.setState({
                 description: this.props.StudyConfig[0].description,
                 blockSize: this.props.StudyConfig[0].blockSize,
@@ -207,54 +214,42 @@ class StudyConfigTab extends Component {
             });
         }
         else {
-            this.setState({
-                description: "",
-                blockSize: "",
-                groups: []
-            });
+            this.clearStudyConfig();
         }
     }
     // StudyConfig Delete
     studyConfigDeleteHandler = () => {
         let StudyConfig = {};
         this.state.StudyConfig.map(item => StudyConfig = item);
-        StudyConfig.statusFlag = "delete";
+        if (StudyConfig.statusFlag == "modified" || StudyConfig.statusFlag == undefined)
+            StudyConfig.statusFlag = "delete";
+        else StudyConfig.statusFlag = "ignore";
         this.props.actions.SaveStudyConfig(this.props.selectedLocation.tenantId, StudyConfig);
         this.cancelStudyConfigModal();
-        this.setState({
-            description: "",
-            blockSize: "",
-            groups: []
-        });
+        this.clearStudyConfig();
     }
     render() {
-        if (this.props.StudyConfig != undefined) {
-            if (this.props.StudyConfig.length > 0 && this.props.StudyConfig[0].hasOwnProperty('_id')) {
-                this.isExistStudyConfig = "yes";
-            }
-            else this.isExistStudyConfig = "";
-        }
-        else this.isExistStudyConfig = "";
         return (
             <Fragment>
-                {this.state.StudyConfig ?
+                {this.props.StudyConfig ?
                     <div>
-                        {(this.props.applicationMode == "VIEW" && this.state.StudyConfig.length == 0) ?
+                        {(this.props.applicationMode == "VIEW" && this.props.StudyConfig.length == 0) ?
                             <p className="pl-2">{localConstant.commonConstants.NO_DATA}</p> :
                             <div>
-                                <Modal open={this.state.deleteModal}
-                                    actions={
-                                        <div>
-                                            <Button onClick={this.state.deleteStatus == "raConfig" ? this.studyConfigDeleteHandler
-                                                : this.deleteStudyConfigGroups} className="btn_secondary otherButtonAddDetUpt">
-                                                {localConstant.commonConstants.YES}</Button>
-                                            <Button onClick={this.cancelStudyConfigModal} className="btn_secondary otherButtonAddDetUpt ml-2" >
-                                                {localConstant.commonConstants.NO}</Button>
-                                        </div>
-                                    }
-                                    header={localConstant.warningMessages.DELETE_CONFIRMATION} >
+                                <Modal
+                                    header='Please Confirm '
+                                    id='DeleteStudyConfig' modalOptions={{dismissible:false}}
+                                    open={this.state.deleteModal} >
+                                    <p>{localConstant.warningMessages.DELETE_CONFIRMATION}</p>
+                                    <div className="col s12 m12 l12 xl12">
+                                        <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
+                                            onClick={this.cancelStudyConfigModal}>{localConstant.commonConstants.NO}</Button>
+                                        <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2'
+                                            onClick={this.state.deleteStatus == "raConfig" ? this.studyConfigDeleteHandler :
+                                                this.deleteStudyConfigGroups}>{localConstant.commonConstants.YES}</Button>
+                                    </div>
                                 </Modal>
-                                <Modal open={this.state.openModal}
+                                <Modal open={this.state.openModal} modalOptions={{dismissible:false}}
                                     actions={
                                         <div>
                                             <Button onClick={this.state.groupStatus == "add" ? this.submitStudyConfigGroups : this.editStudyConfigGroups}
@@ -265,22 +260,23 @@ class StudyConfigTab extends Component {
                                     }
                                     header={localConstant.study_Config.STUDY_CONFIG} >
                                     <div className='row pr-2' >
-                                        <label className="danger-txt left mt-4">*</label>
-                                        <Col s={6} className="pl-0"><Input label={localConstant.study_Config.ASSIGNMENT} type='text' name="assignment"
-                                            onChange={this.inputHandlerChange} autoComplete='off' defaultValue={this.editedRowData.assignment} s={12}
-                                            key={this.editedRowData.assignment} /></Col>
-                                        <label className="danger-txt left mt-4">*</label>
-                                        <Col s={6} className="pl-0"><Input label={localConstant.study_Config.DESCRIPTION} type='text' name="description"
-                                            onChange={this.inputHandlerChange} autoComplete='off' defaultValue={this.editedRowData.description} s={12}
-                                            key={this.editedRowData.description} /></Col>
-                                        <label className="danger-txt left mt-4">*</label>
-                                        <Col s={6} className="pl-0"><Input label={localConstant.study_Config.RATIO} type='text' name="ratio"
-                                            onChange={this.ratioInputHandler} autoComplete='off' defaultValue={this.editedRowData.ratio} s={12}
-                                            key={this.editedRowData.ratio} /></Col>
-                                        <label className="danger-txt left mt-4">*</label>
-                                        <Col s={6} className="pl-0"><Input label={localConstant.study_Config.SEQUENCE_LIMIT} type='number' min="0"
-                                            name="sequenceLimit" onChange={this.inputHandlerChange} autoComplete='off' s={12}
-                                            defaultValue={this.editedRowData.sequenceLimit} key={this.editedRowData.sequenceLimit} /></Col>
+                                        <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
+                                            <Input label={localConstant.study_Config.ASSIGNMENT} type='text' name="assignment"
+                                                onChange={this.inputHandlerChange} autoComplete='off' defaultValue={this.editedRowData.assignment} s={10}
+                                                key={this.editedRowData.assignment} /></Col>
+                                        <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
+                                            <Input label={localConstant.study_Config.DESCRIPTION} type='text' name="description"
+                                                onChange={this.inputHandlerChange} autoComplete='off' defaultValue={this.editedRowData.description} s={10}
+                                                key={this.editedRowData.description} /></Col>
+                                        <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
+                                            <Input label={localConstant.study_Config.RATIO} type='text' name="ratio"
+                                                onChange={this.ratioInputHandler} autoComplete='off' defaultValue={this.editedRowData.ratio} s={10}
+                                                key={this.editedRowData.ratio} /></Col>
+                                        <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
+                                            <Input label={localConstant.study_Config.SEQUENCE_LIMIT} type='number' min="0"
+                                                name="sequenceLimit" onChange={this.inputHandlerChange} autoComplete='off' s={10}
+                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
+                                                defaultValue={this.editedRowData.sequenceLimit} key={this.editedRowData.sequenceLimit} /></Col>
                                     </div>
                                 </Modal>
                                 <div className='row pl-2 pr-2 pt-1' >
@@ -293,25 +289,27 @@ class StudyConfigTab extends Component {
                                     <Col className="pl-0" s={5} ><Input className="pt-1" label={localConstant.study_Config.BLOCK_SIZE} s={12}
                                         name="blockSize" onBlur={this.studyConfigChangeHandler} key={this.state.blockSize} type="number"
                                         defaultValue={this.state.blockSize} autoComplete='off' min="0"
+                                        onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
                                         readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>
                                 </div>
                                 <div>
                                     <label className="danger-txt left ml-3">*</label>
                                     <label className='ml-1 mb-0' style={{ fontSize: '18px' }} >{localConstant.study_Config.GROUPS}</label>
                                     {this.props.applicationMode == "VIEW" ? null :
-                                        <a className="right mr-9" onClick={this.addStudyConfigModal} >{localConstant.study_Config.ADD_GROUPS}</a>}
+                                        <Button className="right btn_secondary otherButtonAddDetUpt mr-2" onClick={this.addStudyConfigModal} >
+                                            {localConstant.study_Config.ADD_GROUPS}</Button>}
                                 </div>
                                 <ReactGrid
                                     gridColData={this.props.applicationMode == "VIEW" ? HeaderData.Headerdata_View : HeaderData.Headerdata}
                                     gridRowData={this.state.groups}
-                                    onRef={ref => { this.gridChild = ref }}/>
+                                    onRef={ref => { this.gridChild = ref }} />
                                 {this.props.applicationMode != "VIEW" ?
                                     <div>
                                         <Button onClick={this.studyConfigSaveHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">
                                             {localConstant.commonConstants.SAVE}</Button>
                                         <Button onClick={this.studyConfigCancelHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">
                                             {localConstant.commonConstants.CANCEL}</Button>
-                                        {this.isExistStudyConfig == "yes" ? <Button onClick={this.deleteStudyConfigModal}
+                                        {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
                                             className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">{localConstant.commonConstants.DELETE}</Button> : null}
                                     </div>
                                     : null}

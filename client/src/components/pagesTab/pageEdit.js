@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, Tab,Tabs,Modal } from 'react-materialize';
+import { Row, Col, Card, Tab,Tabs,Modal,Button } from 'react-materialize';
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
 import LoadingSpinner from './loadingSpinner';
@@ -11,23 +11,20 @@ class PageEdit extends Component {
      constructor(props) {
         super(props);
         
+		var newStatus;
+        newStatus = this.props.pageJson['statusFlag'] == undefined ? "modified" : this.props.pageJson['statusFlag'];
+		
         this.state = {
-			pageId: this.props.pageId,
-			pageJson: this.props.pageJson
+     		pageId: this.props.pageJson['_id'],
+			statusFlag : newStatus,
         };
 		
 		 this.jsonValue = this.jsonValue.bind(this);   
 		 this.handleSubmit = this.handleSubmit.bind(this);
 		 this.showForm = this.showForm.bind(this);
-		 this.showModal = this.showModal.bind(this);
-		 this.id = 'yo'
-	  
+		
     }
 	
-	//Function to Open Modal
-	showModal (event) {
-      $(`#${this.id}`).modal('open');
-    }
 	
 	jsonValue(e, data) {
 		// console.log("Json: " + e.plainText);
@@ -46,36 +43,69 @@ class PageEdit extends Component {
 	handleSubmit(e) {
 		
         e.preventDefault();
-               
+       	
+
+		
         if (this.state.pageJson) {
 			//this.state.pageJson._id = this.state.pageId
-            let newJson = {'_id': this.state.pageId,'statusFlag':'modified','location':this.state.selectedLocation.id, ...this.state.pageJson};
+            let newJson = {'_id': this.state.pageId,'statusFlag':this.state.statusFlag,'location':this.state.selectedLocation.id, ...this.state.pageJson};
 			this.props.sendData(newJson);  
 			
         }
 		
     }	
 	
-	
+  
 	
   componentDidMount() {
 		//alert(this.props.pageId)
 		
+		
+		var newStatus;
+        newStatus = this.props.pageJson['statusFlag'] == undefined ? "modified" : this.props.pageJson['statusFlag'];
+		
 		this.setState({
-		    pageId: this.props.pageId,
-			pageJson: this.props.pageJson,
+			pageId: this.props.pageJson['_id'],
+			statusFlag : newStatus,
 			selectedLocation:this.props.selectedLocation
+		});
+		
+		//Removing _id,statusFlag,location in the JSON Schema if any
+		delete this.props.pageJson['_id'];
+		delete this.props.pageJson['statusFlag'];
+		delete this.props.pageJson['location'];
+		
+		this.setState({
+			pageJson: this.props.pageJson,
 			
 		});
-			
+		
+		console.log(this.state)	;
 	}
 	
   componentWillReceiveProps(nextProps) {
-    this.setState({
-	  pageId: nextProps.pageId,
-	  pageJson: nextProps.pageJson,
-	  selectedLocation:nextProps.selectedLocation
-    });
+	  
+	  var newStatus;
+      newStatus = nextProps.pageJson['statusFlag'] == undefined ? "modified" : nextProps.pageJson['statusFlag'];
+	  
+		this.setState({
+			pageJson: nextProps.pageJson,
+			pageId: nextProps.pageJson['_id'],
+			statusFlag : newStatus,
+			selectedLocation:nextProps.selectedLocation
+		});
+		
+		//Removing _id,statusFlag,location in the JSON Schema if any
+		delete nextProps.pageJson['_id'];
+		delete nextProps.pageJson['statusFlag'];
+		delete nextProps.pageJson['location'];
+		
+		this.setState({
+			pageJson: nextProps.pageJson,
+			
+		});
+		
+		console.log(this.state)	;
    }
 	
 
@@ -102,13 +132,13 @@ class PageEdit extends Component {
 	    {
 	    	dynamicForm =  <PagePreview pageJson={this.state.pageJson}/> ;
 		}  
-        
+        const trigger = <Button>Preview</Button>;
 	   	if(this.state.pageJson)
         {
 			return ( 
              <Row className='m-0'>
 			   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
-				 <Modal id={this.id} modalOptions={ { dismissible: true, inDuration: 30 } }> {dynamicForm} </Modal>
+				 
 				  <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
 					<form className="col-md-4" onSubmit={this.handleSubmit} >
 						<Row className="margin">
@@ -131,7 +161,10 @@ class PageEdit extends Component {
 						</Row>
 						<Row className="center submit-container">
 						 <button className="btn " type="submit" name="action">Submit</button> {this.renderAlert()}
-						 {/*<button className="btn " type="button" name="action" onClick={this.showModal}>Preview</button>*/} 
+							 {/*<Modal header="Modal Header" trigger={trigger}>
+							Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+							{dynamicForm}
+							 </Modal>*/}
 						 <button className="btn " type="button" name="action" onClick={this.showForm}>Add Fields</button> 	  
 						</Row>
 					 </form>	

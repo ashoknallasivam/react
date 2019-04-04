@@ -6,10 +6,11 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
-
+let x_rapter_bounds = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc1JlYWR5IjoxMCwibHRvSWQiOjEwLCJ0ZW5hbnRJZCI6MSwidHRvSWQiOjEsImlhdCI6MTU1Mzc3NDgzMCwiZXhwIjoxNTUzODYxMjMwfQ.dn7HIw4hfAlEK7MG7OSuSKmifRUmyKnw9xMtBqurpA0";//  req.bounds.
+let resourceRoleBiz = require('../biz/resourceRoleAccessBiz');
 
 // create resource-role-access.
-router.post('/create-resource-role-access', (req, res) => {
+router.post('/resource-role-access', (req, res) => {
     // token validation.
     let token = req.token
     if (token === undefined || token === "" || token === null) {
@@ -26,30 +27,20 @@ router.post('/create-resource-role-access', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    // preparing bounds body
-    let boundsBody = this.createBoundsObj(inpParam);
-    // preparing resource role body.
-    let resourceRoleBody = this.createResourceRoleObj(inpParam);
-
-    axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(function (response) {
-        let x_rapter_bounds = response.data["x-rapter-bounds"];
-        let newConfig = { headers: requestOptions.headers };
-        newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-
-        axios.post(`${config.RAPTER_URL}/resource-role-access`, resourceRoleBody, newConfig).then(function (response) {
-            res.send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.sqlMessage});
-        });
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    let newConfig = { headers: requestOptions.headers };
+    newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+    resourceRoleBiz.createResourceRoleAccess(newConfig, inpParam).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
     });
+
 });
 
 // find resource-role-access list.
-router.post('/resource-role-access', (req, res) => {
+router.get('/resource-role-access', (req, res) => {
 
     // token validation.
     let token = req.token
@@ -59,36 +50,19 @@ router.post('/resource-role-access', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    let inpParam = req.body;
-    //Check for the input parameters.
-    if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
-        let rtnVal = responseStatus.BAD_REQUEST;
-        rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
-        res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
-        return;
-    }
-    // preparing bounds body
-    let boundsBody = this.createBoundsObj(inpParam);
-
-    axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(response => {
-        let x_rapter_bounds = response.data["x-rapter-bounds"];
-        let newConfig = { headers: requestOptions.headers };
-        newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-        axios.get(`${config.RAPTER_URL}/resource-role-access`, newConfig).then(function (response) {
+    let newConfig = { headers: requestOptions.headers };
+    newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+    resourceRoleBiz.getResourceRoleAccessList(newConfig).then(response => {
+        if (response.status === 200) {
             res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        });
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        } else {
+            res.status(500).send(response)
+        }
     });
 });
 
 // find resource-role-access by using id.
-router.post('/resource-role-access/:id', (req, res) => {
-    let inpParam = req.params;
+router.get('/resource-role-access/:id', (req, res) => {
     // token validation.
     let token = req.token
     if (token === undefined || token === "" || token === null) {
@@ -97,23 +71,17 @@ router.post('/resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+    let newConfig = { headers: requestOptions.headers };
+    newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+    let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        let boundsBody = this.createBoundsObj(req.body);
-        axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(response => {
-            let x_rapter_bounds = response.data["x-rapter-bounds"];
-            let newConfig = { headers: requestOptions.headers };
-            newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-            axios.get(`${config.RAPTER_URL}/resource-role-access/`, newConfig).then(function (response) {
+        resourceRoleBiz.getResourceRoleAccess(newConfig, inpParam.id).then(response => {
+            if (response.status === 200) {
                 res.status(200).send(response.data);
-            }).catch(error => {
-                logging.applogger.error(error);
-                res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-            });
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+            } else {
+                res.status(500).send(response)
+            }
         });
-
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
         rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
@@ -132,8 +100,9 @@ router.put('/resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-
-    let inpParam = req.body;
+    let newConfig = { headers: requestOptions.headers };
+    newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+    let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
         let rtnVal = responseStatus.BAD_REQUEST;
         rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
@@ -141,28 +110,16 @@ router.put('/resource-role-access/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    // preparing bounds body
-    let boundsBody = this.createBoundsObj(inpParam);
-    // preparing resource role body.
-    let resourceRoleBody = this.createResourceRoleObj(inpParam);
-
-    axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(response => {
-        let x_rapter_bounds = response.data["x-rapter-bounds"];
-        let newConfig = { headers: requestOptions.headers };
-        newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-        axios.put(`${config.RAPTER_URL}/resource-role-access/` + req.params.id, resourceRoleBody, newConfig).then(function (response) {
+    resourceRoleBiz.updateResourceRoleAccess(newConfig, inpParam.id, req.body).then(response => {
+        if (response.status === 200) {
             res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        });
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        } else {
+            res.status(500).send(response)
+        }
     });
 });
 // delete resource-role-access.
-router.post('/delete-resource-role-access/:id', (req, res) => {
+router.delete('/resource-role-access/:id', (req, res) => {
 
     // token validation.
     let token = req.token
@@ -172,7 +129,9 @@ router.post('/delete-resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    let inpParam = req.body;
+    let newConfig = { headers: requestOptions.headers };
+    newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
+    let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
         let rtnVal = responseStatus.BAD_REQUEST;
         rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
@@ -180,37 +139,13 @@ router.post('/delete-resource-role-access/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    let boundsBody = this.createBoundsObj(inpParam);
-    axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(response => {
-        let x_rapter_bounds = response.data["x-rapter-bounds"];
-        let newConfig = { headers: requestOptions.headers };
-        newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-        axios.delete(`${config.RAPTER_URL}/resource-role-access/` + inpParam.insertResourceId, newConfig).then(function (response) {
-            res.send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        });
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    resourceRoleBiz.deleteResourceRoleAccess(newConfig, inpParam.id).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response);
+        }
     });
 });
 
 module.exports = router;
-
-exports.createBoundsObj = (inpParam => {
-    let boundsBody = {
-        "tenantId": inpParam.tenantId,
-        "ttoId": inpParam.ttoId,
-        "ltoId": inpParam.ltoId
-    };
-    return boundsBody;
-});
-exports.createResourceRoleObj = (inpParam => {
-    let resourceRoleBody = {
-        "roleId": inpParam.roleId,
-        "resourceId": inpParam.resourceId
-    };
-    return resourceRoleBody;
-});

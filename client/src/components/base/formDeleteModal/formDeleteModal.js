@@ -6,10 +6,12 @@ class FormDeleteModal extends Component {
         super(props);
         this.state={
           selectedOrganisation:{
-            name:''
+            name:'',
+            statusFlag:''
           },
           selectedLocation:{
-            name:''
+            name:'',
+            statusFlag:''
           },
            
     }
@@ -20,7 +22,10 @@ class FormDeleteModal extends Component {
     this.setState({
       orgsList : props.orgsList,
       selectedOrganisation: props.selectedOrganisation,
-      selectedLocation : props.selectedLocation
+      selectedLocation : props.selectedLocation,
+      locdel :props.selectedLocation !== undefined ?  props.selectedLocation.statusFlag : '',
+      orgdel :props.selectedOrganisation !== undefined ? props.selectedOrganisation.statusFlag :''
+
     })
   }
 
@@ -30,7 +35,7 @@ class FormDeleteModal extends Component {
     _handleOrg = () => {
         let newOrg = {
           ...this.state.selectedOrganisation,
-          statusFlag : "delete"
+          statusFlag :  this.props.applicationMode =="CREATE" ? 'ignore' :"delete"
         };
        
             let arrIndex='';
@@ -48,6 +53,7 @@ class FormDeleteModal extends Component {
                 name:''
               }
          });
+         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
          this.props.setValues('allOrganisations',allOrganisations) 
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
@@ -55,8 +61,10 @@ class FormDeleteModal extends Component {
           }
       
       _handleLoc = () => {
-              let newLoc = {...this.state.selectedLocation,
-              statusFlag : 'delete'};
+              let newLoc = {
+                ...this.state.selectedLocation,
+              statusFlag : this.props.applicationMode =="CREATE" ? 'ignore' : 'delete'
+            };
               let arrIndex='';           
               let allLocations ={...this.props.allLocations}
               delete allLocations[this.state.selectedLocation.id]
@@ -72,6 +80,7 @@ class FormDeleteModal extends Component {
                       name:''
                     }
                   })
+           this.props.actions.SaveLocation(newLoc.tenantId, newLoc) 
            this.props.setValues('allLocations',allLocations)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)

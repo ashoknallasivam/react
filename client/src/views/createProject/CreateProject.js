@@ -26,7 +26,7 @@ class CreateProject extends Component {
           id : ''
       },
       selectedLocation: {
-        value:''
+        id:''
       },
       fetched:false,
       applicationMode:'',
@@ -82,7 +82,7 @@ class CreateProject extends Component {
     })
   }
   componentWillReceiveProps(props) {
-    if (this.props.location.state !== undefined){
+    if (props.location.state !== undefined){
     let currentProject = props.projectList[props.location.state.id];
     this.setState({ currentProject: currentProject,
                       name:  currentProject.name,
@@ -92,24 +92,27 @@ class CreateProject extends Component {
                     })}
 
                     else{
-                      let id =Object.keys(props.projectList);
-                      let currentProject =props.projectList[id];
-                      console.log(currentProject)
+                      // let id = props.projectList[this.state.id] ;
+                      let currentProject =props.projectList[this.state.id];
                       this.setState({ 
                         currentProject: currentProject,
-                        name:  currentProject.name,
-                        id: id[0],
-                        // allOrganisations: currentProject.orgs,
-                        orgsList : currentProject.orgsList
+                        name: currentProject !== undefined ? currentProject.name : '',
+                        id: currentProject !== undefined ? currentProject.id :'',
+                        allOrganisations:  currentProject !== undefined ? currentProject.orgs : '',
+                        orgsList :  currentProject !== undefined ? currentProject.orgsList :''
                       })
                     }
+                    //                     
+                     
+
   }
   _handleOrgDropdown = (e) => {
           e.preventDefault();
           let allLocations = {};
           let selectedOrganisation={};
-            this.state.orgsList.map((data,index)=>{
-            if(data.parentId ==  e.target.value ){
+          let locList =[];
+            this.state.currentProject.orgsList.map((data,index)=>{
+            if(data.ttoId ==  e.target.value ){
              allLocations = {...allLocations, [data.id] :  {...data}}
             }
             if(data.id == e.target.value){
@@ -123,18 +126,114 @@ class CreateProject extends Component {
               id:''
             }
           });
-        
   }
-_populateLocation = (data) =>{
-  let location ;
-        data.map((item =>  { 
-          if(Object.key(data.children).length > 0){
-            _populateLocation(data.children) 
-          }else{
-            location = [...location,data]
-          }
-        })) 
+
+  
+ SaveStudyConfig = ( data) =>  {
+  this.setState(({
+    selectedLocation: {
+      ...this.state.selectedLocation,
+      raConfig : [data]
+    }
+  }))
 }
+
+ 
+  SaveEnrollment = (data) => {
+    let selectedLocation = this.state.selectedLocation;
+    let rollIndex = '';
+    this.state.selectedLocation.enrollmentTargets.map((item, i) => {
+      if (data.id == item.id) {
+        rollIndex = i;
+      }
+    })
+
+    if (rollIndex !== '') {
+      selectedLocation.enrollmentTargets[rollIndex] = data;
+      this.setState({
+        selectedLocation
+
+      })
+    } else {
+      selectedLocation.enrollmentTargets = [...selectedLocation.enrollmentTargets, data];
+      this.setState({
+        selectedLocation
+      })
+    }
+  }
+
+  SaveRoles = (data) => {
+    let selectedLocation = this.state.selectedLocation;
+    let roleIndex = '';
+    //store in loc
+    if(data.id == this.state.selectedLocation.id){
+    this.state.selectedLocation.roles.map((item, i) => {
+    
+      
+      if (data.id == item.id) {
+        roleIndex = i;
+      }
+    })
+
+    if (roleIndex !== '') {
+      selectedLocation.roles[roleIndex] = data;
+      this.setState({
+        selectedLocation
+      })
+    } else {
+      selectedLocation.roles = [...selectedLocation.roles, data];
+      this.setState({
+        selectedLocation
+      })
+    }
+  } 
+  // store in org
+  else if(data.id == this.state.selectedOrganisation.id){
+    this.state.selectedOrganisation.roles.map((item, i) => {
+    
+      
+      if (data.id == item.id) {
+        roleIndex = i;
+      }
+    })
+
+    if (roleIndex !== '') {
+      selectedOrganisation.roles[roleIndex] = data;
+      this.setState({
+        selectedOrganisation
+      })
+    } else {
+      selectedOrganisation.roles = [...selectedOrganisation.roles, data];
+      this.setState({
+        selectedOrganisation
+      })
+    }
+    }
+  }
+
+  SavePages = (data) => {
+    
+    let selectedLocation = this.state.selectedLocation;
+    let pageIndex = '';
+    this.state.selectedLocation.pages.map((item, i) => {
+      if (data._id == item._id) {
+        pageIndex = i;
+      }
+    })
+
+    if (pageIndex !== '') {
+      selectedLocation.pages[pageIndex] = data;
+      this.setState({
+        selectedLocation
+      })
+    } else {
+      selectedLocation.pages = [...selectedLocation.pages, data];
+      this.setState({
+        selectedLocation
+      })
+    }
+
+  }
 
   _handleLoc = (e) => {
     (Object.keys(this.state.allLocations)).map((item)=>{
@@ -190,6 +289,7 @@ _populateLocation = (data) =>{
     
   }
   saveTenant = (e) =>{
+    if(this.state.name !==''){
     let data ;
     if(this.state.applicationMode == "EDIT"){
        data ={
@@ -202,14 +302,16 @@ _populateLocation = (data) =>{
        data ={
         id:this.state.id,
         name : this.state.name,
-        orgs:{},
-        orgsList:[],
+        orgs:this.state.allOrganisations,
+        orgsList:this.state.orgsList,
         statusFlag :"new"
   }
     }
   this.props.actions.SaveTenant(this.state.id, data);
   console.log(this.state.id, this.state.name)
-
+}else{
+  window.Materialize.toast('Please fill project name', 4000)
+}
   }
   _handleModalClose =(e) =>{
     this.setState({
@@ -244,10 +346,17 @@ _populateLocation = (data) =>{
       selectedLocation: {
         value:''
       },
-      
-
     })
   }
+finalPublish = () =>{
+  this.props.actions.SaveProject(this.state.id);
+}
+
+
+upadateNew = () =>{
+  this.forceUpdate();
+  console.log('updated')
+}
   render() {
     return (
       <Fragment>
@@ -284,6 +393,8 @@ _populateLocation = (data) =>{
                       allLocations={this.state.allLocations} 
                       orgsList={this.state.orgsList}
                       tenantId={this.state.id}
+                      applicationMode ={this.state.applicationMode}
+
                        />
                       {this.state.selectedOrganisation.id != "" ?
                         <Fragment>
@@ -297,7 +408,8 @@ _populateLocation = (data) =>{
                               allLocations={this.state.allLocations} 
                               orgsList={this.state.orgsList}
                               selectedOrganisation = {this.state.selectedOrganisation}
-                              tenantId={this.state.id} />
+                              tenantId={this.state.id}
+                              applicationMode ={this.state.applicationMode} />
 
 
                           <Button className='orgIcon col s12 m2 l2 xl2 mt-8'  name="editOrg" onClick={this._handleModal}  >
@@ -310,7 +422,8 @@ _populateLocation = (data) =>{
                               allLocations={this.state.allLocations} 
                               orgsList={this.state.orgsList}
                               selectedOrganisation = {this.state.selectedOrganisation}
-                              tenantId={this.state.id} />
+                              tenantId={this.state.id}
+                              applicationMode ={this.state.applicationMode} />
                         </Fragment> 
                          : null
                       } 
@@ -338,7 +451,9 @@ _populateLocation = (data) =>{
                       allOrganisations={this.state.allOrganisations} 
                       allLocations={this.state.allLocations} 
                       orgsList={this.state.orgsList} 
-                      tenantId={this.state.id}/>
+                      tenantId={this.state.id}
+                      applicationMode ={this.state.applicationMode}
+                      selectedOrganisation = {this.state.selectedOrganisation}/>
                         {(this.state.selectedLocation.id !== "") ?
                             <Fragment>
                               <Button className='col s12 m2 l2 xl2 orgIcon mt-8' name="deleteLoc" onClick={this._handleModal}  >
@@ -352,7 +467,8 @@ _populateLocation = (data) =>{
                               allLocations={this.state.allLocations} 
                               orgsList={this.state.orgsList}
                               selectedLocation = {this.state.selectedLocation} 
-                              tenantId={this.state.id}/>
+                              tenantId={this.state.id}
+                              applicationMode ={this.state.applicationMode}/>
                             
 
 
@@ -367,7 +483,8 @@ _populateLocation = (data) =>{
                               allLocations={this.state.allLocations} 
                               orgsList={this.state.orgsList}
                               selectedLocation = {this.state.selectedLocation}
-                              tenantId={this.state.id} />
+                              tenantId={this.state.id}
+                              applicationMode ={this.state.applicationMode} />
                             </Fragment> : null
                         }
                       </Fragment>
@@ -379,7 +496,13 @@ _populateLocation = (data) =>{
         </Col>
         { this.state.selectedOrganisation.id !== ''  &&
           <Col className="z-depth-4 col-centered mb-3 p-0" s={12} m={12} l={12} xl={12}>
-            <TabsProject currentProject = {this.state.currentProject} selectedOrganisation={this.state.selectedOrganisation} selectedLocation ={this.state.selectedLocation} applicationMode={this.state.applicationMode}/> 
+            <TabsProject currentProject = {this.state.currentProject} selectedOrganisation={this.state.selectedOrganisation} selectedLocation ={this.state.selectedLocation} applicationMode={this.state.applicationMode} upadateNew={this.upadateNew}
+            SaveStudyConfig= {this.SaveStudyConfig}
+            SaveEnrollment ={ this.SaveEnrollment}
+            SaveRoles={this.SaveRoles}
+            SavePages={this.SavePages}
+            
+            /> 
           </Col>
         }
         <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
@@ -388,12 +511,12 @@ _populateLocation = (data) =>{
            <Button className="mt-3 CreateProjectPublish btn_primary"  name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}  waves='light'>Edit</Button>}
 
           {/* Display publish in create and edit mode */}
-          {this.state.applicationMode !== 'VIEW' &&
+          {this.state.applicationMode !== 'VIEW' && 
           <Fragment>
-              <Button className="mt-3 CreateProjectPublish btn_primary" onClick={this.finalPublish} waves='light'>Publish</Button>
+              <Button className="mt-3 CreateProjectPublish btn_primary" onClick={this.finalPublish}  disabled= {(this.state.name !=='') ? false : true} waves='light'>Publish</Button>
             {/* Display Discard in if project name is not empty */}
-             {this.state.name != '' &&
-             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard} waves='light'>Discard</Button> }
+             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard} disabled= {(this.state.name !=='') ? false : true} waves='light'>Save</Button>
+             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  disabled= {(this.state.name !=='') ? false :  true } waves='light'>Discard</Button>
               </Fragment> 
             }
         </Col>

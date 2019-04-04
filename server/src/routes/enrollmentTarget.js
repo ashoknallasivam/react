@@ -6,6 +6,7 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let enrollmentBiz = require('../biz/enrollmentTargetBiz');
 
 
 // create enrollment-target.
@@ -27,11 +28,12 @@ router.post('/enrollment-target', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/enrollment-target`, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    enrollmentBiz.createEnrollmentTarget(requestOptions,inpParam).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -45,11 +47,13 @@ router.get('/enrollment-target', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    // call rapter biz.
+    enrollmentBiz.getEnrollmentTargetList(requestOptions).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 // find enrollment-target by using id.
@@ -64,12 +68,14 @@ router.get('/enrollment-target/:id', (req, res) => {
     requestOptions.headers.Authorization = "Bearer " + token;
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/enrollment-target/` + inpParam.id, requestOptions).then(function (response) {
-            res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        enrollmentBiz.getEnrollmentTarget(requestOptions, inpParam.id).then(response=>{
+            if(response.status===200){
+                res.status(200).send(response.data);
+            }else{
+                res.status(500).send(response)
+            }
         });
+
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
         rtnVal.messages = MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE;
@@ -96,11 +102,18 @@ router.put('/enrollment-target/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/enrollment-target/` + inpParam.id, req.body, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    // axios.put(`${config.RAPTER_URL}/enrollment-target/` + inpParam.id, req.body, requestOptions).then(function (response) {
+    //     res.status(200).send(response.data);
+    // }).catch(error => {
+    //     logging.applogger.error(error);
+    //     res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    // });
+    enrollmentBiz.updateEnrollmentTarget(requestOptions, inpParam.id, req.body).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 // delete enrollment-target.
@@ -121,11 +134,12 @@ router.delete('/enrollment-target/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/enrollment-target/` + inpParam.id, requestOptions).then(function (response) {
-        res.send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    enrollmentBiz.deleteEnrollmentTarget(requestOptions, inpParam.id).then(response =>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 

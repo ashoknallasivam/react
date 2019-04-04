@@ -12,10 +12,12 @@ let resourceService = require('./routes/resource');
 let menuRoleAccessService = require('./routes/menuRoleAccess');
 let resourceRoleAccessService = require('./routes/resourceRoleAccess');
 let raConfigService = require('./routes/raConfig');
-let enrollementTargetService = require('./routes/enrollmentTarget');
+let enrollmentTargetService = require('./routes/enrollmentTarget');
 let loginService = require('./routes/login');
 let dashBoardService = require('./routes/dashboard');
+let publishProjectService = require('./routes/publishProject');
 let pageService = require('./routes/page');
+let boundService = require('./routes/bounds');
 
 /**
 * Module dependencies.
@@ -71,11 +73,11 @@ app.use('/', resourceService);
 app.use('/', menuRoleAccessService);
 app.use('/', resourceRoleAccessService);
 app.use('/', raConfigService);
-app.use('/', enrollementTargetService);
+app.use('/', enrollmentTargetService);
 app.use('/', dashBoardService);
+app.use('/', publishProjectService);
 app.use('/', pageService);
-
-
+app.use('/', boundService);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

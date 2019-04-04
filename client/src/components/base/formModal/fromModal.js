@@ -12,22 +12,20 @@ class FormModal extends Component {
               value:''
             },
             newOrg:0,
-            orgsList:[]
-
+            orgsList:[],
     }
-  
   }
   componentWillReceiveProps(props){
     if(props.orgsList !== undefined && props.selectedOrganisation !== undefined && props.selectedLocation !== undefined){
-    this.setState({
+      this.setState({
       orgsList : props.orgsList,
       selectedOrganisation: props.selectedOrganisation,
-      selectedLocation : props.selectedLocation
-    })}
+      selectedLocation : props.selectedLocation,
+    })
+  }
   }
 
     _input =(e)=>{
-       
       if(e.target.name === "parenOfLoc"){ 
         let data =  this.props.orgsList.filter(item =>{
           return   (item.id == e.target.value) ? item : null ;
@@ -42,6 +40,21 @@ class FormModal extends Component {
           [e.target.name] :e.target.value
       })
       }
+    
+//       let locList=[];
+//       this.props.orgsList.map((item,i)=>{
+//         if(item.id == this.props.selectedOrganisation.id){
+//           console.log('org')
+//         locList = [...locList, item];
+//       }
+//       if(item.ttoId == this.props.selectedOrganisation.id ){
+
+//         locList = [...locList, item];
+//       }
+//       })
+// this.setState({
+//   locList
+// })
     }
 
     _handleClose = () =>{
@@ -63,6 +76,8 @@ class FormModal extends Component {
           newOrg.tenantId = this.props.tenantId;
           newOrg.ttoId = null;
           newOrg.parentId = null;
+          newOrg.roles=[];
+          newOrg.statusFlag='new';
 
           let isDuplicate = this.state.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.orgName) {
@@ -100,6 +115,12 @@ class FormModal extends Component {
             newLoc.ttoId = this.state.parenOfLoc.ttoId == null ? this.state.parenOfLoc.id : this.state.parenOfLoc.ttoId;
             newLoc.name = this.state.locName;
             newLoc.tenantId = this.state.parenOfLoc.tenantId;
+            newLoc.enrollmentTargets=[];
+            newLoc.raConfig =[];
+            newLoc.roles=[];
+            newLoc.pages=[];
+            newLoc.functions = [];
+            newLoc.statusFlag= "new";
             const isDuplicatte = this.props.orgsList.map((iteratedValue)=>{
                 if(iteratedValue.name === this.state.locName){
                     return true
@@ -129,11 +150,25 @@ class FormModal extends Component {
         }
     }
  render(){
+  this.locList=[];
+  if(this.props.selectedOrganisation !== undefined){
+  this.props.orgsList.map((item,i)=>{
+    if(item.id == this.props.selectedOrganisation.id){
+      console.log('org')
+      this.locList = [...this.locList, item];
+  }
+  if(item.ttoId == this.props.selectedOrganisation.id ){
+
+    this.locList = [...this.locList, item];
+  }
+  })
+}
      return(
          <Modal open={this.props.open} 
                 name={this.props.name}  
                 header= {this.props.header} 
                 handleModalClose={this.props.handleModalClose}
+                modalOptions={{dismissible : false}}
                 > 
                
                 <Input s={12} m={12} l={12} xl={12} 
@@ -147,7 +182,7 @@ class FormModal extends Component {
                    <select name="parenOfLoc" onChange={this._input} value={this.state.parenOfLoc.value}>
                         <option value="" disabled> Choose option </option>
                         {
-                            this.props.orgsList.map(data=>
+                            this.locList.map((data,i)=>
                                 <option value={data.id}>{data.name}</option>
                             )
                         } 

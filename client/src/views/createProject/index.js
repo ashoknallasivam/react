@@ -2,7 +2,7 @@ import CreateProject from './CreateProject'
 
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import {fetchSingleTenant, SaveTenant, SaveOrganizations, SaveLocations} from '../../actions';
+import {fetchSingleTenant, SaveTenant, SaveOrganizations, SaveLocations, SaveProject} from '../../actions';
 
 
 const mapStateToProps=(state)=>{
@@ -18,7 +18,8 @@ const mapDispatchToProps = (dispatch) => {
                 fetchSingleTenant,
                 SaveTenant, 
                 SaveOrganizations, 
-                SaveLocations
+                SaveLocations,
+                SaveProject
             }, dispatch
         )
     }

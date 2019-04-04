@@ -11,7 +11,7 @@ class EnrollmentTab extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            enrollemntTargets: [],
+
             openModal: false,
             deleteModal: false,
             startDate: null,
@@ -24,22 +24,21 @@ class EnrollmentTab extends Component {
         objectUtil.bindAction(HeaderData.enrollmentTargetHeaderCreate, "DeleteColumn", this._deleteRowHandler);
     }
     componentDidMount() {
-        // this.props.actions.fetchRoles(this.props.currentProjectId);
-        // if (this.props.enrollemntTargets && this.props.enrollemntTargets.length > 0) {
-        if (this.props.enrollemntTargets != undefined) {
+        // if (this.props.enrollmentTargets && this.props.enrollmentTargets.length > 0) {
+        if (this.props.enrollmentTargets != undefined) {
             this.setState({
-                enrollemntTargets: this.props.enrollemntTargets
+                enrollmentTargets: this.props.enrollmentTargets
             });
         }
     }
     componentWillReceiveProps(props) {
-        // if (props.enrollemntTargets != undefined) {
-        //     if (props.enrollemntTargets && props.enrollemntTargets.length > 0) {
-        let enrollemntTargets = props.enrollemntTargets;
+        // if (props.enrollmentTargets != undefined) {
+        //     if (props.enrollmentTargets && props.enrollmentTargets.length > 0) {
+        let enrollmentTargets = props.enrollmentTargets;
         this.setState({
-            enrollemntTargets,
+            enrollmentTargets,
         })
-        //     }
+        // }
         // }
     }
 
@@ -60,21 +59,23 @@ class EnrollmentTab extends Component {
         return day === 1
     }
     _enrollmentDateHandler = (data) => {
-        //if(this.isValidDate(data)){
-        this.month = data // for showing in UI
-        this.formatedMonth = data //for sending in backend
-        this.setState({
-            startDate: new Date(this.month)
-        });
-        this.formatedMonth.setMinutes(30);
-        this.formatedMonth.setHours(5);
-        this.formatedMonth = this.formatedMonth.toISOString()
-        this.updatedData["month"] = this.formatedMonth;
-        // }
-        // else{
-        //     window.Materialize.toast("Please enter valid Date", 2000);
-        //     this.setState({startDate:null})
-        // }  
+        if (this.isValidDate(data) && data != null) {
+            this.month = data // for showing in UI
+            this.formatedMonth = data //for sending in backend
+            this.setState({
+                startDate: new Date(this.month)
+            });
+            this.formatedMonth.setMinutes(30);
+            this.formatedMonth.setHours(5);
+            this.formatedMonth = this.formatedMonth.toISOString()
+            this.updatedData["month"] = this.formatedMonth;
+        }
+        else {
+            if (data != null) {
+                window.Materialize.toast("Please enter valid Date", 2000);
+                this.setState({ startDate: null })
+            }
+        }
     }
     _inputHandlerChange = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
@@ -93,7 +94,6 @@ class EnrollmentTab extends Component {
     }
     _addEnrollmentTarget = (e) => {
         e.preventDefault();
-        //this.previousId = this.previousId + 1;
         this.previousId = uuid.v4();
         if (this.updatedData && !(objectUtil.isEmpty(this.updatedData))) {
             if (this.enrollmentValidation(this.updatedData)) {
@@ -101,8 +101,9 @@ class EnrollmentTab extends Component {
                 this.updatedData["id"] = this.previousId;
                 this.updatedData["orgId"] = this.props.selectedLocation.id;
                 this.updatedData["statusFlag"] = "new";
-                this.setState({ enrollemntTargets: [...this.state.enrollemntTargets, this.updatedData] })
+                this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
                 this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
+                this.props.SaveEnrollment(this.updatedData)
                 this._cancelEnrollmentTarget();
             }
         }
@@ -111,10 +112,6 @@ class EnrollmentTab extends Component {
         }
     }
     _updateEnrollmentTarget = () => {
-        // if (("" + this.editedRowData.id).includes("-"))
-        //     this.updatedData["statusFlag"] = "new";
-        // else
-        //     this.updatedData["statusFlag"] = "modified";
         if (this.editedRowData.hasOwnProperty("statusFlag") && this.editedRowData["statusFlag"] == "new") {
             this.updatedData["statusFlag"] = "new";
         }
@@ -123,6 +120,7 @@ class EnrollmentTab extends Component {
         this.updatedData["orgId"] = this.props.selectedLocation.id;
         const combinedData = Object.assign(this.editedRowData, this.updatedData);
         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, combinedData);
+        this.props.SaveEnrollment(combinedData);
         this.gridChildren.refreshCells(true);
         this._cancelEnrollmentTarget();
         this.setState({ startDate: null })
@@ -132,22 +130,29 @@ class EnrollmentTab extends Component {
         let selectedData = this.gridChildren.getSelectedRows();
         this.gridChildren.removeSelectedRows(selectedData);
         const rowsToDisplay = this.gridChildren.gridApi.clientSideRowModel.rowsToDisplay.map(row => row.data);
-        this.setState({ enrollemntTargets: rowsToDisplay, deleteModal: false });
+        this.setState({ enrollmentTargets: rowsToDisplay, deleteModal: false });
         selectedData.map(data => {
             selectedData = data
         });
-        selectedData.statusFlag = "delete";
+        // selectedData.statusFlag = "delete";
+        if (selectedData.statusFlag == "modified" || selectedData.statusFlag == undefined)
+            selectedData.statusFlag = "delete";
+        else selectedData.statusFlag = "ignore";
         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, selectedData);
+        this.props.SaveEnrollment(selectedData)
     }
-    // isValidDate(date) {
-    //    // const datePattern = /(^(((0[1-9]|1[0-9]|2[0-8])[-](0[1-9]|1[012]))|((29|30|31)[-](0[13578]|1[02]))|((29|30)[-](0[4,6,9]|11)))[-](19|[2-9][0-9])\d\d$)|(^29[-]02[-](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)/;
-    //    const datePattern = /(^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$)/;
-    //    if (datePattern.test(date)) {
-    //         return true;
-    //     } else {
-    //         return false;
-    //     }
-    // }
+    isValidDate(date) {
+        const datePattern = /(^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$)/;
+        var date = new Date(date),
+            mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+            day = ("0" + date.getDate()).slice(-2);
+        const testDate = [date.getFullYear(), mnth, day].join("-");
+        if (datePattern.test(testDate)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     enrollmentValidation = (data) => {
         if (objectUtil.isEmpty(data.month) || objectUtil.isEmpty(data.target)) {
             window.Materialize.toast("Please enter both the fields", 2000);
@@ -162,21 +167,26 @@ class EnrollmentTab extends Component {
     render() {
         return (
             <Fragment>
-                {this.state.enrollemntTargets ?
+                {this.state.enrollmentTargets ?
                     <div>
-                        {(this.props.applicationMode == "VIEW" && this.state.enrollemntTargets.length == 0) ?
+                        {(this.props.applicationMode == "VIEW" && this.state.enrollmentTargets.length == 0) ?
                             <p className="pl-2">{localConstant.commonConstants.NO_DATA}</p> :
                             <div>
-                                <Modal open={this.state.deleteModal}
-                                    actions={
-                                        <div>
-                                            <Button onClick={this._deleteEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt" >{"YES"}</Button>
-                                            <Button onClick={this._cancelEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt ml-2" >{"NO"}</Button>
-                                        </div>
-                                    }
-                                    header={localConstant.Enrollment_Target.DELETE_ENROLLMENT_TARGET} >
+                                <Modal
+                                    header='Please Confirm '
+                                    id='DeleteEnrollmentModal'
+                                    open={this.state.deleteModal}
+                                    modalOptions={{ dismissible: false }}
+                                >
+                                    <p>{localConstant.warningMessages.DELETE_CONFIRMATION}</p>
+
+                                    <div className="col s12 m12 l12 xl12">
+                                        <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this._cancelEnrollmentTarget}>{localConstant.commonConstants.NO}</Button>
+                                        <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this._deleteEnrollmentTarget} >{localConstant.commonConstants.YES}</Button>
+                                    </div>
                                 </Modal>
                                 <Modal open={this.state.openModal}
+                                    modalOptions={{ dismissible: false }}
                                     actions={
                                         <div>
                                             <Button onClick={this.state.isModal == "Add" ? this._addEnrollmentTarget : this._updateEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt mr-2" >{localConstant.commonConstants.OK}</Button>
@@ -198,6 +208,7 @@ class EnrollmentTab extends Component {
                                                 showMonthDropdown
                                                 selected={this.state.startDate}
                                                 onChange={this._enrollmentDateHandler}
+
                                             />
                                         </div>
                                     </div>
@@ -205,24 +216,34 @@ class EnrollmentTab extends Component {
                                         <label className="col s3 pt-5 pl-2">Target<label className="danger-txt">*</label></label>
                                         <div className="pl-0">
                                             <Input type='number' min="0" name="target"
+                                                autoComplete="off"
                                                 onChange={this._inputHandlerChange}
                                                 defaultValue={this.editedRowData.target}
                                                 key={this.editedRowData.target}
+                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
                                             />
                                         </div>
                                     </div>
                                 </Modal>
                                 {this.props.applicationMode !== 'VIEW' ?
-                                    <div className="right pr-2 mr-10">
-                                        <a onClick={this._showEnrollment} >{localConstant.Enrollment_Target.ADD_ENROLLMENT}</a>
+                                    <div className="right pr-2">
+                                        <Button className="mt-5 btn_secondary otherButtonAddDetUpt" onClick={this._showEnrollment} >{localConstant.Enrollment_Target.ADD_ENROLLMENT}</Button>
                                     </div> : null}
                                 <br /><br />
                                 <ReactGrid
                                     gridColData={this.props.applicationMode == "VIEW" ? HeaderData.enrollmentTargetHeaderView : HeaderData.enrollmentTargetHeaderCreate}
-                                    gridRowData={this.state.enrollemntTargets && this.state.enrollemntTargets}
+                                    gridRowData={this.state.enrollmentTargets && this.state.enrollmentTargets.filter(item => {
+                                        if (item.hasOwnProperty("statusFlag")) {
+                                            if (item.statusFlag == "new" || item.statusFlag == "modified") {
+                                                return item
+                                            }
+                                        }
+                                        else {
+                                            return item
+                                        }
+                                    })}
                                     onRef={ref => { this.gridChildren = ref; }}
                                 />
-                                {/* </Card> */}
                             </div>}
                     </div>
                     : <p>Select the location</p>}

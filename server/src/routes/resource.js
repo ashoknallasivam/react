@@ -6,6 +6,7 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let resourceBiz = require('../biz/resourceBiz');
 
 
 // create resource.
@@ -45,12 +46,12 @@ router.get('/resource', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-
-    axios.get(`${config.RAPTER_URL}/resource`, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    resourceBiz.getResourceList(requestOptions).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 // find resource by using id.

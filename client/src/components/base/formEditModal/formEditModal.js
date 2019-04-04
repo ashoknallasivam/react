@@ -19,13 +19,6 @@ class FormEditModal extends Component {
   
   }
   componentWillReceiveProps(props){
-    // let selectedOrganisation={};
-    // props.orgsList.map((item,i)=>{
-    //   if(item.id == props.selectedOrganisation)
-    //   {
-    //     selectedOrganisation = item
-    //   }
-    // })
     this.setState({
       orgsList : props.orgsList,
       selectedOrganisation:  props.selectedOrganisation,
@@ -81,7 +74,7 @@ class FormEditModal extends Component {
           newOrg.tenantId = this.state.selectedOrganisation.tenantId;
           newOrg.ttoId = this.state.selectedOrganisation.ttoId;
           newOrg.parentId = this.state.selectedOrganisation.parentId;
-          newOrg.statusFlag = this.state.selectedOrganisation.statusFlag !=='' ? 'modified' : this.state.selectedOrganisation.statusFlag ;
+          newOrg.statusFlag =  this.props.applicationMode =="CREATE" ? 'new' : this.state.selectedOrganisation.statusFlag !=='' ? 'modified' : this.state.selectedOrganisation.statusFlag ;
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.selectedOrganisation.name) {
               return true
@@ -129,7 +122,7 @@ class FormEditModal extends Component {
             newLoc.ttoId = this.state.selectedLocation.ttoId;
             newLoc.name = this.state.selectedLocation.name;
             newLoc.tenantId = this.state.selectedLocation.tenantId;
-            newLoc.statusFlag = this.state.selectedLocation.statusFlag !=='' ? 'modified' : this.state.selectedLocations.statusFlag ;
+            newLoc.statusFlag =  this.props.applicationMode =="CREATE" ? 'new' : this.state.selectedLocation.statusFlag !=='' ? 'modified' : this.state.selectedLocations.statusFlag ;
             const isDuplicate = this.props.orgsList.map((iteratedValue)=>{
                 if(iteratedValue.name === this.state.selectedLocation.name){
                     return true
@@ -139,7 +132,7 @@ class FormEditModal extends Component {
             if (isDuplicate.includes(true)) {
                 window.Materialize.toast('Already Exist', 5000)
                 return false;
-            } else if(this.state.selectedLocation.parentId !== '') {
+            } else{
               let allLocations ={...this.props.allLocations}
               allLocations[this.state.selectedLocation.id] = {
                   ...allLocations[this.state.selectedLocation.id],
@@ -155,9 +148,6 @@ class FormEditModal extends Component {
            this.props.setValues('allLocations',allLocations)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)
-            }
-            else{
-              window.Materialize.toast('select parent for the location', 5000)
             }
         }
     }
@@ -177,7 +167,7 @@ class FormEditModal extends Component {
                         onChange={this._input} 
                         required />
                 {this.props.name == "editLoc" &&
-                   <select name="parenOfLoc" onChange={this._input} value={this.state.selectedLocation.parentId}>
+                   <select name="parenOfLoc" onChange={this._input} value={this.state.selectedLocation.parentId} disabled= {true} >
                         <option value="" disabled> Choose option </option>
                         {
                             this.props.orgsList.map(data=>

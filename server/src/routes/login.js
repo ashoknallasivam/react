@@ -6,6 +6,7 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let loginBiz = require('../biz/loginBiz');
 
 // login api.
 router.post('/login', (req, res) => {
@@ -17,11 +18,13 @@ router.post('/login', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/login`, inpParam).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    // calling rapter login.
+    loginBiz.getLogin(inpParam).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -44,11 +47,13 @@ router.post('/two-factor-validate', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/two-factor-validate`, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    // calling rapter two-factor-validate.
+    loginBiz.getTwoFactorValidation(inpParam, requestOptions).then(response=>{
+        if(response.status===200){
+            res.status(200).send(response.data);
+        }else{
+            res.status(500).send(response)
+        }
     });
 });
 

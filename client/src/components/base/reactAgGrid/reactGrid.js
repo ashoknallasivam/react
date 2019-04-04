@@ -35,7 +35,7 @@ class ReactGrid extends Component {
     render() {
         return (
             <Fragment>
-                <div className="ag-theme-balham pl-2 pr-2 pb-2 mb-1" style={{ "height": "30vh" }} >
+                <div className="ag-theme-balham pl-2 pr-2 pb-2 pt-2 mb-1" style={{ "height": "30vh" }} >
                     <AgGridReact
                         columnDefs={this.props.gridColData.columnDefs}
                         rowData={this.props.gridRowData}

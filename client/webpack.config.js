@@ -36,7 +36,7 @@ module.exports = {
   entry: {
     app: [
       'react-hot-loader/patch',
-      'webpack-hot-middleware/client',
+      // 'webpack-hot-middleware/client',
       path.resolve(SRC, 'index.js'),
     ].filter(Boolean),
   },
@@ -107,7 +107,7 @@ module.exports = {
     }
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
+    // new webpack.HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({
       template: './public/index.html',
       favicon: './public/favicon.ico'

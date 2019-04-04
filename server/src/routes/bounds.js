@@ -6,6 +6,7 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let boundsBiz = require('../biz/boundsBiz');
 
 // create bounds.
 router.post('/bounds', (req, res) => {
@@ -26,52 +27,13 @@ router.post('/bounds', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/bounds`, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-    });
-});
-
-// find bounds.
-router.get('/bounds', (req, res) => {
-
-    // token validation.
-    let token = req.token;
-    if (token === undefined || token === "" || token === null) {
-        res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
-        return;
-    }
-    let requestOptions = config.AUTHORIZATION;
-    requestOptions.headers.Authorization = "Bearer " + token;
-    let boundsBody = this.createBoundsObj(req.body);
-    axios.post(`${config.RAPTER_URL}/bounds`, boundsBody, requestOptions).then(response => {
-        let x_rapter_bounds = response.data["x-rapter-bounds"];
-        let newConfig = { headers: requestOptions.headers };
-        newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
-        axios.get(`${config.RAPTER_URL}/bounds`, newConfig).then(function (response) {
+   // calling rapter create bounds api.
+    boundsBiz.createBounds(requestOptions, inpParam).then(response=>{
+        if(response.status===200){
             res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        });
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        }else{
+            res.status(500).send(response)
+        }
     });
-    
 });
-
 module.exports = router;
-
-exports.createBoundsObj = (inpParam => {
-    let boundsBody = {
-        "tenantId": inpParam.tenantId,
-        "ttoId": inpParam.ttoId,
-        "ltoId": inpParam.ltoId
-    };
-    return boundsBody;
-});
-
-

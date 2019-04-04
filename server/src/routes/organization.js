@@ -1,11 +1,11 @@
 'use strict';
 let express = require('express');
 let router = express.Router();
-let axios = require('axios');
 let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let organizationBiz = require('../biz/organizationBiz');
 
 
 
@@ -28,11 +28,12 @@ router.post('/organization', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/organization`, inpParam, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    organizationBiz.createOrganization(requestOptions, inpParam).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -46,11 +47,12 @@ router.get('/organization', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    axios.get(`${config.RAPTER_URL}/organization`, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    organizationBiz.getOrganizationList(requestOptions).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
     });
 });
 
@@ -66,11 +68,12 @@ router.get('/organization/:id', (req, res) => {
     requestOptions.headers.Authorization = "Bearer " + token;
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/organization/` + inpParam.id, requestOptions).then(function (response) {
-            res.status(200).send(response.data);
-        }).catch(error => {
-            logging.applogger.error(error);
-            res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        organizationBiz.getOrganization(requestOptions, inpParam.id).then(response => {
+            if (response.status === 200) {
+                res.status(200).send(response.data);
+            } else {
+                res.status(500).send(response)
+            }
         });
     } else {
         let rtnVal = responseStatus.BAD_REQUEST;
@@ -98,11 +101,12 @@ router.put('/organization/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/organization/` + inpParam.id, req.body, requestOptions).then(function (response) {
-        res.status(200).send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    organizationBiz.updateOrganization(requestOptions, inpParam.id, req.body).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
     });
 
 });
@@ -126,11 +130,12 @@ router.delete('/organization/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/organization/` + inpParam.id, requestOptions).then(function (response) {
-        res.send(response.data);
-    }).catch(error => {
-        logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+    organizationBiz.deleteOrganization(requestOptions, inpParam.id).then(response => {
+        if (response.status === 200) {
+            res.status(200).send(response.data);
+        } else {
+            res.status(500).send(response)
+        }
     });
 });
 

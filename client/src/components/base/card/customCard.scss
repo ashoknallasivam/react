@@ -33,6 +33,7 @@
         top: 56px;
         left: 19rem;
         cursor: pointer;
+        display: inline;
         z-index: 20;
         padding: 3px;
         transition: all 20ms linear;
@@ -63,4 +64,20 @@
         float: right;
         cursor: pointer;
     }
+}
+.cardMenu{
+    position: absolute;
+    right: 12px;
+    top: 20px;
+    z-index: 60;
+    background-color: #ffff;
+    transition: all 20ms linear;
+    ul{
+        padding: 3px;
+        margin: 0;
+        li {
+            padding: 5px 20px 3px;
+        }
+    }
+
 }
