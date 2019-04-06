@@ -79,7 +79,7 @@ class FormModal extends Component {
           newOrg.roles=[];
           newOrg.statusFlag='new';
 
-          let isDuplicate = this.state.orgsList.map((iteratedValue) => {
+          let isDuplicate = this.props.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.orgName) {
               return true
             }
@@ -88,7 +88,6 @@ class FormModal extends Component {
                 window.Materialize.toast('Already Exist', 5000)
           } 
           else {
-
             let allOrganisations ={...this.props.allOrganisations, ...{[newOrg.id]: {...newOrg}}}
             let orgsList =[...this.state.orgsList,{...newOrg}]
             this.setState({ 

@@ -4,49 +4,50 @@ export const HeaderData = {
             {
                 "headerName": "Assignment",
                 "field": "assignment",
-                "width": 200
+                "width": 250
 
             },
             {
                 "headerName": "Description",
                 "field": "description",
-                "width": 200
+                "width": 250
             },
             {
                 "headerName": "Ratio",
                 "field": "ratio",
-                "width": 200
+                "width": 235
             },
             {
                 "headerName": "Sequence Limit",
                 "field": "sequenceLimit",
-                "width": 150
+                "width": 220
             }
         ],
-        "rowSelection": "single"
+        "rowSelection": "single",
+        "defaultColDef": { "resizable": true }
     },
     "Headerdata": {
         "columnDefs": [
             {
                 "headerName": "Assignment",
                 "field": "assignment",
-                "width": 200
+                "width": 285
 
             },
             {
                 "headerName": "Description",
                 "field": "description",
-                "width": 200
+                "width": 300    
             },
             {
                 "headerName": "Ratio",
                 "field": "ratio",
-                "width": 200
+                "width": 75
             },
             {
                 "headerName": "Sequence Limit",
                 "field": "sequenceLimit",
-                "width": 150
+                "width": 200
             },
             {
                 "headerName": "",
@@ -60,9 +61,10 @@ export const HeaderData = {
                 "field": "DeleteColumn",
                 "cellRenderer": "DeleteComponent",
                 "cellRendererParams": { "action": "editAction" },
-                "width": 50
+                "width":50
             }
         ],
-        "rowSelection": "single"
+        "rowSelection": "single",
+        "defaultColDef": { "resizable": true }
     }
 }

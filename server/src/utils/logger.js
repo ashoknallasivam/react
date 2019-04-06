@@ -7,7 +7,7 @@ let applogger = bunyan.createLogger({
         {
             stream: new RotatingFileStream({
                 level: 'info',
-                path: './log/applogging.log',
+                path: 'log/applogging.log',
                 period: '1d',          // daily rotation
                 totalFiles: 10,        // keep 10 back copies
                 rotateExisting: true,  // Give ourselves a clean file when we start up, based on period

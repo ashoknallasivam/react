@@ -35,7 +35,7 @@
         cursor: pointer;
         display: inline;
         z-index: 20;
-        padding: 3px;
+        padding: 5px;
         transition: all 20ms linear;
         &:hover{
             transform: scale(1.5);
@@ -73,7 +73,7 @@
     background-color: #ffff;
     transition: all 20ms linear;
     ul{
-        padding: 3px;
+        padding: 5px;
         margin: 0;
         li {
             padding: 5px 20px 3px;

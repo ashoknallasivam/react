@@ -1,4 +1,4 @@
-import { fetchAllTenants } from './fetchTenant';
+import { fetchAllTenants,exportProject } from './fetchTenant';
 import{ login,twoStepVerification,signoutUser,tokenError,} from './auth.actions';
 import { fetchSingleTenant, fetchRoles, fetchResourceList, fetchMenuList, SaveProject} from './fetchTabsData'
 import {SaveRoles , SaveStudyConfig, SaveFunctions, SaveEnrollment, SavePages,SaveTenant,SaveOrganization,SaveLocation } from './saveTabsData'
@@ -21,5 +21,6 @@ export{
     SaveTenant,
     SaveOrganization,
     SaveLocation,
-    SaveProject
+    SaveProject,
+    exportProject
 };

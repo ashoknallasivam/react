@@ -12,7 +12,7 @@ export function login(username, password, environment) {
 					// alert(JSON.stringify(data));
 				},
 				error => {
-					dispatch(authError('Invalid Credentilas'));
+					dispatch(authError('Invalid Credentials'));
 					// alert(JSON.stringify(error));
 				}
 			);
@@ -31,7 +31,7 @@ export function twoStepVerification(code) {
 					 //alert(JSON.stringify(data));
 				},
 				error => {
-					dispatch(authError('Invalid OTP'));
+					dispatch(authError('Invalid Code. Please try again.'));
 					 //alert(JSON.stringify(error));
 				}
 			);

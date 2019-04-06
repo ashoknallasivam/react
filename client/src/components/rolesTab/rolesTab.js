@@ -24,7 +24,9 @@ class RolesTab extends Component {
             RoleNameAlreadyExist :'',
             newRole: 1,
             DeleteModal : false,
-            roleDefaultValue: true,
+            roleDefaultValue: {
+                id:'',
+            },
             disabledSelectRole : false
         };
         this.rolesData = {};
@@ -206,9 +208,9 @@ class RolesTab extends Component {
                     role.resources.push(finalResource);
                 }
             })
-            
-            this.props.actions.SaveRoles(this.props.orgRoles.tenantId,role)
             this.props.SaveRoles(role)
+            this.props.actions.SaveRoles(this.props.orgRoles.tenantId,role)
+            
             this.rolesData = {};
             this.menuData = {};
             this.resourceData = {};
@@ -221,6 +223,7 @@ class RolesTab extends Component {
             roleDefaultValue: false,
             disabledSelectRole : true
         });
+		window.Materialize.toast("Save successful", 2000);
     }
     UpdateRole = () => {
         const isDuplicatte = (this.props.selectedLocation.id ? this.props.roles :this.props.orgRoles.roles).map((iteratedValue) => {
@@ -355,6 +358,7 @@ class RolesTab extends Component {
             roleDefaultValue: false,
             disabledSelectRole : true
         })
+        this.props.SaveRoles(role)
         this.props.actions.SaveRoles(this.props.orgRoles.tenantId,role)
         window.Materialize.toast("Save successful", 2000);
     }
@@ -385,9 +389,9 @@ class RolesTab extends Component {
 
         let filteredRolesData =  filteredRoles[0];
         filteredRolesData.statusFlag = (filteredRolesData.statusFlag == "modified" || filteredRolesData.statusFlag == undefined)? "delete" : "ignore";
-
-        this.props.actions.SaveRoles(this.props.orgRoles.tenantId,filteredRolesData)
         this.props.SaveRoles(filteredRolesData)
+        this.props.actions.SaveRoles(this.props.orgRoles.tenantId,filteredRolesData)
+      
         this.setState({
             roleStatus:false,
             selectedRole: [],
@@ -487,8 +491,8 @@ class RolesTab extends Component {
                 <Fragment>
                     {(this.props.selectedLocation.id == "" && this.props.orgRoles.roles.length>0 )||(this.props.selectedLocation.id != "" && this.props.roles.length>0 )? 
                     <Input type='select' s={12} m={3} l={3} xl={3} className="pl-0" name="selectedRole" onChange={this.handleRoleDropdown} 
-                    defaultValue={this.state.roleDefaultValue} key={this.state.roleDefaultValue} className="roleDropdown">
-                      <option disabled={this.state.disabledSelectRole} >Select Role</option>
+                    value={this.state.roleDefaultValue.id} className="roleDropdown">
+                      <option value="" disabled>Select Role</option>
                       { this.props.selectedLocation.id != "" ? 
                                 this.state.roles.map((iteratedValue ,i ) => 
                                 {
@@ -521,9 +525,9 @@ class RolesTab extends Component {
                                     
                         }
                     </Input >
-                    : <p className='col s3'>No Role</p>}
+                    : <p className='col s3 mt-2 pl-2'>No role to display</p>}
                     </Fragment>
-                    :<p className='col s3'>No Role </p> }
+                    :<p className='col s3 mt-2 pl-2'>No role to display </p> }
                         {this.props.applicationMode == 'VIEW' ? null :
                             <div className='col s12 m3 l3 xl3 mt-2'>
                                 <Col className=' col s12 m6 l6 xl6'>
@@ -534,7 +538,7 @@ class RolesTab extends Component {
                                     </Button>
                                 </Col>
                                 <Col className='s12 col m6 l6 xl6' >
-                                    <Button className='orgIcon innerRolesButton' >
+                                    <Button className='orgIcon innerRolesButton pl-0' style={{float:'left'}} >
                                         <i className="material-icons" title='Copy Role'>
                                             file_copy
                                         </i>

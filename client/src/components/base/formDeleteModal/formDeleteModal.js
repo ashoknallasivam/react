@@ -90,8 +90,9 @@ class FormDeleteModal extends Component {
      return(
          <Modal open={this.props.open} 
                 name={this.props.name}  
-                header= {this.props.header} 
+                header= {this.props.header}
                 handleModalClose={this.props.handleModalClose}
+                modalOptions={{dismissible : false}}
                 > 
                 <h6> delete  {(this.props.name == 'deleteLoc')? this.state.selectedLocation.name : this.state.selectedOrganisation.name } ?</h6>
                        

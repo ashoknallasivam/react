@@ -28,6 +28,7 @@ class CreateProject extends Component {
       selectedLocation: {
         id:''
       },
+      preloader:'',
       fetched:false,
       applicationMode:'',
       addOrg: false,
@@ -102,9 +103,6 @@ class CreateProject extends Component {
                         orgsList :  currentProject !== undefined ? currentProject.orgsList :''
                       })
                     }
-                    //                     
-                     
-
   }
   _handleOrgDropdown = (e) => {
           e.preventDefault();
@@ -130,12 +128,32 @@ class CreateProject extends Component {
 
   
  SaveStudyConfig = ( data) =>  {
-  this.setState(({
-    selectedLocation: {
-      ...this.state.selectedLocation,
-      raConfig : [data]
+  // this.setState(({
+  //   selectedLocation: {
+  //     ...this.state.selectedLocation,
+  //     raConfig : [data]
+  //   }
+  // }))
+  let selectedLocation = this.state.selectedLocation;
+    let rollIndex = '';
+    this.state.selectedLocation.raConfig.map((item, i) => {
+      if (data.id == item.id) {
+        rollIndex = i;
+      }
+    })
+
+    if (rollIndex !== '') {
+      selectedLocation.raConfig[rollIndex] = data;
+      this.setState({
+        selectedLocation
+
+      })
+    } else {
+      selectedLocation.raConfig = [...selectedLocation.raConfig, data];
+      this.setState({
+        selectedLocation
+      })
     }
-  }))
 }
 
  
@@ -164,12 +182,11 @@ class CreateProject extends Component {
 
   SaveRoles = (data) => {
     let selectedLocation = this.state.selectedLocation;
+    let selectedOrganisation = this.state.selectedOrganisation;
     let roleIndex = '';
     //store in loc
-    if(data.id == this.state.selectedLocation.id){
+    if(data.orgId == this.state.selectedLocation.id){
     this.state.selectedLocation.roles.map((item, i) => {
-    
-      
       if (data.id == item.id) {
         roleIndex = i;
       }
@@ -188,7 +205,7 @@ class CreateProject extends Component {
     }
   } 
   // store in org
-  else if(data.id == this.state.selectedOrganisation.id){
+  else if(data.orgId == this.state.selectedOrganisation.id){
     this.state.selectedOrganisation.roles.map((item, i) => {
     
       
@@ -308,7 +325,6 @@ class CreateProject extends Component {
   }
     }
   this.props.actions.SaveTenant(this.state.id, data);
-  console.log(this.state.id, this.state.name)
 }else{
   window.Materialize.toast('Please fill project name', 4000)
 }
@@ -317,21 +333,6 @@ class CreateProject extends Component {
     this.setState({
        [e] :  !this.state[e]
     })
-    // if(e == 'deleteLoc'){
-    //   this.setState({
-    //     selectedLocation : {
-    //       id:''
-    //     }
-    //   })
-    // }
-    // else if(e == 'deleteOrg'){
-    //  this.setState({
-    //    selectedOrganisation : {
-    //      id:''
-    //    }
-    //  })
-
-    // }
   }
   _discard = () => {
     this.setState({
@@ -349,29 +350,34 @@ class CreateProject extends Component {
     })
   }
 finalPublish = () =>{
-  this.props.actions.SaveProject(this.state.id);
-}
+  this.setState({
+    preloader :true
+  })
+ this.props.actions.SaveProject(this.state.id).then(response=>{ 
+    this.setState({
+        fetched : false,
+    }) 
+});
+this.props.history.push({pathname:'/dashboard',
+state:{flag : 'published'}})
 
-
-upadateNew = () =>{
-  this.forceUpdate();
-  console.log('updated')
 }
   render() {
     return (
       <Fragment>
          {( this.state.fetched == true || this.state.applicationMode == "CREATE") ? 
       <Row className="create-project-page">
+      <Col s={12} className={this.state.preloader ? "valign-wrapper leftzero loader-overlay" :"hide" }>
+                        <Preloader className="spinner" size='big'  active={this.state.preloader} />
+                     </Col> 
         <Col className="z-depth-4 col-centered mt-2" s={12} m={12} l={12} xl={12}>
             <Row className="project-form">
               <Col s={12} m={12} l={12} xl={12} className=' mt-1'>
                 <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false}  onBlur={this.saveTenant}/>
-                {/* <p className={ this.state.validations.name ? "red-text darken-4" : "hide"  } > Please fill the Project name to add Organisation  </p> */}
-                
               </Col>
              
-              <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
-                 <Col  s={12} m={6} l={6} xl={6}>
+              <Col s={12} m={12} l={12} xl={12} className='mt-2'>
+                 <Col  s={12} m={6} l={6} xl={6} className='pl-0'>
                   <Input type='select' s={12} m={6} l={6} xl={6} className="mt-5 pl-0" name="organisation" label="Organization" onChange={this._handleOrgDropdown} value={this.state.selectedOrganisation.id} disabled={this.state.name !="" ?false : true } >
                     <option value="" disabled >Choose your option</option>
                     {
@@ -432,7 +438,7 @@ upadateNew = () =>{
                 </Col>
                 {this.state.selectedOrganisation.id != '' ?
                   <Col  s={12} m={6} l={6} xl={6}>
-                    <Input type='select' s={12} m={6} l={6} xl={6} className="mt-5 pl-0" name="selectedLocation" label="location" onChange={this._handleLoc} value={this.state.selectedLocation.id} disabled={this.state.allOrganisations.length != 0 ? false : true}>
+                    <Input type='select' s={12} m={6} l={6} xl={6} className="mt-5 pl-0" name="selectedLocation" label="Location" onChange={this._handleLoc} value={this.state.selectedLocation.id} disabled={this.state.allOrganisations.length != 0 ? false : true}>
                       <option value="" disabled >Choose your option</option>
                       {
                         (Object.keys(this.state.allLocations)).map((iteratedValue, i) =>
@@ -508,20 +514,20 @@ upadateNew = () =>{
         <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
         {/* Display Edit in view mode */}
         {this.state.applicationMode == "VIEW" && 
-           <Button className="mt-3 CreateProjectPublish btn_primary"  name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}  waves='light'>Edit</Button>}
+           <Button className="mt-1 CreateProjectPublish btn_primary"  name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}  >Edit</Button>}
 
           {/* Display publish in create and edit mode */}
           {this.state.applicationMode !== 'VIEW' && 
           <Fragment>
-              <Button className="mt-3 CreateProjectPublish btn_primary" onClick={this.finalPublish}  disabled= {(this.state.name !=='') ? false : true} waves='light'>Publish</Button>
+              <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish}  disabled= {(this.state.name !=='') ? false : true} >Publish</Button>
             {/* Display Discard in if project name is not empty */}
-             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard} disabled= {(this.state.name !=='') ? false : true} waves='light'>Save</Button>
-             <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  disabled= {(this.state.name !=='') ? false :  true } waves='light'>Discard</Button>
+             {/* <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this._discard} disabled= {(this.state.name !=='') ? false : true} >Save</Button> */}
+             <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  disabled= {(this.state.name !=='') ? false :  true } >Discard</Button>
               </Fragment> 
             }
         </Col>
-      </Row> :  
-            <Col s={12} className="valign-wrapper loader-overlay">
+      </Row> : 
+            <Col s={12} className="valign-wrapper loader-overlay-view">
             <Preloader className="spinner" size='big' />
          </Col>
           } 

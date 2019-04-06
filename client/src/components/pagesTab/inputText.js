@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Row, Input, Button, Modal, Col } from 'react-materialize';
 import LoadingSpinner from './loadingSpinner';
 import inputJson from './text.json';
-
+import Collapsible from 'react-collapsible';
 
 class IntputText extends Component {
 
@@ -65,6 +65,9 @@ class IntputText extends Component {
 		
 		
 	 }	
+	 
+
+	
 	
   render() {
  
@@ -74,128 +77,9 @@ class IntputText extends Component {
   
      <form onSubmit={this.handleSubmit} >
      <Row>
+	 {this.renderForm()}
     
-    {this.state.inputJson.layout.map(value => {
-        const { type, label, name, options } = value
-        if (type == 'heading') {
-			return <div >
-				 <h4>{value.label}</h4>
-				 
-				</div>;
-			
-		}else  if (type == 'text') {
-			
-			if (name == 'type') {
-			   return <div >
-				 <Input
-				 s={6}
-				 label={value.label}
-				 id={value.name}
-				 name={value.name}
-				 type={value.type}
-				 value={this.state.selected}
-				 minLength={value.options.validation.minLength}
-				 maxLength={value.options.validation.maxLength}
-				 onChange={this.handleChange}
-				 disabled
-				/>
-    			</div>
-				;
-			} else {
-				return <div >
-				 <Input
-				 s={6}
-				 label={value.label}
-				 id={value.name}
-				 name={value.name}
-				 type={value.type}
-				 minLength={value.options.validation.minLength}
-				 maxLength={value.options.validation.maxLength}
-				 onChange={this.handleChange}
-				 />
-				</div>;
-				
-			}
-			
-			
-			
-        } else if (type == 'panel') {
-           return <div >
-               <h5>{value.label}</h5>
-             {options.fields.map(itemval => {
-               if (itemval.name == 'items') {
-               return	<h6>{itemval.label}</h6>
-                 {itemval.options.fields.map(itemvalauto => {
-                   return <h4>asdd</h4>
-                  //return  <Input name={itemvalauto.name} type={itemvalauto.type} defaultValue={itemvalauto.value} label={itemvalauto.label} onChange={this.handleChange}/>
-
-                 })}
-
-
-
-               
-               } else { 
-
-               return  <Input name={itemval.name} type={itemval.type} defaultValue={itemval.value} label={itemval.label} onChange={this.handleChange}/>
-               }
-                   
-               })}
-              </div>;
-              
-        } else if (type == 'radio') {
-           return <div >
-               <h5>{value.label}</h5>
-             {value.options.items.map(itemval => {
-               return  <Input name={value.name} type={value.type} defaultValue={itemval.value} label={itemval.label} onChange={this.handleChange}/>
-              
-               })}
-              </div>;
-        } else if (type == 'checkbox') {
-           return <div >
-               <Input s={12} name={value.name} type={value.type} label={value.label} onChange={this.handleChange}/>
-               </div>;
-        } else if (type == 'email') {
-           return <div >
-             <Input
-             s={6}
-             label={value.label}
-             id={value.name}
-             name={value.name}
-             type={value.type}
-             onChange={this.handleChange}
-            />
-            </div>;
-        } else if (type == 'select') {
-           return <div >
-               <Input s={6} name={value.name} type={value.type} label={value.label} defaultValue='' onChange={this.handleChange}>
-             {value.options.items.map(itemval => {
-               return   <option value={itemval.value}>{itemval.label}</option>
-              
-               })}
-             </Input>
-              </div>;
-            
-        } else if (type == 'date') {
-           return <div >
-               <Input s={6} type={value.type} label={value.label} format='dd/mm/yyyy' onChange={this.handleChange}>
-             
-             
-             </Input>
-              </div>;
-            
-        }else if (type == 'time') {
-           return <div >
-               <Input s={6} type={value.type} label={value.label} onChange={this.handleChange}>
-             
-             
-             </Input>
-              </div>;
-            
-        }
-        
-        
-               
-    })}
+    
         
     </Row>
 	<Row>

@@ -7,6 +7,8 @@ import PagePreview from './pagePreview';
 import PageFields from './pageFields';
 import uuid from 'uuid';
 
+
+
 class PagesTab extends Component {
 
   constructor(props) {
@@ -220,15 +222,30 @@ class PagesTab extends Component {
 							 </form>	
 						</div>
 		                </Col>
-					   {viewOnly == false ? (	
-						   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} > 
-							<h5> Dynamic Form </h5>
-								<button className="btn " type="button" name="action" onClick={this.showDynamicForm}>Add Fields</button> 
-								{dynamicForm}
-						   </Col>
-					    ) : ('')
-      				   }
-				  </Row>
+					   {viewOnly == false ? (
+
+
+					<div className='col s12 m12 l12 xl12 mb-2' >
+					 <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
+					 <Row>
+					  <Col s={6} className='z-depth-8 mr-0'>
+						<h5> Dynamic Form </h5>
+		    		  </Col>
+					  <Col s={2} className='z-depth-8 mr-0'>
+						<a class="btn-floating btn-small grey" onClick={this.showDynamicForm}><i class="material-icons">add</i></a>
+					  </Col>
+					 </Row>
+					</Col>
+				  
+				   <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
+						{dynamicForm} 
+				   </Col>
+				  
+				   </div>
+		   
+				) : ('')
+      		}
+			</Row>
 		
 		}
 					 

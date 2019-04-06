@@ -34,7 +34,7 @@ exports.createRaConfig = (requestOptions, tenantId, inpParam) => {
 
 // update ra-config.
 exports.updateRaConfig = (requestOptions, inpParam, query_string, reqBody) => {
-    return axios.put(`${config.RAPTER_URL}/ra-config/` + inpParam.id+ '?tenantId=' + query_string, reqBody, requestOptions).then(response => {
+    return axios.put(`${config.RAPTER_URL}/ra-config/` + inpParam+ '?tenantId=' + query_string, reqBody, requestOptions).then(response => {
         return response;
     }).catch(error => {
         logging.applogger.error(error);

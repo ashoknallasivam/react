@@ -8,7 +8,7 @@ import Signin from './../components/auth/signin';
 import Twofactor from './../components/auth/twofactor';
 import Signout from './../components/auth/signout';
 import RequireAuth from './../components/auth/require_auth';
-import Pages from './../components/pagesTab/pageFields';
+import Pages from './../components/pagesTab';
 import Text from './../components/pagesTab/text';
 
 const Routes = () => (
@@ -23,7 +23,7 @@ const Routes = () => (
 		<Route exact path="/createProject" key="create-project" component={RequireAuth(CreateProject)} />
 		<Route exact path="/viewedit" key="view-edit-project" component={RequireAuth(CreateProject)} />
         <Route exact path="/clone" key="clone-project" component={RequireAuth(CreateProject)} />
-		<Route path="/Pages" component={Pages} />
+		<Route path="/Pages" component={RequireAuth(Pages)} />
 		<Route path="/Text" component={RequireAuth(Text)} />
         <Route path="*" component={NotFound} />
     </Switch>

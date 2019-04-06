@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Input, Button, Modal, Col } from 'react-materialize';
+import { Row, Input, Button, Modal, Col,Icon } from 'react-materialize';
 import { connect } from 'react-redux';
 import Spinner from 'react-spinner-material';
 import brand from '../../../public/assets/images/logo/login-logo.png';
@@ -109,7 +109,7 @@ class Signin extends Component {
            <form className="col-md-4" onSubmit={this.handleSubmit} >
              <Row>
                <Col className="input-field center"s={12}>
-                 <p className="center login-form-text"><h5>Rapter Configurator</h5></p>
+                 <p className="center login-form-text"><h5>RAPTER Configurator</h5></p>
                </Col>
              </Row>
 			  <Row className="margin">
@@ -124,16 +124,40 @@ class Signin extends Component {
              </Row>
              <Row className="margin">
                <Col className="input-field p-0" s={12}>
-                 <i className="material-icons prefix pt-5">person_outline</i>
-                 <input id="username" name="username" type="text" value={username} onChange={this.handleChange} required/>
-                 <label htmlFor="username" className="center-align">Username</label>
+                 
+				  <Input
+					 s={12}
+					 label='Username'
+					 id='username'
+					 name='username'
+					 type='text'
+					 icon='person_outline' 
+					 onChange={this.handleChange}
+					 required
+					 value={username}
+					 className="labelText" 
+					/>
+				 
+				 
+                 
                </Col>
              </Row>
              <Row className="margin">
                <Col className="input-field p-0" s={12}>
-                 <i className="material-icons prefix pt-5">lock_outline</i>
-                 <input id="password" name="password" type="password" value={password} onChange={this.handleChange} required/>
-                 <label htmlFor="password">Password</label>
+			      <Input
+					 s={12}
+					 label='Password'
+					 id='password'
+					 name='password'
+					 type='password'
+					 icon='lock_outline' 
+					 onChange={this.handleChange}
+					 required
+					 value={password}
+					 className="labelText" 
+					/>
+			   
+                 
                </Col>
 			   {this.renderAlert()}
              </Row>
@@ -142,7 +166,7 @@ class Signin extends Component {
                  <label htmlFor="remember-me">Remember me</label>
              </Row>
              <Row className="center submit-container">
-                <button className="btn waves-effect waves-light btn_primary" type="submit" name="action">Submit
+                <button className="btn waves-light btn_primary" type="submit" name="action">Submit
                   <i className="material-icons right">send</i>
                 </button>
              </Row>

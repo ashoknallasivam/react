@@ -5,22 +5,23 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let fs = require('fs');
+
+router.get('/dashboard_data/:id', (req, res) => {
+  // exporting the particular project.
+  let data = JSON.stringify(response);
+  fs.writeFile('AllProjects.json', data, 'utf8', function (err) {
+    if (err) {
+      logging.applogger.error(err);
+      res.send(err);
+    }
+  });
+  res.download('/AllProjects.json', "exportedProject_" + req.params.id + ".json");
+  fs.unlink('/AllProjects.json', function (err) {
+    if (err) throw err;
+  })
+})
 
 
-router.get('/export-project', (req, res) => {
-    try {
-
-        const rtnVal = [1, 2, 3];
-        if (rtnVal.length === 0) {
-            res.status(204).send(rtnVal);
-        } else {
-            res.status(200).send(rtnVal);
-        }
-    } catch (err) {
-        logging.applogger.error(err);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        return;
-    };
-});
 
 module.exports = router;

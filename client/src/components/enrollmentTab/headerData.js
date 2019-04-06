@@ -13,7 +13,8 @@ export const HeaderData = {
                 "width": 480
             },
         ],
-         "rowSelection":"single"
+        "rowSelection": "single",
+        "defaultColDef": { "resizable": true }
     },
     "enrollmentTargetHeaderCreate": {
         "columnDefs": [
@@ -45,8 +46,7 @@ export const HeaderData = {
                 "width": 75
             }
         ],
-        //  "gridHeight": 30,
-        // "gridWidth": 140,
-         "rowSelection":"single"
+        "rowSelection": "single",
+        "defaultColDef": { "resizable": true }
     }
 };

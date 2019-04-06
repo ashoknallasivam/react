@@ -226,7 +226,7 @@ class EnrollmentTab extends Component {
                                     </div>
                                 </Modal>
                                 {this.props.applicationMode !== 'VIEW' ?
-                                    <div className="right pr-2">
+                                    <div className="right pt-1 pr-2">
                                         <Button className="mt-5 btn_secondary otherButtonAddDetUpt" onClick={this._showEnrollment} >{localConstant.Enrollment_Target.ADD_ENROLLMENT}</Button>
                                     </div> : null}
                                 <br /><br />

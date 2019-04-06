@@ -39,7 +39,6 @@ export const fetchSingleTenant = (id) => (dispatch, getState) => {
 //    else {
        return axios.get(`${BACKEND_URL}/dashboard_data/${id}`, config).then(response => {
             if(response.status === 200){
-                console.log(response.data)
                  dispatch(actions.GetSingleTenantSuccess(response.data))
                  return true
                 }
@@ -50,11 +49,8 @@ export const fetchSingleTenant = (id) => (dispatch, getState) => {
 
     
 export const fetchMenuList = () => (dispatch, getState) => {
-   
         return axios.get(`${BACKEND_URL}/menu`, config).then(response => {
-           
                 return  (response.data)
-             
         })
 }
 
@@ -63,7 +59,6 @@ export const fetchResourceList = () => (dispatch, getState) => {
    
    return  axios.get(`${BACKEND_URL}/resource`, config).then(response => {
         if(response.status === 200){
-           
             return  (response.data)
             }
          
@@ -82,20 +77,16 @@ export const SaveProject = (tenantId) => (dispatch, getState) => {
       orgsList : list_to_tree(newProject.orgsList),
       statusFlag: newProject.statusFlag
     }
-    console.log(saveProject)
 // function calling 
 // let orgsList = list_to_tree(orgsList);// need to move separate flow
 console.log('before api call')
     return  axios.post(`${BACKEND_URL}/publish`, saveProject, config).then(response => {
-        console.log('api called')
 
         if(response.status === 200){
-           console.log(response)
             return true
             }
             else{
-           console.log(response)
-
+                return true
             }
         })
     }

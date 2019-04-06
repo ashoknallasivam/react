@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, Tab,Tabs } from 'react-materialize';
+import { Row, Col, Card, Tab,Tabs,Input,Icon } from 'react-materialize';
 import { connect } from 'react-redux';
 import * as actions from '../../actions';
 import Otp from './otp';
@@ -81,16 +81,27 @@ class Twofactor extends Component {
              
              <Row className="margin">
                <Col className="input-field p-0" s={12}>
-                 <i className="material-icons prefix pt-5">lock_outline</i>
-                 <input id="code" name="code" type="text"  onChange={this.handleChange}/>
-                 <label htmlFor="password">OTP</label>
+                
+				 <Input
+					 s={12}
+					 label='OTP'
+					 id='code'
+					 name='code'
+					 type='text'
+					 icon='lock_outline' 
+					 onChange={this.handleChange}
+					 required
+					 className="labelText" 
+					/>
+				 
+                
                </Col>
 			    {this.renderAlert()}
              </Row>
             
              <Row >
                <Col className="input-field center">
-			   <button className="btn waves-effect waves-light" type="submit" name="action">Validate</button>
+			   <button className="btn waves-light" type="submit" name="action">Validate</button>
 
                </Col>
              </Row>

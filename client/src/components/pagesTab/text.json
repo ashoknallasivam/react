@@ -88,6 +88,17 @@
                     },
                     "hint": "Enter label"
                   }
+                },
+				{
+                  "name": "label",
+                  "type": "text",
+                  "label": "Label",
+                  "options": {
+                    "validation": {
+                      "required": true
+                    },
+                    "hint": "Enter label"
+                  }
                 }
               ]
             }

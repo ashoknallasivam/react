@@ -17,7 +17,8 @@ class StudyConfigTab extends Component {
             groups: [],
             groupStatus: "",
             deleteModal: false,
-            deleteStatus: ""
+            deleteStatus: "",
+            buttonDisable: true
         }
         this.updatedData = {};
         this.editedRowData = {};
@@ -42,6 +43,7 @@ class StudyConfigTab extends Component {
         if (props.StudyConfig != undefined) {
             this.setState({
                 StudyConfig: props.StudyConfig,
+                buttonDisable: true
             });
             if (props.StudyConfig.length > 0) {
                 if (props.StudyConfig[0].statusFlag == "delete" || props.StudyConfig[0].statusFlag == "ignore") {
@@ -64,6 +66,10 @@ class StudyConfigTab extends Component {
     // Input handler for Description and Blocksize
     studyConfigChangeHandler = (e) => {
         this.setState({ [e.target.name]: e.target.value });
+    }
+    // For disabling the buttons (Save and Cancel)
+    buttonDisable = () => {
+        this.setState({ buttonDisable: false });
     }
     // Input handler for Groups
     inputHandlerChange = (e) => {
@@ -127,7 +133,7 @@ class StudyConfigTab extends Component {
         if (!objectUtil.isEmpty(this.updatedData.assignment) && !objectUtil.isEmpty(this.updatedData.description) &&
             !objectUtil.isEmpty(this.updatedData.ratio) && !objectUtil.isEmpty(this.updatedData.sequenceLimit)) {
             this.setState({
-                groups: [...this.state.groups, this.updatedData]
+                groups: [...this.state.groups, this.updatedData], buttonDisable: false
             });
             this.cancelStudyConfigModal();
         }
@@ -137,11 +143,11 @@ class StudyConfigTab extends Component {
     editStudyConfigGroups = () => {
         let newGroups = [];
         this.state.groups.map(item => newGroups.push(item));
-        const combinedData = {...this.editedRowData, ...this.updatedData};
+        const combinedData = { ...this.editedRowData, ...this.updatedData };
         newGroups[this.groupIndex] = combinedData;
         if (!objectUtil.isEmpty(combinedData.assignment) && !objectUtil.isEmpty(combinedData.description) &&
             combinedData.ratio != "" && combinedData.sequenceLimit != "") {
-            this.setState({ groups: newGroups });
+            this.setState({ groups: newGroups, buttonDisable: false });
             this.cancelStudyConfigModal();
             this.clearModal();
         }
@@ -196,7 +202,7 @@ class StudyConfigTab extends Component {
                 StudyConfig.statusFlag = statusFlag;
                 this.props.actions.SaveStudyConfig(this.props.selectedLocation.tenantId, StudyConfig);
                 this.props.SaveStudyConfig(StudyConfig);
-                this.setState({ _id: "" });
+                this.setState({ _id: _id, buttonDisable: true });
                 window.Materialize.toast(localConstant.warningMessages.SAVING_DATA, 2000);
 
             }
@@ -216,6 +222,7 @@ class StudyConfigTab extends Component {
         else {
             this.clearStudyConfig();
         }
+        this.setState({ buttonDisable: true });
     }
     // StudyConfig Delete
     studyConfigDeleteHandler = () => {
@@ -225,6 +232,8 @@ class StudyConfigTab extends Component {
             StudyConfig.statusFlag = "delete";
         else StudyConfig.statusFlag = "ignore";
         this.props.actions.SaveStudyConfig(this.props.selectedLocation.tenantId, StudyConfig);
+        this.props.SaveStudyConfig(StudyConfig);
+        this.setState({ buttonDisable: true });
         this.cancelStudyConfigModal();
         this.clearStudyConfig();
     }
@@ -238,7 +247,7 @@ class StudyConfigTab extends Component {
                             <div>
                                 <Modal
                                     header='Please Confirm '
-                                    id='DeleteStudyConfig' modalOptions={{dismissible:false}}
+                                    id='DeleteStudyConfig' modalOptions={{ dismissible: false }}
                                     open={this.state.deleteModal} >
                                     <p>{localConstant.warningMessages.DELETE_CONFIRMATION}</p>
                                     <div className="col s12 m12 l12 xl12">
@@ -249,7 +258,7 @@ class StudyConfigTab extends Component {
                                                 this.deleteStudyConfigGroups}>{localConstant.commonConstants.YES}</Button>
                                     </div>
                                 </Modal>
-                                <Modal open={this.state.openModal} modalOptions={{dismissible:false}}
+                                <Modal open={this.state.openModal} modalOptions={{ dismissible: false }}
                                     actions={
                                         <div>
                                             <Button onClick={this.state.groupStatus == "add" ? this.submitStudyConfigGroups : this.editStudyConfigGroups}
@@ -279,45 +288,47 @@ class StudyConfigTab extends Component {
                                                 defaultValue={this.editedRowData.sequenceLimit} key={this.editedRowData.sequenceLimit} /></Col>
                                     </div>
                                 </Modal>
-                                <div className='row pl-2 pr-2 pt-1' >
-                                    <label className="danger-txt left ml-2 mt-3">*</label>
-                                    <Col className="pl-0" s={5} ><Input className="pt-1" s={5} label={localConstant.study_Config.DESCRIPTION} s={12}
-                                        name="description" onBlur={this.studyConfigChangeHandler} key={this.state.description}
-                                        defaultValue={this.state.description} autoComplete='off'
-                                        readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>
-                                    <label className="danger-txt left ml-5 mt-3">*</label>
-                                    <Col className="pl-0" s={5} ><Input className="pt-1" label={localConstant.study_Config.BLOCK_SIZE} s={12}
-                                        name="blockSize" onBlur={this.studyConfigChangeHandler} key={this.state.blockSize} type="number"
-                                        defaultValue={this.state.blockSize} autoComplete='off' min="0"
-                                        onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
-                                        readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>
-                                </div>
-                                <div>
-                                    <label className="danger-txt left ml-3">*</label>
-                                    <label className='ml-1 mb-0' style={{ fontSize: '18px' }} >{localConstant.study_Config.GROUPS}</label>
-                                    {this.props.applicationMode == "VIEW" ? null :
-                                        <Button className="right btn_secondary otherButtonAddDetUpt mr-2" onClick={this.addStudyConfigModal} >
-                                            {localConstant.study_Config.ADD_GROUPS}</Button>}
-                                </div>
-                                <ReactGrid
-                                    gridColData={this.props.applicationMode == "VIEW" ? HeaderData.Headerdata_View : HeaderData.Headerdata}
-                                    gridRowData={this.state.groups}
-                                    onRef={ref => { this.gridChild = ref }} />
-                                {this.props.applicationMode != "VIEW" ?
-                                    <div>
-                                        <Button onClick={this.studyConfigSaveHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">
-                                            {localConstant.commonConstants.SAVE}</Button>
-                                        <Button onClick={this.studyConfigCancelHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">
-                                            {localConstant.commonConstants.CANCEL}</Button>
-                                        {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
-                                            className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">{localConstant.commonConstants.DELETE}</Button> : null}
+                                    <div className="row pt-2 pr-1">
+                                        {this.props.applicationMode == "VIEW" ? null :
+                                            <Button className="right btn_secondary otherButtonAddDetUpt mr-2" onClick={this.addStudyConfigModal} >
+                                                {localConstant.study_Config.ADD_GROUPS}</Button>}
                                     </div>
-                                    : null}
-                            </div>}
+                                    <div className="row pl-2 pr-2">
+                                        <label className="danger-txt left ml-1 mt-3">*</label>
+                                        <Col className="pl-0" s={5} ><Input className="pt-1" s={5} label={localConstant.study_Config.DESCRIPTION} s={12}
+                                            name="description" onBlur={this.studyConfigChangeHandler} key={this.state.description}
+                                            defaultValue={this.state.description} autoComplete='off' onChange={this.buttonDisable}
+                                            readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>
+                                        <label className="danger-txt left ml-5 mt-3">*</label>
+                                        <Col className="pl-0" s={5} ><Input className="pt-1" label={localConstant.study_Config.BLOCK_SIZE} s={12}
+                                            name="blockSize" onBlur={this.studyConfigChangeHandler} key={this.state.blockSize} type="number"
+                                            defaultValue={this.state.blockSize} autoComplete='off' min="0" onChange={this.buttonDisable}
+                                            onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
+                                            readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>
+                                    </div>
+                                    <div>
+                                        <label className="danger-txt left ml-2">*</label>
+                                        <label className="ml-1 mb-0" style={{ fontSize: '18px' }} >{localConstant.study_Config.GROUPS}</label>
+                                    </div>
+                                    <ReactGrid
+                                        gridColData={this.props.applicationMode == "VIEW" ? HeaderData.Headerdata_View : HeaderData.Headerdata}
+                                        gridRowData={this.state.groups}
+                                        onRef={ref => { this.gridChild = ref }} />
+                                    {this.props.applicationMode != "VIEW" ?
+                                        <div className="pl-2">
+                                            <Button onClick={this.studyConfigSaveHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1"
+                                                disabled={this.state.buttonDisable}>{localConstant.commonConstants.SAVE}</Button>
+                                            <Button onClick={this.studyConfigCancelHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1"
+                                                disabled={this.state.buttonDisable}>{localConstant.commonConstants.CANCEL}</Button>
+                                            {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
+                                                className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">{localConstant.commonConstants.DELETE}</Button> : null}
+                                        </div>
+                                        : null}
+                                </div>}
                     </div>
                     : <p className="pl-2">{localConstant.commonConstants.SELECT_AN_LTO}</p>}
             </Fragment>
         )
-    }
-}
+                }
+            }
 export default StudyConfigTab;

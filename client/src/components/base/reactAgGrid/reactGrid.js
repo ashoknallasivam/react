@@ -35,17 +35,15 @@ class ReactGrid extends Component {
     render() {
         return (
             <Fragment>
-                <div className="ag-theme-balham pl-2 pr-2 pb-2 pt-2 mb-1" style={{ "height": "30vh" }} >
+                <div className="ag-theme-balham pl-4 pr-2 pb-2 pt-2 mb-1" style={{ "height": "30vh" }} >
                     <AgGridReact
                         columnDefs={this.props.gridColData.columnDefs}
+                        defaultColDef={this.props.gridColData.defaultColDef}
                         rowData={this.props.gridRowData}
                         onGridReady={this.onGridReady}
-                        // rowHeight="30"
                         rowClassRules={this.state.rowClassRules}
                         rowSelection={this.props.gridColData.rowSelection}
-                        // rowMultiSelectWithClick={true}
                         rowDeselection={true}
-                        //rowMultiSelectWithClick={true}
                         frameworkComponents={this.state.frameworkComponents} >
                     </AgGridReact>
                 </div>

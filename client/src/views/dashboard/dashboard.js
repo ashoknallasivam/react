@@ -33,19 +33,17 @@ class Dashboard extends React.Component {
    }
 
    componentDidMount() {
-      this.props.actions.fetchAllTenants();
-      if(Object.keys(this.props.projectList).length > 0){
+      this.props.actions.fetchAllTenants().then(response=>{ 
          this.setState({
-            preloader : false
-         });
-      }
+            preloader : response
+ 
+         }) 
+     });
    }
+
    componentWillReceiveProps(props){
-      if(Object.keys(props.projectList).length > 0){
-         this.setState({
-            preloader : false
-         });
-      }
+      
+     
    }
  
    handleDashboardBtn = (e) => {
@@ -70,7 +68,14 @@ class Dashboard extends React.Component {
         console.log(Object.keys(data))
    
 }
+_loaderHandler = (e) =>{
 
+   this.setState({
+      preloader : e
+
+   })
+
+}
 
 
    render() {
@@ -84,7 +89,7 @@ class Dashboard extends React.Component {
                <Fragment>
                   <Row className="card-container">
                      <Col s={12} className={this.state.preloader ? "valign-wrapper loader-overlay" :"hide" }>
-                        <Preloader className="spinner" size='big'  active={this.state.preloader}  />
+                        <Preloader className="spinner" size='big'  active={this.state.preloader} />
                      </Col> 
                         <Fragment>
                            <div className="dashboard-btn">
@@ -96,7 +101,7 @@ class Dashboard extends React.Component {
                                  <h2>Published Projects </h2>
                                  {
                                  Object.keys(this.props.projectList).map((i, index) => 
-                                       <CustomCard tenantId={i}  key={index} history={this.props.history} />
+                                       <CustomCard tenantId={i}  key={index} history={this.props.history} loaderHandler={this._loaderHandler} />
                                     )}
                               </Fragment> : 
                               <Fragment>

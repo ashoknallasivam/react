@@ -155,8 +155,9 @@ class FormEditModal extends Component {
      return(
          <Modal open={this.props.open} 
                 name={this.props.name}  
-                header= {this.props.header} 
+                header= {this.props.header}
                 handleModalClose={this.props.handleModalClose}
+                modalOptions={{dismissible : false}}
                 > 
                  
                 <Input s={12} m={12} l={12} xl={12} 
@@ -180,11 +181,11 @@ class FormEditModal extends Component {
                                     <Button className="btn_secondary  otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this._handleClose}>Cancel</Button>
                                     {this.props.name == "editLoc"&&  
                                         <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' 
-                                        onClick={this._handleLoc }>save</Button>
+                                        onClick={this._handleLoc }>Save</Button>
                                     }
                                     { this.props.name =="editOrg"  &&
                                         <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' 
-                                        onClick={ this._handleOrg }>save</Button>
+                                        onClick={ this._handleOrg }>Save</Button>
                                     } 
                         </div>
                     

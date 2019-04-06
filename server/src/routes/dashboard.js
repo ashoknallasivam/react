@@ -6,6 +6,7 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let fs = require('fs');
 
 // get the project info.
 router.get('/dashboard_data', (req, res) => {
@@ -29,22 +30,46 @@ router.get('/dashboard_data', (req, res) => {
 //API for complete project information.
 router.get('/dashboard_data/:id', (req, res) => {
     // token validation.
+    //let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWRlYjJkMzFiZjYwMGMyYjRkZDU2MiIsImlzRnVsbHlBdXRoZW50aWNhdGVkIjp0cnVlLCJpYXQiOjE1NTQ0NDUzMDgsImV4cCI6MTU1NDUzMTcwOH0.ZJNQ7r1q391pJYs90nVOVCOU90xXpgJgyayR6BHhN0U"
     let token = req.token;
     if (token === undefined || token === "" || token === null) {
         res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
         return;
     }
+    
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
 
     let inpParam = req.params;
     mapping(requestOptions).then(response => {
         selectedProjectInfo(response, inpParam.id, requestOptions).then(response => {
-            res.send(response);
-        })
+            if(req.query.export!=="true"){
+                res.send(response);
+            } else {
+
+                // export project.
+                let data = JSON.stringify(response);
+                fs.writeFile('AllProjects.json', data, 'utf8', function (err) {
+                    if (err) {
+                        logging.applogger.error(err);
+                        res.send(err);
+                    }else{
+                        res.download('AllProjects.json', "exportedProject_" + req.params.id + ".json");
+                        // fs.unlinkSync('AllProjects.json', function (err) {
+                        //     if (err) throw err;
+                        // })
+                    }
+                    
+                });
+            }
+            
+        }).catch(error => {
+            //logging.applogger.error(error);
+            res.status(500).send(error);
+        });
     }).catch(error => {
         //logging.applogger.error(error);
-        res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+        res.status(500).send(error);
     });
 });
 

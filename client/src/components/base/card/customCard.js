@@ -1,5 +1,5 @@
 import React,{Fragment} from 'react';
-import { Col, Card, Badge } from 'react-materialize';
+import { Col, Card,Preloader, Row, Badge } from 'react-materialize';
 import { withRouter } from 'react-router'
 import { Link } from 'react-router-dom';
 import './customCard.scss';
@@ -7,7 +7,7 @@ import './customCard.scss';
     constructor(props) {
         super(props);
         this.state = {
-            sum:'',
+            loader:false,
             popup:false
         }
       }
@@ -33,6 +33,11 @@ this.props.history.push({
 })
 }
 _handleExport=(e)=>{
+   this.props.loaderHandler(true)
+     this.props.actions.exportProject(e.target.parentElement.id).then(response=>{ 
+       this.props.loaderHandler(response)
+    });
+
     
 }
     
@@ -41,11 +46,11 @@ _handleExport=(e)=>{
         return (
             <Col s={12} m={3} l={3} xl={3} className="tenant-class">
                 <div className="hamburger" onMouseOver={this._handlePop} onMouseOut={this._handlePop}  >
-                <div className ={this.state.popup ? "cardMenu" : "cardMenu hide" } > <ul className="collection" id={this.props.tenantId}> <li onClick={this._handleClone} >Clone</li>
+                <div className ={this.state.popup ? "cardMenu" : "cardMenu hide" } > 
+                <ul className="collection" id={this.props.tenantId}> 
+                {/* <li onClick={this._handleClone} >Clone</li> */}
                 <li onClick={this._handleExport} >Export</li> </ul>  </div>
                 </div>
-             
-                
                     <Card className='white' title={testing.get(this.props.tenantId).name} id={this.props.tenantId} onClick={this._handleCardClick} >
                         { this.props.projectList ? 
                         <Fragment>
@@ -56,6 +61,7 @@ _handleExport=(e)=>{
                          } 
                     </Card>
             </Col>
+          
         )
     }
 }

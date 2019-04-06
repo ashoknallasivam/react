@@ -56,7 +56,6 @@ router.post('/publish', (req, res) => {
                             console.log(response);
                         }).catch(error => {
                             console.log(error);
-                            //reject(error)
                         });
 
 
@@ -91,7 +90,6 @@ router.post('/publish', (req, res) => {
                             console.log(response);
                         }).catch(error => {
                             console.log(error);
-                            //reject(error)
                         });
 
 
@@ -115,7 +113,6 @@ router.post('/publish', (req, res) => {
                     console.log(response);
                 }).catch(error => {
                     console.log(error);
-                    //reject(error)
                 });
 
 
@@ -586,7 +583,7 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
                             "subtitle": onePage.subtitle,
                             "layout": onePage.layout
                         }
-                        return pageBiz.updatePage(newHeaders, onePage.id, pageBody).then(response => {
+                        return pageBiz.updatePage(newHeaders, onePage._id, pageBody).then(response => {
                             if (response.status === 200) {
                                 return response;
                             } else {
@@ -595,7 +592,7 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
                         });
 
                     } else if (onePage.statusFlag === "delete") {
-                        return pageBiz.deletePage(newHeaders, onePage.id).then(response => {
+                        return pageBiz.deletePage(newHeaders, onePage._id).then(response => {
                             if (response.status === 200) {
                                 return response;
                             } else {

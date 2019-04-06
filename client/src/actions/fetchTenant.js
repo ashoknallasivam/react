@@ -28,19 +28,44 @@ const actions = {
 
 export const fetchAllTenants = () => (dispatch, getState) => {
     let state = getState();
-     if(state.projectList.length >0 ){
+    //  if(state.projectList.length >0 ){
 
-        return state;
+    //     return state;
 
-     }else{
-        axios.get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() }).then(response => {
+    //  }else{
+      return  axios.get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() }).then(response => {
             if(response.status === 200){
-             return  dispatch(actions.GetAllTenantsSuccess(response.data));
+               dispatch(actions.GetAllTenantsSuccess(response.data));
+               return false
             }
             else{
-              return  dispatch(action.GetAllTenantsError(response.message))
+                dispatch(action.GetAllTenantsError(response.message))
+                return false
             }
         })
 
-     }
+    //  }
+}
+
+
+    
+export const exportProject = (id) => (dispatch, getState) => {
+   const state = getState();
+   let project =  state.projectList.Projects[id];
+
+     return axios.get(`${BACKEND_URL}/dashboard_data/${id}?export=true`,  { headers: authHeaderFinal() }).then(response => {
+        if(response.status == 200){
+           const url = window.URL.createObjectURL(new Blob([JSON.stringify(response.data)]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${response.data.name}.json`); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            return false;
+}else{
+  return false;
+}
+    
+})
 }
