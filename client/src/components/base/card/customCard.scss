@@ -34,13 +34,12 @@
         left: 19rem;
         cursor: pointer;
         display: inline;
-        z-index: 20;
+        z-index: 11;
         padding: 5px;
         transition: all 20ms linear;
         &:hover{
             transform: scale(1.5);
         }
-    
     }
     .hamburger:after {
         content: '\2807';

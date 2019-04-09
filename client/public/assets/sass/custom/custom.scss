@@ -10,7 +10,7 @@ NOTE:
 PLACE HERE YOUR OWN CSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 /* General Overlay */
-#overlay{
+#overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -25,16 +25,19 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 .side-nav.slideOut {
     transform: translateX(0px);
 }
+
 /* Right SideNav Open And Clode  */
 .side-nav.right-navout {
     transform: translateX(0px);
-    z-index:1000;
+    z-index: 1000;
 }
-#sidenav-overlay{
+
+#sidenav-overlay {
     opacity: 0.5;
     background-color: black;
 }
-#rightSide-overlay{
+
+#rightSide-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -45,20 +48,23 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     opacity: 0.5;
     background-color: black;
 }
+
 /* onClick show showDropDown */
-.showDropDown{
+.showDropDown {
     white-space: nowrap;
     opacity: 1;
-    right:20px;
+    right: 20px;
     position: absolute;
     top: 64px;
     display: block;
 }
-#LocationModal{
-    .browser-default{
+
+#LocationModal {
+    .browser-default {
         margin-bottom: 24px
     }
-    .modal-footer{
+
+    .modal-footer {
         display: none !important;
     }
 }
@@ -66,25 +72,30 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     .modal-footer{
         display: none !important;
     }
+
     width: 35% !important;
-   div h4 {
+
+    div h4 {
         font-size: 20px;
         text-align: center;
         text-transform: uppercase;
     }
 }
-.modalButton{
+
+.modalButton {
     float: right !important;
 }
-#modal_1{
-    .modal-footer{
+
+#modal_1 {
+    .modal-footer {
         display: none !important;
     }
 }
+
 .ag-theme-balham {
     background-color: transparent !important;
     color: #000 !important;
-    font-family: -apple-system , BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !important;
     font-weight: 400 !important;
     font-size: 13px !important;
 }
@@ -94,7 +105,9 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     white-space: nowrap;
     font-size: 13px;
 }
-.ag-theme-balham .ag-row-even, .ag-theme-balham .ag-row-odd {
+
+.ag-theme-balham .ag-row-even,
+.ag-theme-balham .ag-row-odd {
     background-color: transparent !important;
 }
 .tabs .tab {
@@ -110,80 +123,104 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 .btn_add {
     margin-top: 22px;
 }
+
 .create-project-page {
     width: 80%;
     margin: auto !important;
-    .project-form{
+
+    .project-form {
         padding-bottom: 30px;
         margin: auto;
+
         .view-and-edit-mode {
             padding-top: 35px;
-            input{
+
+            input {
                 position: relative !important;
                 opacity: 1 !important;
                 pointer-events: auto !important;
                 margin-right: 10px !important;
             }
-            [type="radio"] + label:before, [type="radio"] + label:after {
+
+            [type="radio"]+label:before,
+            [type="radio"]+label:after {
                 content: none !important;
             }
-            [type="radio"]:not(:checked) + label, [type="radio"]:checked + label{
+
+            [type="radio"]:not(:checked)+label,
+            [type="radio"]:checked+label {
                 margin-right: 20px !important;
                 padding-left: 0px !important;
             }
         }
     }
-    .Add_Location{
+
+    .Add_Location {
         padding-top: 2px;
     }
-    .tabs-project{
-        .tabs .tab a:hover, .tabs .tab a.active{
+
+    .tabs-project {
+
+        .tabs .tab a:hover,
+        .tabs .tab a.active {
             color: #002354;
         }
     }
-    .form-footer{
+
+    .form-footer {
         text-align: right
     }
 }
-.btn_primary{
+
+.btn_primary {
     border-radius: 20px !important;
     height: 44px !important;
     background: #002e57 !important;
 }
-.btn_secondary, .modal-action {
+
+.btn_secondary,
+.modal-action {
     border-radius: 20px !important;
     background: #004e92;
     color: white !important;
     height: 40px !important;
     text-transform: initial !important;
 }
-.btn_primary:hover{
+
+.btn_primary:hover {
     background: #002e57 !important;
 }
-.page-footer{
+
+.page-footer {
     background: linear-gradient(to right, #004e92, #000428) !important;
     z-index: 11;
 }
-#login-page{
-    login-container{
+
+#login-page {
+    login-container {
         width: 35%;
         margin: auto;
     }
-    .input-field .prefix{
+
+    .input-field .prefix {
         padding: 0px !important;
         padding-top: 10px !important;
     }
-    .submit-container{
+
+    .submit-container {
         padding: 10px
     }
-    .remember-user{
+
+    .remember-user {
         text-align: right;
         margin-right: 14px;
     }
-    .login-footer{
+
+    .login-footer {
         padding: 4px;
     }
 }
+
 // .project-form {
 //     #input_0 {
 //         label{
@@ -192,21 +229,25 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 //     }
 // }
 
-#tabsProject{
-    .add-copy-role{
+#tabsProject {
+    .add-copy-role {
         padding: 2px 58px;
     }
-    .roles-access{
+
+    .roles-access {
         padding: 25px 58px;
     }
-    .role-details{
+
+    .role-details {
         height: 210px !important;
         display: inline-block;
         overflow: auto;
     }
+
     ::-webkit-scrollbar {
         width: 5px;
-      }
+    }
+
     ::-webkit-scrollbar-track {
         background: #f1f1f1;
     }
@@ -220,33 +261,42 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     ::-webkit-scrollbar-thumb:hover {
         background: #555;
     }
+
     .tab-cards {
-         margin-bottom: 0 !important;
+        margin-bottom: 0 !important;
     }
-    .tab-btn-alignment{
+
+    .tab-btn-alignment {
         margin-top: 25px;
     }
-    .tabs{
+
+    .tabs {
         overflow-x: hidden !important;
     }
-    .role-body{
+
+    .role-body {
         position: relative;
-        div{
+
+        div {
             position: absolute;
             top: 15px;
             left: 400px;
         }
     }
-    .tab-lto-dependent{
+
+    .tab-lto-dependent {
         padding: 100px;
     }
 }
-#header{
+
+#header {
     .mpr-logo img {
         height: 24px;
     }
-    .header-nav{
+
+    .header-nav {
         margin-left: 50px;
+
         a {
             padding-right: 10px;
             font-size: 18px;
@@ -254,57 +304,65 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     }
 }
 
-.new-card{
+.new-card {
     color: blue !important;
     border: 1px solid gray;
     border-radius: 6px;
 }
 
 
- body {
-    .custommodal{
+body {
+    .custommodal {
         z-index: 1003;
         display: block !important;
         opacity: 1;
         top: 10%;
         transform: scaleX(1) scaleY(1);
     }
+
     .modal.customModal {
         overflow-y: auto !important;
         display: block;
     }
+
     .hide {
-        display: none;
+        display: none !important;
     }
+
     .orgIcon {
         background-color: transparent;
         box-shadow: unset;
         color: #004e92;
         width: 40px !important;
-        &:hover{
+
+        &:hover {
             background-color: transparent;
             box-shadow: unset;
             color: #004e92;
             width: 40px !important;
         }
-        &:focus{
+
+        &:focus {
             background-color: transparent;
             box-shadow: unset;
             color: #004e92;
             width: 40px !important;
         }
-        &:active{
+
+        &:active {
             background-color: transparent;
             box-shadow: unset;
             color: #004e92;
             width: 40px !important;
         }
     }
+
     .btn.orgIcon {
         i {
             font-size: 20px !important;
         }
     }
+
     .popupCopyRole {
         position: fixed;
         width: 100%;
@@ -314,18 +372,21 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         right: 0;
         bottom: 0;
         margin: auto;
-        background-color: rgba(0,0,0, 0.5);
+        background-color: rgba(0, 0, 0, 0.5);
         z-index: 1003;
         display: block !important;
         opacity: 1;
         transform: scaleX(1) scaleY(1);
     }
+
     .role_select_box {
         height: 22px;
     }
+
     .input-field {
         padding-right: unset !important;
     }
+
     .RoledAddDiv {
         -moz-box-shadow: 3px 3px 5px 6px #ccc;
         -webkit-box-shadow: 3px 3px 5px 6px #ccc;
@@ -334,6 +395,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         margin-top: 5% !important;
         margin-bottom: 2% !important;
     }
+
     .raConfigAddDiv {
         box-shadow: 1px 3px 4px 2px #ccc;
         width: 95%;
@@ -342,58 +404,74 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         margin-top: 1% !important;
         margin-bottom: 3% !important;
     }
-    .raconfig{
+
+    .raconfig {
         background: #fff;
         box-shadow: 1px 3px 4px 2px #ccc;
     }
-    .danger-txt{
+
+    .danger-txt {
         color: red !important;
-    }        
+    }
+
     .errorMessage {
         color: red;
         font-size: 12px;
     }
+
     .orgLabel {
         position: absolute;
     }
+
     .locLabel {
         position: absolute;
     }
-    .innerLabel{
+
+    .innerLabel {
         position: absolute;
         font-size: 15px !important;
     }
+
     label {
         font-size: 18px !important;
         color: gray !important;
     }
+
     .innerRolesButton {
         float: right;
     }
+
     .rolesButton {
         float: right !important;
     }
+
     .MapcheckboxLTo {
         margin-top: 42px;
+
         div {
             label.active {
                 font-size: 15px !important;
             }
+
             label {
                 font-size: 15px !important;
             }
         }
+
         label.active {
             font-size: 15px !important;
         }
+
         label {
             font-size: 15px !important;
         }
     }
+
     label.active {
         font-size: 20px !important;
         color: gray !important;
     }
+
     .otherButtonAddDetUpt {
         padding: 10px;
         padding-top: 0px;
@@ -401,12 +479,15 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         border-radius: 5px !important;
         font-size: 12px;
     }
+
     .css-1l0glfn {
         fill: #333 !important;
     }
+
     .css-80f7ae {
         color: #333 !important;
     }
+
     .discardDetails {
         button {
             float: right;
@@ -417,6 +498,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
             padding-right: 1px;
             padding-left: 1px;
             border: unset;
+
             &:hover {
                 float: right;
                 color: #000;
@@ -427,6 +509,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
                 padding-left: 1px;
                 border: unset;
             }
+
             &:active {
                 float: right;
                 color: #000;
@@ -437,6 +520,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
                 padding-left: 1px;
                 border: unset;
             }
+
             &:focus {
                 float: right;
                 color: #000;
@@ -448,8 +532,10 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
                 border: unset;
             }
         }
+
         float: right !important;
     }
+
     table.role-details {
         tbody {
             tr {
@@ -458,6 +544,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
                         label.active {
                             font-size: 15px !important;
                         }
+
                         label {
                             font-size: 15px !important;
                         }
@@ -466,38 +553,45 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
             }
         }
     }
+
     #CopyRoleModal {
         .modal-content {
             ul {
                 cursor: pointer !important;
                 background-color: unset !important;
+
                 li {
                     padding-left: 19px !important;
                     cursor: pointer !important;
                 }
             }
         }
+
         div h4 {
             font-size: 20px;
             text-align: center;
             text-transform: uppercase;
         }
     }
-    .labelText + label {
+
+    .labelText+label {
         transform: translateY(-14px) scale(0.8);
         transform-origin: 0 0;
         font-size: 20px !important;
     }
 }
-.customTabs{
-    li{
-            padding: 15px;
-            background: #f5f5f5;
+
+.customTabs {
+    li {
+        padding: 15px;
+        background: #f5f5f5;
     }
-    li.react-tabs__tab--selected{
-            background: #004E92;
-            color: #fff;
+
+    li.react-tabs__tab--selected {
+        background: #004E92;
+        color: #fff;
     }
+
     li:hover {
         background-color: #6694bd;
         cursor: pointer;
@@ -508,13 +602,26 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     .menu, .resource{
         height: 220px;
         overflow-y: auto;
+        position: relative;
     }
-    .hideDeleteRoles{
+    .hiddenDeletedRole{
         display: none;
+    }
+    .Dropdown{
+       cursor: pointer;
     }
     .roleDropdown ul li.disabled{
         display: none;
     }
     .roleDropdown ul li:nth-of-type(1){
         display: block;
+    }
+    .orgDropdown ul li.disabled{
+        display: none;
+    }
+    .orgDropdown ul li:nth-of-type(1){
+        display: block;
+    }
+    .modal {
+        overflow-y: inherit !important;
     }

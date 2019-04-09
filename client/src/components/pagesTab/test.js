@@ -6,7 +6,7 @@ import inputJson from './text.json';
 import Collapsible from 'react-collapsible';
 
 
-class PagePreview extends React.Component {
+class dynamicControls extends React.Component {
   constructor(props) {
 
     super(props);
@@ -21,13 +21,15 @@ class PagePreview extends React.Component {
 			subtitle:'',
 			layout: [],
 			inputJson: inputJson,
-			selected:''
-			
+			selected:'',
+			name: "",
+            shareholders: [{ name: "" }]
 			
     };
    
     this.handleSubmit = this.handleSubmit.bind(this);    
 	this.handleChange = this.handleChange.bind(this);
+	this.handleShareholderNameChange = this.handleShareholderNameChange.bind(this);
 	//this.removeClick = this.removeClick.bind(this);
   }
 
@@ -57,7 +59,77 @@ class PagePreview extends React.Component {
       console.log('Send this in a POST request:', inputJSON);
     }
 	
-  renderForm = () => {
+	renderForm = (idx) => {
+		
+		return <div >
+					 <Input
+					 s={6}
+					 label={`Shareholder #${idx + 1} name`}
+					 id='name'
+					 name='name'
+					 type='text'
+					 onChange={this.handleShareholderNameChange(idx)}			 
+					/>
+					</div>
+	}
+	
+	handleShareholderNameChange = idx => evt => {
+      const { name, value } = evt.target;
+     
+	 this.setState({ [name[idx]]: value }, () => console.log(name, value));
+	 alert(idx);
+  };
+	
+	handleShareholderNameChange1 = idx => evt => {
+    const newShareholders = this.state.shareholders.map((shareholder, sidx) => {
+      if (idx !== sidx) return shareholder;
+      return { ...shareholder, name: evt.target.value };
+    });
+
+    this.setState({ shareholders: newShareholders });
+  };
+	
+	handleChange(e) {
+	    const { name, value } = e.target;
+		
+        this.setState({ [name]: value }, () => console.log(name, value));
+		
+		
+   }
+   
+   handleSubmit(e) {
+   
+    e.preventDefault();
+	
+   const optionsPayload = {
+			hint : this.state.hint,
+			autocomplete: this.state.autocomplete,
+   };
+   const formPayload = {
+			type : this.state.type,
+			name: this.state.name,
+			label: this.state.label,
+			options: optionsPayload,
+   };
+     
+	console.log('Send this in a POST request:', formPayload);
+	//console.log(this.props.pageJson);
+	console.log(this.state);
+	
+	//if (this.state) {
+		
+		//this.props.updatePage(formPayload,this.props.pageId);
+		
+	//}
+		
+		
+	
+	
+  }
+	
+  renderForm1 = (i) => {
+	  
+	 // onClick={this.removeClick.bind(this, i)}
         let model = this.state.inputJson.layout;
         let input = '';        
         let formUI = model.map((m) => {
@@ -117,18 +189,26 @@ class PagePreview extends React.Component {
 			   var arr3 = Object.values(m.options.fields);
 			   
 			   input = arr3.map((o) => {
-                   console.log(o.name);
-                   
-				   
-				   
-				   var arr4 = Object.values(o.options);
-				    
-					  input = arr4.map((p) => {
-						   console.log(p);
-						 
-					  });	  
-					 return (<h6>{o.name}</h6> );
-				   
+                   //console.log(o.name);
+				   var arr4 = Object.values(o.options)
+					
+					 if(o.type == 'text' || o.type == 'checkbox' ){
+					 return <div>
+				     <Input
+					 s={6}
+					 label={o.label}
+					 id={o.name}
+					 name={o.name}
+					 type={o.type}
+					 onChange={this.handleChange}
+					 /></div>
+		             }   
+						
+		 
+		
+						
+						
+				  
 				   
                });
                
@@ -152,10 +232,9 @@ class PagePreview extends React.Component {
 	return <Collapsible trigger='Text'> {formUI} </Collapsible>;
     }	
 	
-	
-
    createUI(){
      return this.state.values.map((el, i) => 
+	 
           <div key={i}>
 		  
 		     <Row className="right submit-container">
@@ -164,7 +243,7 @@ class PagePreview extends React.Component {
 		    </Col></Row>
 		   
 		    <Row>
-			 {this.renderForm()}
+			 {this.renderForm(i)}
 		
 			</Row>
 		   
@@ -175,10 +254,7 @@ class PagePreview extends React.Component {
      )
    }
 
-   handleChange(e) {
-	    const { name, value } = e.target;
-        this.setState({ [name]: value }, () => console.log(name, value));
-   }
+   
    
   
   
@@ -193,31 +269,7 @@ class PagePreview extends React.Component {
      this.setState({ values });
   }
 
-  handleSubmit(e) {
-   
-    e.preventDefault();
-	const formPayload = {
-			type : this.state.type,
-			name: this.state.name,
-			label: this.state.label
-			
-			
-	};
-     
-	//console.log('Send this in a POST request:', formPayload);
-	//console.log(this.props.pageJson);
-	//console.log(this.state);
-	
-	//if (this.state) {
-		
-		//this.props.updatePage(formPayload,this.props.pageId);
-		
-	//}
-		
-		
-	
-	
-  }
+  
   
  
   
@@ -248,9 +300,9 @@ class PagePreview extends React.Component {
 		  
 		</Input>
 	 </Col>
-	 <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={2} >
-       <button className="btn " type="submit" name="action" onClick={this.addClick.bind(this)}>Attributes
-          <i className="material-icons right">add</i>
+	 <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={4} >
+       <button className="btn " type="submit" name="action" onClick={this.addClick.bind(this)}>Add Attr
+          
        </button>
      
 	  </Col>
@@ -285,4 +337,4 @@ class PagePreview extends React.Component {
   }
 }
 
-export default PagePreview;
+export default dynamicControls;

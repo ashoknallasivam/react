@@ -97,14 +97,12 @@ select{
 }
 .loader-overlay-view{
     background-color: #6b6b6ba3;
-        width: 100%;
-        height: 100%;
-        position: fixed;
-        z-index: 1000;
-        //opacity: 0.5;
-        top:0;
-        left:0;
-        //right:-1000px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    z-index: 1000;
+    top:0;
+    left:0;
 }
 .preloader-wrapper{
     margin: 0 auto;

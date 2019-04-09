@@ -18,6 +18,8 @@ let dashBoardService = require('./routes/dashboard');
 let publishProjectService = require('./routes/publishProject');
 let pageService = require('./routes/page');
 let boundService = require('./routes/bounds');
+let userService = require('./routes/user');
+
 
 /**
 * Module dependencies.
@@ -78,6 +80,8 @@ app.use('/', dashBoardService);
 app.use('/', publishProjectService);
 app.use('/', pageService);
 app.use('/', boundService);
+app.use('/', userService);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

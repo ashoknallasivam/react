@@ -246,7 +246,7 @@ class EnrollmentTab extends Component {
                                 />
                             </div>}
                     </div>
-                    : <p>Select the location</p>}
+                    : <p className="pl-2">{localConstant.commonConstants.SELECT_AN_LTO}</p>}
 
             </Fragment>
         )

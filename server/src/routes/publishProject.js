@@ -15,6 +15,7 @@ let menuBiz = require('../biz/menuRoleAccessBiz');
 let resourceBiz = require('../biz/resourceRoleAccessBiz');
 let pageBiz = require('../biz/pageBiz');
 let boundsbiz = require('../biz/boundsBiz');
+let fs = require('fs');
 
 // publish bounds.
 router.post('/publish', (req, res) => {
@@ -38,7 +39,8 @@ router.post('/publish', (req, res) => {
     }
 
     // read the flag then call appropriate operation.
-    if (inpParam.statusFlag === "new") {
+
+    if (inpParam.statusFlag === "new" && inpParam.projectStatus == "publish") {
         // publish request body.
         let tenantInputObj = {
             "name": inpParam.name
@@ -49,14 +51,10 @@ router.post('/publish', (req, res) => {
                 let test = [];
                 let publishedTenantId = response.data.insertId;
                 if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
-                    inpParam.orgsList.forEach(oneOrganization => {//top level organization.
+                    inpParam.orgsList.map(oneOrganization => {//top level organization.
                         oneOrganization.tenantId = publishedTenantId;
                         // calling create organization in loop through.
-                        publishProjectOrganization(requestOptions, oneOrganization).then(response => {
-                            console.log(response);
-                        }).catch(error => {
-                            console.log(error);
-                        });
+                        publishProjectOrganization(requestOptions, oneOrganization);
 
 
                         // single response to the client.finall response.
@@ -76,7 +74,7 @@ router.post('/publish', (req, res) => {
         }).catch(error => {
             res.status(500).send(error);
         })
-    } else if (inpParam.statusFlag === "modified") {
+    } else if (inpParam.statusFlag === "modified" && inpParam.projectStatus == "publish") {
         // publish request body.
         let tenantInputObj = {
             "name": inpParam.name
@@ -86,11 +84,7 @@ router.post('/publish', (req, res) => {
                 if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
                     inpParam.orgsList.forEach(oneOrganization => {//top level organization.
                         // calling create organization in loop through.
-                        publishProjectOrganization(requestOptions, oneOrganization).then(response => {
-                            console.log(response);
-                        }).catch(error => {
-                            console.log(error);
-                        });
+                        publishProjectOrganization(requestOptions, oneOrganization)
 
 
                         // single response to the client.finall response.
@@ -105,15 +99,11 @@ router.post('/publish', (req, res) => {
                 res.status(500).send(response);
             }
         })
-    } else {
+    } else if(inpParam.projectStatus == "publish") {
         if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
             inpParam.orgsList.forEach(oneOrganization => {//top level organization.
                 // calling create organization in loop through.
-                publishProjectOrganization(requestOptions, oneOrganization).then(response => {
-                    console.log(response);
-                }).catch(error => {
-                    console.log(error);
-                });
+                publishProjectOrganization(requestOptions, oneOrganization);
 
 
                 // single response to the client.finall response.
@@ -127,9 +117,25 @@ router.post('/publish', (req, res) => {
             res.status(200).send(response.data);
         }
 
+    } else if(inpParam.projectStatus == "save"){
+        fs.writeFile('savedProjects/saveProject.json_' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+            if (err) {
+                logging.applogger.error(err);
+                res.send(err);
+            }else{
+                res.status(200).send({savedProjectId: inpParam.id});
+                // fs.unlinkSync('AllProjects.json', function (err) {
+                //     if (err) throw err;
+                // })
+            }
+            
+        });
     }
 
 });
+
+
+
 
 module.exports = router;
 
@@ -153,7 +159,11 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
                 globalTto = response.data.insertId;
             }
             if (response.status === 200) {
-                arr.push(response.status)
+                arr.push(response.status);
+                let orgUserBody = {"ttoId" : globalTto, "ltoId":  inputObj.ttoId == null? null: response.data.insertId, userId: oneOrganization.userId}
+                if(inputObj.level !== 0){   
+                    organizationBiz.createOrganizationUser(requestOptions, orgUserBody);
+                }
                 if (oneOrganization.roles !== undefined && oneOrganization.roles.length !== 0) {
                     publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, globalTto, response.data.insertId == globalTto ? null : response.data.insertId);
                     arr.push(response.status)
