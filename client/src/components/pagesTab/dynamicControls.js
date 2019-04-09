@@ -182,9 +182,7 @@ class dynamicControls extends React.Component {
 				var arr3 = Object.values(m.options.fields);
 
 				input = arr3.map((o) => {
-					//console.log(o.name);
-					var arr4 = Object.values(o.options)
-
+					
 					if (o.type == 'text' || o.type == 'checkbox') {
 						return <div>
 							<Input
@@ -197,6 +195,68 @@ class dynamicControls extends React.Component {
 							/></div>
 					}
 
+
+					if (o.type == 'array' || o.type == 'fieldset') {
+						var autoitems ='';
+
+                        const autoitems = Object.entries(o.options).map(([key,value])=>{
+
+                          if(key == 'hint')	
+                          {
+							  return (
+							      <div>{value.toString()}</div>
+							  );
+						  } 
+
+						  if(key == 'fields')	
+                          {
+							  
+                             var autofileds = '';
+                             var required = '';
+                             autofileds = value.map((q) => {
+                                
+                                const validation =q.options.validation.required.toString() ;
+
+                                required =  validation == true ? required : '';
+                                console.log(required);
+                                return  <div>
+                                		<div>
+										<Input
+											s={12}
+											label={q.label}
+											id={q.name}
+											name={q.name}
+											type={q.type}
+											onChange={this.handleControlChange(idx)}
+											required
+										/></div><h6>{q.options.hint}</h6>
+                                         </div>
+
+                             });
+
+                              return <div>{autofileds}</div>
+								
+						  } 
+
+
+
+						})	
+
+
+                        
+
+						return <div className="card-panel hoverable">
+						     	<h5>{o.label}</h5>
+						       		<div>{autoitems}</div>
+								</div>
+					}
+					if (o.type == 'fieldset') {
+
+                        
+
+
+					}
+
 				});
 
 				input = <div>{input}</div>;
@@ -206,7 +266,7 @@ class dynamicControls extends React.Component {
 
 			}
 			return (
-				<div>
+				<div >
 					<Collapsible trigger={label}>
 						{input}
 					</Collapsible>
@@ -216,7 +276,7 @@ class dynamicControls extends React.Component {
 
 
 		});
-		return <Collapsible trigger='Text' className='.CustomTriggerCSS'> {formUI} </Collapsible>;
+		return <div className="collection"><Collapsible trigger='Text' > {formUI} </Collapsible></div>;
 	}
 
 	createUI() {
