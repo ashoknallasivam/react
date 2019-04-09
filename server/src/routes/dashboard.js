@@ -73,6 +73,41 @@ router.get('/dashboard_data/:id', (req, res) => {
     });
 });
 
+router.get('/saved_projects', (req, res) => {
+    // token validation.
+    let token = req.token;
+    if (token === undefined || token === "" || token === null) {
+        res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
+        return;
+    }
+    let requestOptions = config.AUTHORIZATION;
+    requestOptions.headers.Authorization = "Bearer " + token;
+    fs.readdir('savedProjects', function(err, items) {
+        if (err) {
+            logging.applogger.error(err);
+            res.send(err);
+        }else{
+            let allSavedProjects = [];
+            let parsedData;
+            var promise = []
+            for (var i=0; i<items.length; i++) {
+                promise.push(new Promise((resolve, reject) => {
+                    fs.readFile('savedProjects/' + items[i], (err, data) => {  
+                        if (err) throw reject(err);
+                        parsedData = JSON.parse(data);
+                        resolve(parsedData)
+                        //res.send(parsedData);                    
+                    })
+                }));
+            }
+            Promise.all(promise).then(function (values) {               
+                res.send(JSON.stringify(values));
+            })
+        }
+    });
+});
+
+
 module.exports = router;
 
 // preparing all projects information.

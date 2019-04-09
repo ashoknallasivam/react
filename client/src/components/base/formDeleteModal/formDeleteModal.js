@@ -35,7 +35,8 @@ class FormDeleteModal extends Component {
     _handleOrg = () => {
         let newOrg = {
           ...this.state.selectedOrganisation,
-          statusFlag :  this.props.applicationMode =="CREATE" ? 'ignore' :"delete"
+          userId : this.props.userId,
+          statusFlag :  this.state.orgdel =="new" ? "ignore" :"delete"
         };
        
             let arrIndex='';
@@ -50,9 +51,14 @@ class FormDeleteModal extends Component {
             orgsList.splice(arrIndex,1)
             this.setState({ 
               selectedOrganisation:{
+                id:'',
                 name:''
               }
          });
+         let selectedOrganisation = {
+           id : ''
+         }
+        //  this.props.setValues('selectedOrganisation',selectedOrganisation) 
          this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
          this.props.setValues('allOrganisations',allOrganisations) 
          this.props.setValues('orgsList', orgsList)
@@ -63,7 +69,8 @@ class FormDeleteModal extends Component {
       _handleLoc = () => {
               let newLoc = {
                 ...this.state.selectedLocation,
-              statusFlag : this.props.applicationMode =="CREATE" ? 'ignore' : 'delete'
+                userId : this.props.userId,
+              statusFlag : this.state.locdel == "new" ? 'ignore' : 'delete'
             };
               let arrIndex='';           
               let allLocations ={...this.props.allLocations}
@@ -77,11 +84,14 @@ class FormDeleteModal extends Component {
                   orgsList.splice(arrIndex,1);
                   this.setState({
                     selectedLocation:{
+                      id:'',
                       name:''
                     }
                   })
+                 
            this.props.actions.SaveLocation(newLoc.tenantId, newLoc) 
            this.props.setValues('allLocations',allLocations)
+           this.props.setValues('selectedLocation',this.state.selectedLocation)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)
             }

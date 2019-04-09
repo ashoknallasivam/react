@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import CustomCard from './customCard';
 import {bindActionCreators} from 'redux';
-import {exportProject} from '../../../actions'
+import {exportProject, cloneProject, fetchSingleTenant} from '../../../actions'
 
 const mapStateToProps = (state) => {
     return{
@@ -13,7 +13,9 @@ const mapDispatchToProps = (dispatch) => {
     return{
         actions:bindActionCreators(
             {
-                exportProject
+                exportProject,
+                cloneProject,
+                fetchSingleTenant
             }, dispatch
         )
     }

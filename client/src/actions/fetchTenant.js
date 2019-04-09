@@ -21,19 +21,29 @@ const actions = {
             type: 'FETCH_ALL_TENANTS_ERROR',
             payload: payload,
         };
+    },
+    GetSavedProjectsSuccess: (payload) => {
+        return {
+            type: 'SAVED_PROJECTS_SUCCESS',
+            payload: payload,
+        };
+    },
+    GetUserInfo: (payload) => {
+        return {
+            type: 'GET_USER_INFO_SUCCESS',
+            payload: payload,
+        };
     }
-   
-
 }
 
 export const fetchAllTenants = () => (dispatch, getState) => {
     let state = getState();
-    //  if(state.projectList.length >0 ){
-
-    //     return state;
-
-    //  }else{
-      return  axios.get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() }).then(response => {
+    //  if(Object.keys(state.projectList.Projects) > 0 ){
+    //             console.log('no api call')
+    //            return false;
+    //  }
+    //  else{
+      return axios.get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() }).then(response => {
             if(response.status === 200){
                dispatch(actions.GetAllTenantsSuccess(response.data));
                return false
@@ -48,24 +58,42 @@ export const fetchAllTenants = () => (dispatch, getState) => {
 }
 
 
-    
-export const exportProject = (id) => (dispatch, getState) => {
-   const state = getState();
-   let project =  state.projectList.Projects[id];
+export const fetchSavedTenants= () => (dispatch, getState) => {
+      return  axios.get(`${BACKEND_URL}/saved_projects`, { headers: authHeaderFinal() }).then(response => {
+            if(response.status === 200){
+                let project ={};
+                 response.data.map((data,index)=>{
+                    project = {
+                        ...project,
+                        [data.id] :{ ...data}
+                    }
+                })
+                dispatch(actions.GetSavedProjectsSuccess(project));
+               return false
+            }
+            else{
+                dispatch(action.GetSavedProjectsError(response.message))
+                return false
+            }
+        })
 
-     return axios.get(`${BACKEND_URL}/dashboard_data/${id}?export=true`,  { headers: authHeaderFinal() }).then(response => {
+    //  }
+}
+
+
+
+export const fetchUserInfo= () => (dispatch, getState) => {
+  
+    return  axios.get(`${BACKEND_URL}/user`, { headers: authHeaderFinal() }).then(response => {
+          
         if(response.status == 200){
-           const url = window.URL.createObjectURL(new Blob([JSON.stringify(response.data)]));
-            const link = document.createElement('a');
-            link.href = url;
-            link.setAttribute('download', `${response.data.name}.json`); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            return false;
-}else{
-  return false;
+              console.log(response)
+              let userId = response.data._id;
+              dispatch(actions.GetUserInfo(userId));
+             return false
+          }
+      })
+
+  
 }
-    
-})
-}
+

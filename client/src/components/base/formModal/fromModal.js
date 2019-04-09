@@ -77,6 +77,7 @@ class FormModal extends Component {
           newOrg.ttoId = null;
           newOrg.parentId = null;
           newOrg.roles=[];
+          newOrg.userId = this.props.userId;
           newOrg.statusFlag='new';
 
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
@@ -119,6 +120,7 @@ class FormModal extends Component {
             newLoc.roles=[];
             newLoc.pages=[];
             newLoc.functions = [];
+            newLoc.userId = this.props.userId;
             newLoc.statusFlag= "new";
             const isDuplicatte = this.props.orgsList.map((iteratedValue)=>{
                 if(iteratedValue.name === this.state.locName){
@@ -153,7 +155,6 @@ class FormModal extends Component {
   if(this.props.selectedOrganisation !== undefined){
   this.props.orgsList.map((item,i)=>{
     if(item.id == this.props.selectedOrganisation.id){
-      console.log('org')
       this.locList = [...this.locList, item];
   }
   if(item.ttoId == this.props.selectedOrganisation.id ){

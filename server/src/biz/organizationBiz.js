@@ -50,3 +50,13 @@ exports.deleteOrganization = (requestOptions, organizationId) => {
         return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
     });
 };
+
+// create organization user.
+exports.createOrganizationUser = (requestOptions, inpParam) => {
+    return axios.post(`${config.RAPTER_URL}/organization-user`, inpParam, requestOptions).then(response => {
+        return response;
+    }).catch(error => {
+        logging.applogger.error(error);
+        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+    });
+};

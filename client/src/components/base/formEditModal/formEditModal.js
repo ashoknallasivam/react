@@ -73,6 +73,7 @@ class FormEditModal extends Component {
           newOrg.name = this.state.selectedOrganisation.name;
           newOrg.tenantId = this.state.selectedOrganisation.tenantId;
           newOrg.ttoId = this.state.selectedOrganisation.ttoId;
+          newOrg.userId = this.props.userId;
           newOrg.parentId = this.state.selectedOrganisation.parentId;
           newOrg.statusFlag =  this.props.applicationMode =="CREATE" ? 'new' : this.state.selectedOrganisation.statusFlag !=='' ? 'modified' : this.state.selectedOrganisation.statusFlag ;
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
@@ -121,6 +122,7 @@ class FormEditModal extends Component {
             newLoc.parentId = this.state.selectedLocation.parentId;
             newLoc.ttoId = this.state.selectedLocation.ttoId;
             newLoc.name = this.state.selectedLocation.name;
+            newLoc.userId = this.props.userId;
             newLoc.tenantId = this.state.selectedLocation.tenantId;
             newLoc.statusFlag =  this.props.applicationMode =="CREATE" ? 'new' : this.state.selectedLocation.statusFlag !=='' ? 'modified' : this.state.selectedLocations.statusFlag ;
             const isDuplicate = this.props.orgsList.map((iteratedValue)=>{

@@ -12,8 +12,8 @@ class FunctionsTab extends Component {
     }
     render(){
         return(
-            <Row>
-                <h1> FunctionsTab  </h1>
+            <Row className='col m-0 pl-2'>
+                <h6> FunctionsTab  </h6>
             </Row>
         )
     }

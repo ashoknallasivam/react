@@ -9,6 +9,7 @@ import Twofactor from './../components/auth/twofactor';
 import Signout from './../components/auth/signout';
 import RequireAuth from './../components/auth/require_auth';
 import Pages from './../components/pagesTab';
+import DynamicControls from './../components/pagesTab/dynamicControls';
 import Text from './../components/pagesTab/text';
 
 const Routes = () => (
@@ -25,7 +26,8 @@ const Routes = () => (
         <Route exact path="/clone" key="clone-project" component={RequireAuth(CreateProject)} />
 		<Route path="/Pages" component={RequireAuth(Pages)} />
 		<Route path="/Text" component={RequireAuth(Text)} />
-        <Route path="*" component={NotFound} />
+		<Route path="/dynamic" component={DynamicControls} />
+		<Route path="*" component={NotFound} />
     </Switch>
 );
 

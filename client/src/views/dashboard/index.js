@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import Dashboard from './dashboard';
 import { bindActionCreators } from 'redux';
-import {fetchAllTenants, fetchRoles,} from '../../actions';
+import {fetchAllTenants, fetchSavedTenants,fetchUserInfo} from '../../actions';
 
 const mapStateToProps=(state)=>{
     return{
@@ -14,6 +14,7 @@ const mapDispatchToProps=(dispatch)=>{
         actions:bindActionCreators(
             {
                 fetchAllTenants,
+                fetchSavedTenants,
                 
             },
             dispatch

@@ -24,10 +24,9 @@ class RolesTab extends Component {
             RoleNameAlreadyExist :'',
             newRole: 1,
             DeleteModal : false,
-            roleDefaultValue: {
-                id:'',
-            },
-            disabledSelectRole : false
+            roleDefaultValue:'',
+            disabledSelectRole : false,
+            noRoleDisplay: true
         };
         this.rolesData = {};
         this.menuData = {};
@@ -44,7 +43,8 @@ class RolesTab extends Component {
             roleStatus: true,
             isEditMode: false,
             roleDefaultValue: true,
-            disabledSelectRole : false
+            disabledSelectRole : false,
+            noRoleDisplay:false
         });
         this.rolesData = {};
         this.menuData = {};
@@ -88,7 +88,11 @@ class RolesTab extends Component {
 
         let filteredMenu= [] ;
          this.props.roles.map((item) => {if(item.id == selectedValue){  item.menus.map((data)=>{
-            filteredMenu =[...filteredMenu,data.menuId] 
+            if(data.statusFlag == undefined || data.statusFlag == "new")
+            {
+                filteredMenu =[...filteredMenu,data.menuId]
+            }
+           
         })}});
         
         this.setState(prevState => ({
@@ -100,7 +104,10 @@ class RolesTab extends Component {
         let filteredResource= [] ;
          this.props.roles.map((item) => {if(item.id == selectedValue)
             {  item.resources.map((data)=>{
-            filteredResource =[...filteredResource,data.resourceId] 
+                if(data.statusFlag == undefined || data.statusFlag == "new")
+                {
+                    filteredResource =[...filteredResource,data.resourceId] 
+                }
                 })
             }}
         );
@@ -115,7 +122,10 @@ class RolesTab extends Component {
 
                 let filteredMenu= [] ;
                 this.props.orgRoles.roles.map((item) => {if(item.id == selectedValue){  item.menus.map((data)=>{
-                    filteredMenu =[...filteredMenu,data.menuId] 
+                    if(data.statusFlag == undefined || data.statusFlag == "new")
+                    {
+                        filteredMenu =[...filteredMenu,data.menuId] 
+                    }
                 })}});
                 
                 this.setState(prevState => ({
@@ -127,7 +137,10 @@ class RolesTab extends Component {
                 let filteredResource= [] ;
                 this.props.orgRoles.roles.map((item) => {if(item.id == selectedValue)
                     {  item.resources.map((data)=>{
-                    filteredResource =[...filteredResource,data.resourceId] 
+                        if(data.statusFlag == undefined || data.statusFlag == "new")
+                         {
+                            filteredResource =[...filteredResource,data.resourceId] 
+                         }
                         })
                     }}
                 );
@@ -247,17 +260,32 @@ class RolesTab extends Component {
                 RoleNameAlreadyExist: false
             })
             let filteredMenu= [] ;
-         this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
-            filteredMenu =[...filteredMenu,data.menuId] 
-        })}});
+        if(this.props.selectedLocation.id){
+            this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
+                filteredMenu =[...filteredMenu,data.menuId] 
+            })}});
+        }else{
+            this.state.orgRoles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
+                filteredMenu =[...filteredMenu,data.menuId] 
+            })}});
+        }
 
         let filteredResource= [] ;
-         this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
-            {  item.resources.map((data)=>{
-            filteredResource =[...filteredResource,data.resourceId] 
-                })
-            }}
-        );
+        if(this.props.selectedLocation.id){
+            this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
+                {  item.resources.map((data)=>{
+                filteredResource =[...filteredResource,data.resourceId] 
+                    })
+                }}
+            );
+        }else{
+            this.state.orgRoles.map((item) => {if(item.id == this.state.selectedDropdownRole)
+                {  item.resources.map((data)=>{
+                filteredResource =[...filteredResource,data.resourceId] 
+                    })
+                }}
+            );
+        }
         let role = {};
         const updatedRoles = (this.props.selectedLocation.id ? this.props.roles :this.props.orgRoles.roles).map((iteratedValue)=>{
             if(iteratedValue.id == this.state.selectedRole.id){
@@ -282,7 +310,9 @@ class RolesTab extends Component {
                         let finalMenu = {};
                         finalMenu.menuId = parseInt(r);
                         finalMenu.roleId = this.state.selectedRole.id;
-                        finalMenu.statusFlag = "delete"
+                        finalMenu.statusFlag = filteredMenu.map((data)=>{
+                                                    data.statusFlag == undefined ? "delete" : "ignore"
+                                                })
                         role.menus.push(finalMenu);
                     }else if(filteredMenu.indexOf(parseInt(r)) <= 0 && this.menuData[r] == 1){
                         let finalMenu = {};
@@ -302,14 +332,16 @@ class RolesTab extends Component {
                         role.menus.push(test);
                     }
                 })
-
+                console.log(filteredMenu)
                 let finalResource = {}//need to create an object that has only manipulated value i.e 
                 Object.keys(this.resourceData).map(r => {
                     if(filteredResource.indexOf(parseInt(r)) >=0 && this.resourceData[r] == 0){
                         let finalResource = {};
                         finalResource.resourceId = parseInt(r);
                         finalResource.roleId = this.state.selectedRole.id;
-                        finalResource.statusFlag = "delete"
+                        finalResource.statusFlag = filteredResource.map((data)=>{
+                                                        data.statusFlag == undefined ? "delete" : "ignore"
+                                                    })
                         role.resources.push(finalResource);
                     }else if(filteredResource.indexOf(parseInt(r)) <= 0 && this.resourceData[r] == 1){
                         let finalResource = {};
@@ -472,7 +504,9 @@ class RolesTab extends Component {
                         orgRoles:props.orgRoles.roles,
                         roles : role,
                         applicationMode:props.applicationMode,
-                        roleStatus : false
+                        roleStatus : false,
+                        roleDefaultValue: true,
+                        disabledSelectRole : false
                     })
                 }  
                 
@@ -490,17 +524,17 @@ class RolesTab extends Component {
                 {(this.props.orgRoles.roles || this.props.roles) ?
                 <Fragment>
                     {(this.props.selectedLocation.id == "" && this.props.orgRoles.roles.length>0 )||(this.props.selectedLocation.id != "" && this.props.roles.length>0 )? 
-                    <Input type='select' s={12} m={3} l={3} xl={3} className="pl-0" name="selectedRole" onChange={this.handleRoleDropdown} 
-                    value={this.state.roleDefaultValue.id} className="roleDropdown">
-                      <option value="" disabled>Select Role</option>
+                    <select className="col s3 mt-1 Dropdown" name="selectedRole" onChange={this.handleRoleDropdown} key={this.state.roleDefaultValue} 
+                    defaultValue={this.state.roleDefaultValue}>
+                      <option disabled={this.state.disabledSelectRole}>Select Role</option>
                       { this.props.selectedLocation.id != "" ? 
                                 this.state.roles.map((iteratedValue ,i ) => 
-                                {
+                                { 
                                     if(iteratedValue.statusFlag == "new" || iteratedValue.statusFlag == "modified" || iteratedValue.statusFlag == undefined){
 
                                         return <option id={i} value={iteratedValue.id}>{iteratedValue.name}</option>
                                     } else if(iteratedValue.statusFlag == "delete" || iteratedValue.statusFlag == "ignore"){
-                                         return  <option id={i} value={iteratedValue.id} disabled>deleted Role</option>
+                                         return  <option id={i} value={iteratedValue.id} className="hiddenDeletedRole" disabled>deleted Role</option>
                                     }
                                 }
                                 )
@@ -511,7 +545,7 @@ class RolesTab extends Component {
                                     return <option id={i} value={iteratedValue.id}>{iteratedValue.name}</option>
                                 }
                                 else if(iteratedValue.statusFlag == "delete" || iteratedValue.statusFlag == "ignore"){
-                                    return <option id={i} value={iteratedValue.id} disabled>deleted Role</option>
+                                    return <option id={i} value={iteratedValue.id} className="hiddenDeletedRole" disabled>deleted Role</option>
                                 }}
                                 )
                                      : this.props.orgRoles.roles.map((iteratedValue ,i ) => 
@@ -519,15 +553,15 @@ class RolesTab extends Component {
                                         return <option id={i} value={iteratedValue.id}>{iteratedValue.name}</option>
                                      }
                                      else if(iteratedValue.statusFlag == "delete" || iteratedValue.statusFlag == "ignore"){
-                                        return <option id={i} value={iteratedValue.id} disabled>deleted Role</option>
+                                        return <option id={i} value={iteratedValue.id} className="hiddenDeletedRole" disabled>deleted Role</option>
                                     }}
                                     )
                                     
                         }
-                    </Input >
-                    : <p className='col s3 mt-2 pl-2'>No role to display</p>}
+                    </select >
+                    : <Fragment> { this.state.noRoleDisplay && <p className='col s3 mt-2 pl-2'>No role to display</p>}</Fragment>}
                     </Fragment>
-                    :<p className='col s3 mt-2 pl-2'>No role to display </p> }
+                    :<Fragment> { this.state.noRoleDisplay && <p className='col s3 mt-2 pl-2'>No role to display </p>}</Fragment> }
                         {this.props.applicationMode == 'VIEW' ? null :
                             <div className='col s12 m3 l3 xl3 mt-2'>
                                 <Col className=' col s12 m6 l6 xl6'>
