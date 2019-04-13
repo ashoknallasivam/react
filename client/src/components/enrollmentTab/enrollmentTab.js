@@ -16,6 +16,8 @@ class EnrollmentTab extends Component {
             deleteModal: false,
             startDate: null,
             isModal: '',
+            id: '',
+            isMandatoryValidation: false
         }
         this.editedRowData = {};
         this.updatedData = {};
@@ -48,7 +50,7 @@ class EnrollmentTab extends Component {
         this.setState({
             startDate: d
         });
-        this.setState({ openModal: true, isModal: "" });
+        this.setState({ openModal: true, isModal: "", id:data.id,isMandatoryValidation: false });
         this.editedRowData = data;
     }
     _deleteRowHandler = () => {
@@ -60,6 +62,7 @@ class EnrollmentTab extends Component {
     }
     _enrollmentDateHandler = (data) => {
         if (this.isValidDate(data) && data != null) {
+            this.setState({isMandatoryValidation: false});
             this.month = data // for showing in UI
             this.formatedMonth = data //for sending in backend
             this.setState({
@@ -67,12 +70,20 @@ class EnrollmentTab extends Component {
             });
             this.formatedMonth.setMinutes(30);
             this.formatedMonth.setHours(5);
-            this.formatedMonth = this.formatedMonth.toISOString()
+            this.formatedMonth = this.formatedMonth.toISOString();
+            this.state.enrollmentTargets.map(record => {
+                if (record.id!= this.state.id && record.month == this.formatedMonth) {
+                    window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
+                    this.setState({ startDate: null })
+                    return false;
+                }
+            })
+            
             this.updatedData["month"] = this.formatedMonth;
         }
         else {
             if (data != null) {
-                window.Materialize.toast("Please enter valid Date", 2000);
+                window.Materialize.toast(localConstant.warningMessages.VALID_DATE, 2000);
                 this.setState({ startDate: null })
             }
         }
@@ -80,9 +91,10 @@ class EnrollmentTab extends Component {
     _inputHandlerChange = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
         this.updatedData[e.target.name] = value;
+        this.setState({isMandatoryValidation: false});
     }
     _cancelEnrollmentTarget = () => {
-        this.setState({ openModal: false });
+        this.setState({ openModal: false,id:'' });
         this.setState({ deleteModal: false });
         this.updatedData = {};
         this.editedRowData = {};
@@ -90,41 +102,76 @@ class EnrollmentTab extends Component {
     _showEnrollment = () => {
         this.setState({ startDate: null })
         this.editedRowData.target = "";
-        this.setState({ openModal: true, isModal: "Add" });
+        this.setState({ openModal: true, isModal: "Add",isMandatoryValidation: false });
     }
     _addEnrollmentTarget = (e) => {
         e.preventDefault();
         this.previousId = uuid.v4();
         if (this.updatedData && !(objectUtil.isEmpty(this.updatedData))) {
             if (this.enrollmentValidation(this.updatedData)) {
+                // this.state.enrollmentTargets && this.state.enrollmentTargets.map(record => {           
+                //     if (record.month == this.formatedMonth) {
+                //         window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
+                //         this.setState({ startDate: null })
+                //     }
+                //     else {
+                //         console.log("1",this.updatedData)
+                //         this.updatedData["month"] = this.formatedMonth;
+                //         this.updatedData["id"] = this.previousId;
+                //         this.updatedData["orgId"] = this.props.selectedLocation.id;
+                //         this.updatedData["statusFlag"] = "new";
+                //         console.log("2",this.updatedData)
+                //         this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
+                //         console.log("3",this.updatedData)
+                //         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
+                //         this.props.SaveEnrollment(this.updatedData)
+                //         this._cancelEnrollmentTarget();
+                //     }
+                // })
                 this.updatedData["month"] = this.formatedMonth;
-                this.updatedData["id"] = this.previousId;
-                this.updatedData["orgId"] = this.props.selectedLocation.id;
-                this.updatedData["statusFlag"] = "new";
-                this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
-                this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
-                this.props.SaveEnrollment(this.updatedData)
-                this._cancelEnrollmentTarget();
+                        this.updatedData["id"] = this.previousId;
+                        this.updatedData["orgId"] = this.props.selectedLocation.id;
+                        this.updatedData["statusFlag"] = "new";
+                        this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
+                        this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
+                        this.props.SaveEnrollment(this.updatedData)
+                        this._cancelEnrollmentTarget();
             }
         }
         else {
-            window.Materialize.toast("Please enter the fields", 2000);
+            //window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
+            this.setState({isMandatoryValidation: true});
         }
     }
     _updateEnrollmentTarget = () => {
         if (this.editedRowData.hasOwnProperty("statusFlag") && this.editedRowData["statusFlag"] == "new") {
             this.updatedData["statusFlag"] = "new";
         }
-        else
+        else {
             this.updatedData["statusFlag"] = "modified";
+        }
+        //this.updatedData["month"] = this.formatedMonth;
         this.updatedData["orgId"] = this.props.selectedLocation.id;
         const combinedData = Object.assign(this.editedRowData, this.updatedData);
-        this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, combinedData);
-        this.props.SaveEnrollment(combinedData);
-        this.gridChildren.refreshCells(true);
-        this._cancelEnrollmentTarget();
-        this.setState({ startDate: null })
-        this.editedRowData.target = "";
+        //if (this.updatedData && !(objectUtil.isEmpty(this.updatedData))) {
+            if (this.enrollmentValidation(combinedData)) {
+                // this.state.enrollmentTargets.map(record => {
+                //     //console.log(record.month)
+                //     if (record.month == combinedData.month) {
+                //         //window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
+                //         //this.setState({ startDate: null })
+                //     }
+                  //  else {
+                        this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, combinedData);
+                        this.props.SaveEnrollment(combinedData);
+                        this.gridChildren.refreshCells(true);
+                        this._cancelEnrollmentTarget();
+                        this.setState({ startDate: null })
+                        this.editedRowData.target = "";
+                   // }
+                //})
+            }
+        //}
     }
     _deleteEnrollmentTarget = () => {
         let selectedData = this.gridChildren.getSelectedRows();
@@ -155,7 +202,8 @@ class EnrollmentTab extends Component {
     }
     enrollmentValidation = (data) => {
         if (objectUtil.isEmpty(data.month) || objectUtil.isEmpty(data.target)) {
-            window.Materialize.toast("Please enter both the fields", 2000);
+            //window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
+            this.setState({isMandatoryValidation: true});
             return false;
         }
         if (data.target < 0) {
@@ -165,6 +213,7 @@ class EnrollmentTab extends Component {
         return true;
     }
     render() {
+        console.log(this.state.enrollmentTargets)
         return (
             <Fragment>
                 {this.state.enrollmentTargets ?
@@ -200,7 +249,7 @@ class EnrollmentTab extends Component {
                                             <DatePicker
                                                 name="month"
                                                 autoComplete="off"
-                                                placeholderText="Click to select a date"
+                                                placeholderText="Click to select a month"
                                                 dateFormat="yyyy-MM-dd"
                                                 filterDate={this._isFirstday}
                                                 showYearDropdown
@@ -208,6 +257,8 @@ class EnrollmentTab extends Component {
                                                 showMonthDropdown
                                                 selected={this.state.startDate}
                                                 onChange={this._enrollmentDateHandler}
+                                                onKeyDown={(evt) => ((evt.which >= 48 && evt.which <= 57)||(evt.which >= 65 && evt.which <= 90) 
+                                                    || (evt.which >= 97 && evt.which <= 122) || evt.which != 8 || evt.key !== '-') && evt.preventDefault()}
 
                                             />
                                         </div>
@@ -220,10 +271,16 @@ class EnrollmentTab extends Component {
                                                 onChange={this._inputHandlerChange}
                                                 defaultValue={this.editedRowData.target}
                                                 key={this.editedRowData.target}
-                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-') && evt.preventDefault()}
+                                                placeholder="Enter a target"
+                                                onKeyDown={(evt) => (evt.key === 'e' || evt.key === '+' || evt.key === '-' || evt.key === '.') && evt.preventDefault()}
                                             />
                                         </div>
                                     </div>
+                                    <div>
+                                    {this.state.isMandatoryValidation == true ?
+                                            <p className="errorMessage right m-0 pl-3">{localConstant.warningMessages.MANDATORY_VALIDATION}</p>
+                                             : null} 
+                                            </div>
                                 </Modal>
                                 {this.props.applicationMode !== 'VIEW' ?
                                     <div className="right pt-1 pr-2">

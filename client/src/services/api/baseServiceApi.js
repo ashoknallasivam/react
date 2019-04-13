@@ -5,7 +5,7 @@ class BaseServiceApi {
 
     getBaseURL() {
         let baseUrl;
-        console.log(process.env.NODE_ENV);
+        // console.log(process.env.NODE_ENV);
         switch (process.env.NODE_ENV) {
             case "dev":
                 baseUrl = config.devEnv.baseUrl;
@@ -57,7 +57,7 @@ class BaseServiceApi {
         return new Promise((resolve, reject) => {
             //const url = this.getBaseURL();
             const url = request.url
-            console.log(url);
+            // console.log(url);
             const method = request.method;
             const payload = request.payload;
             const async = true;
@@ -93,7 +93,7 @@ class BaseServiceApi {
                 }
 
                 else {
-                    console.log(xhr.statusText);
+                    // console.log(xhr.statusText);
                 }
             };
 

@@ -8,13 +8,17 @@ class Dashboard extends React.Component {
    constructor(props) {
       super(props);
       this.state = {
-         // preloader: true,
+         preloader: true,
          publishStatus: "published"
       };
    }
    componentDidMount() {
     this.props.actions.fetchAllTenants().then((response)=>{
-       this.props.actions.fetchSavedTenants()
+       
+      this.setState({
+         preloader: false
+      })
+      this.props.actions.fetchSavedTenants()
     });
       }
 
@@ -62,8 +66,8 @@ _loaderHandler = (e) =>{
                {this.props.projectList  && 
                <Fragment>
                   <Row className="card-container">
-                     <Col s={12} className={Object.keys(this.props.projectList) >0 ?  "valign-wrapper loader-overlay"  :  "hide"}>
-                        <Preloader className="spinner" size='big'  active={Object.keys(this.props.projectList) > 0 ? true  :false} />
+                     <Col s={12} className={this.state.preloader ?  "valign-wrapper loader-overlay"  :  "hide"}>
+                        <Preloader className="spinner" size='big'  active={this.state.preloader  ? true  :false} />
                      </Col> 
                         <Fragment>
                            <div className="dashboard-btn">

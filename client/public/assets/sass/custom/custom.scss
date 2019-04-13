@@ -81,6 +81,13 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         text-transform: uppercase;
     }
 }
+#SaveSuccessfullModal{
+    .modal-footer{
+        display: none !important;
+    }
+
+    width: 25% !important;
+}
 
 .modalButton {
     float: right !important;
@@ -624,4 +631,7 @@ body {
     }
     .modal {
         overflow-y: inherit !important;
+    }
+    div table tr td {
+        padding: 3px 5px;
     }

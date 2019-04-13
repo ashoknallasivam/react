@@ -2,6 +2,7 @@ import { debug } from "util";
 
 const initialState = {
     Projects: {},
+    userId:'',
     error: []
 }
 const store = (state = initialState, action) => {
@@ -159,7 +160,10 @@ const store = (state = initialState, action) => {
                 userId: action.payload
             }
             return state;
-
+        
+        case 'REMOVE_PROJECT':
+         delete state.Projects[action.payload]
+        return state;
         // case 'GET_USER_INFO_ERROR':
         // state = {
         //     ...state,

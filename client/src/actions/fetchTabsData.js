@@ -12,46 +12,16 @@ var config = {
     headers: {'Content-Type': "application/json", 'Authorization': "Bearer " + finalToken}
 };
 
-const actions = {
-    GetSingleTenantSuccess: (payload) =>{
-        return{
-            type:"FETCH_SINGLE_TENANT_SUCCESS",
-            payload : payload
-        };
-    },
-    GetSingleTenantError: (payload) => {
-        return {
-            type: 'FETCH_SINGLE_TENANT_ERROR',
-            payload: payload,
-        };
-    }
-    
-}
 
-
-export const fetchSingleTenant = (id) => (dispatch, getState) => {
-    const state = getState();
-    
-//    if(state.projectList.Projects[id])
-//    {
-//     return true   
-//    }
-//    else {
-       return axios.get(`${BACKEND_URL}/dashboard_data/${id}`,  { headers: authHeaderFinal() }).then(response => {
-            if(response.status === 200){
-                 dispatch(actions.GetSingleTenantSuccess(response.data))
-                 return true
-                }
-             
-        })
-    // }
-}
 
     
 export const fetchMenuList = () => (dispatch, getState) => {
         return axios.get(`${BACKEND_URL}/menu`, { headers: authHeaderFinal() }).then(response => {
                 return  (response.data)
+        }).catch(error=>{
+            // console.log(error)
         })
+    
 }
 
       
@@ -62,6 +32,8 @@ export const fetchResourceList = () => (dispatch, getState) => {
             return  (response.data)
             }
          
+    }).catch(error=>{
+        // console.log(error)
     })
 }
 

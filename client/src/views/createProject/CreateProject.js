@@ -28,7 +28,7 @@ class CreateProject extends Component {
       selectedLocation: {
         id: ''
       },
-      preloader: '',
+      preloader: true,
       fetched: false,
       applicationMode: '',
       addOrg: false,
@@ -50,13 +50,27 @@ class CreateProject extends Component {
 
     // checking for the id of clicked card and fetching data
     if (this.props.location.state !== undefined) {
-      this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response => {
+      if (this.props.location.state.applicationMode === "VIEW" ) {
+        this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response => {
+          if(response.status == 200)
+          {
+          this.setState({
+            preloader: false,
+            applicationMode: this.props.location.state.applicationMode
+          })
+          }
+          else{
+            alert('Fetching data error, try refreshing the page')
+            this.setState({
+              preloader: false,
+            })
+          }
+        });
+      } else {
         this.setState({
-          fetched: response,
-          applicationMode: this.props.location.state.applicationMode
+          preloader: false
         })
-      });
-
+      }
       // checking for the data of the selected project
       if (this.props.projectList[this.props.location.state.id] != undefined) {
         let currentProject = this.props.projectList[this.props.location.state.id]
@@ -76,6 +90,7 @@ class CreateProject extends Component {
       this.setState({
         applicationMode: "CREATE",
         id: uuid.v4(),
+        preloader: false
       })
     }
   }
@@ -87,23 +102,15 @@ class CreateProject extends Component {
   componentWillReceiveProps(props) {
     if (props.location.state !== undefined) {
       let currentProject = props.projectList[props.location.state.id];
-      // let allOrganisations =currentProject.orgs;
-      // (Object.keys(currentProject.orgs)).map((item)=>{
-      //    if (currentProject.orgs[item].statusFlag !== undefined){
-      //   if (currentProject.orgs[item].statusFlag == "delete" || currentProject.orgs[item].statusFlag == "ignore"){
-      //     delete allOrganisations[currentProject.orgs[item].id] 
-      //   }}
-      //   })
       this.setState({
         currentProject: currentProject,
-        name: currentProject.name,
-        id: currentProject.id,
-        allOrganisations: currentProject.orgs,
-        orgsList: currentProject.orgsList
+        name: currentProject !== undefined ? currentProject.name : '',
+        id: currentProject !== undefined ? currentProject.id : '',
+        allOrganisations: currentProject !== undefined ? currentProject.orgs : {},
+        orgsList: currentProject !== undefined ? currentProject.orgsList : []
       })
     }
     else {
-      // let id = props.projectList[this.state.id] ;
       let currentProject = props.projectList[this.state.id];
       this.setState({
         currentProject: currentProject,
@@ -114,6 +121,7 @@ class CreateProject extends Component {
       })
     }
   }
+  
   _handleOrgDropdown = (e) => {
     e.preventDefault();
     let allLocations = {};
@@ -143,8 +151,6 @@ class CreateProject extends Component {
       }
     }))
   }
-
-
   SaveStudyConfig = (data) => {
     // this.setState(({
     //   selectedLocation: {
@@ -268,6 +274,13 @@ class CreateProject extends Component {
         this.setState({
           [e.target.name]: this.state.allLocations[item]
         })
+        this.state.currentProject.orgsList.map(parentName =>{
+          if(parentName.id==this.state.allLocations[item].parentId){
+            this.setState({
+            locParentName : parentName.name
+            })
+          }
+        }) 
       }
     })
   }
@@ -299,18 +312,7 @@ class CreateProject extends Component {
       })
     }
   }
-  _handleDelete = () => {
-    if (this.state.selectedOrganisation.id !== "") {
-      confirm("Delete Organization?")
-      delete this.state.allOrganisations[this.state.selectedOrganisation]
-    }
-    this.setState({
-      selectedOrganisation: {
-        id: ''
-      },
-      allLocations: []
-    })
-  }
+  
   saveTenant = (e) => {
     if (this.state.name !== '') {
       let data;
@@ -327,7 +329,8 @@ class CreateProject extends Component {
           name: this.state.name,
           orgs: this.state.allOrganisations,
           orgsList: this.state.orgsList,
-          statusFlag: "new"
+          statusFlag: "new",
+          
         }
       }
       this.props.actions.SaveTenant(this.state.id, data);
@@ -336,43 +339,93 @@ class CreateProject extends Component {
     }
   }
   _handleModalClose = (e) => {
+    
     this.setState({
-      [e]: !this.state[e]
+      [e]: false
     })
   }
   _discard = () => {
-    this.setState({
-      name: this.state.currentProject.name,
-      id: this.state.currentProject.id,
-      allOrganisations: this.state.currentProject.orgs,
-      orgsList: this.state.currentProject.orgsList,
-      allLocations: [],
-      selectedOrganisation: {
-        id: ''
-      },
-      selectedLocation: {
-        value: ''
-      },
-    })
-  }
+    if(this.state.applicationMode == "EDIT"){
+     this.setState({
+       preloader : true,
+       name: this.state.currentProject.name,
+       id: this.state.currentProject.id,
+       allOrganisations: this.state.currentProject.orgs,
+       orgsList: this.state.currentProject.orgsList,
+       allLocations: [],
+       selectedOrganisation: {
+         id: ''
+       },
+       selectedLocation: {
+         id: ''
+       },
+     });
+     this.props.actions.fetchSingleTenant(this.state.id).then(response => {
+      if(response.status === 200 )
+      { 
+        this.setState({
+         preloader: false,
+       })
+      }else{
+
+        alert('Fetching data failed, try refreshing the ')
+        this.setState({
+          preloader: false,
+        })
+      }
+     });
+   }
+   else{
+     this.props.actions.removeProject(this.state.id)
+     this.props.history.push({
+       pathname: '/dashboard',
+   })
+   }
+   }
   finalPublish = () => {
+    debugger
     this.setState({
       preloader: true
     })
     this.props.actions.publishProject(this.state.id).then(response => {
-      this.setState({
-        fetched: false,
-      })
+    
+      if (response.status == 200) {
+        this.props.actions.fetchSingleTenant(response.data.id).then(response => {
+          this.setState({
+            preloader: false,
+            publishInfo: response.message
+          })
+          if (response.data.status == 200) {
+            alert("Project is Successfully Published")
+            this.props.history.push({
+              pathname: '/dashboard',
+            })
+          } else {
+            alert("Project is Successfully Published")
+            this.props.history.push({
+              pathname: '/dashboard',
+            })
+            this.setState({
+              preloader: false
+
+            })
+          }
+        })
+      } 
+      else {
+        alert("Publish error. Please refer logs. ")
+        this.setState({
+          preloader: false,
+        })
+      }
+
     });
-    this.props.history.push({
-      pathname: '/dashboard',
-      state: { flag: 'published' }
-    })
   }
+
   finalSave = () => {
     this.props.actions.saveProject(this.state.id).then(response => {
       this.setState({
-        fetched: false,
+        preloader: false,
       })
 
       this.props.history.push({
@@ -384,30 +437,33 @@ class CreateProject extends Component {
       })
     })
   }
+
   render() {
     return (
       <Fragment>
-        {(this.state.fetched == true || this.state.applicationMode == "CREATE") ?
-          <Row className="create-project-page">
-            <Col s={12} className={this.state.preloader ? "valign-wrapper leftzero loader-overlay" : "hide"}>
-              <Preloader className="spinner" size='big' active={this.state.preloader} />
-            </Col>
-            <Col className="z-depth-4 col-centered mt-2" s={12} m={12} l={12} xl={12}>
-              <Row className="project-form">
-                <Col s={12} m={12} l={12} xl={12} className=' mt-1'>
-                  <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false} onBlur={this.saveTenant} />
-                </Col>
+        {/* {(this.state.fetched == true || this.state.applicationMode == "CREATE") ? */}
+        <Row className="create-project-page">
+          <Col s={12} className={this.state.preloader ? "valign-wrapper leftzero loader-overlay-view" : "hide"}>
+            <Preloader className="spinner" size='big' active={this.state.preloader} />
+          </Col>
+          <Col className="z-depth-4 col-centered mt-2" s={12} m={12} l={12} xl={12}>
+            <Row className="project-form">
+              <Col s={12} m={12} l={12} xl={12} className='project_name mt-1'>
+                <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0 project_name' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false} onBlur={this.saveTenant} />
+              </Col>
 
-                <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
-                  <Col s={12} m={6} l={6} xl={6}>
-                    <select className="mt-5 pl-0 col s8 Dropdown " name="organisation" label="Organization" onChange={this._handleOrgDropdown} value={this.state.selectedOrganisation.id} disabled={this.state.name != "" ? false : true} >
-                      <option value="" disabled >Choose Organization</option>
+              <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
+                <Col s={12} m={6} l={6} xl={6} className="org-loc">
+                  <label>Organization</label>
+                  <div>
+                    <select className="mt-1 ml-0 pl-0 col s8 Dropdown " name="organisation" onChange={this._handleOrgDropdown} value={this.state.selectedOrganisation.id} disabled={this.state.name != "" ? false : true} >
+                      <option value="" disabled >Select an organization</option>
                       {
                         Object.keys(this.state.allOrganisations).map((id, i) => {
                           if (this.state.allOrganisations[id].statusFlag == "new" || this.state.allOrganisations[id].statusFlag == "modified" || this.state.allOrganisations[id].statusFlag == undefined) {
                             return <option id={i} value={this.state.allOrganisations[id].id}>{this.state.allOrganisations[id].name}</option>
                           } else if (this.state.allOrganisations[id].statusFlag == "delete" || this.state.allOrganisations[id].statusFlag == "ignore") {
-                            return <option id={i} value={this.state.allOrganisations[id].id} className="hide">deleted Organization</option>
+                            return <option id={i} value={this.state.allOrganisations[id].id} className="hide">deleted Location</option>
                           }
                         })
                       }
@@ -429,12 +485,17 @@ class CreateProject extends Component {
                           userId={this.props.userId}
 
                         />
-                        {this.state.selectedOrganisation.id != "" ?
-                          <Fragment>
-                            <Button className='orgIcon col s12 m2 l2 xl2 mt-3' name="deleteOrg" onClick={this._handleModal} >
-                              <i className="material-icons" title='Delete'>delete</i>
-                            </Button>
-                            <FormDeleteModal header={"Delete Organization"} name="deleteOrg" open={this.state.deleteOrg}
+                         <FormDeleteModal header={"Delete Organization"} name="deleteOrg" open={this.state.deleteOrg}
+                              setValues={this._setValues}
+                              handleModalClose={this._handleModalClose}
+                              allOrganisations={this.state.allOrganisations}
+                              allLocations={this.state.allLocations}
+                              orgsList={this.state.orgsList}
+                              selectedOrganisation={this.state.selectedOrganisation}
+                              tenantId={this.state.id}
+                              applicationMode={this.state.applicationMode}
+                              userId={this.props.userId} />
+                        <FormEditModal header={"Edit Organization"} name="editOrg" open={this.state.editOrg}
                               setValues={this._setValues}
                               handleModalClose={this._handleModalClose}
                               allOrganisations={this.state.allOrganisations}
@@ -445,34 +506,43 @@ class CreateProject extends Component {
                               applicationMode={this.state.applicationMode}
                               userId={this.props.userId} />
 
+
+                        {this.state.selectedOrganisation.id != "" ?
+                          <Fragment>
+                            <Button className='orgIcon col s12 m2 l2 xl2 mt-3' name="deleteOrg" onClick={this._handleModal} >
+                              <i className="material-icons" title='Delete'>delete</i>
+                            </Button>
                             <Button className='orgIcon col s12 m2 l2 xl2 mt-3' name="editOrg" onClick={this._handleModal}  >
                               <i className="material-icons" title='Update'>edit</i>
                             </Button>
-                            <FormEditModal header={"Edit Organization"} name="editOrg" open={this.state.editOrg}
-                              setValues={this._setValues}
-                              handleModalClose={this._handleModalClose}
-                              allOrganisations={this.state.allOrganisations}
-                              allLocations={this.state.allLocations}
-                              orgsList={this.state.orgsList}
-                              selectedOrganisation={this.state.selectedOrganisation}
-                              tenantId={this.state.id}
-                              applicationMode={this.state.applicationMode}
-                              userId={this.props.userId} />
                           </Fragment>
                           : null
                         }
                       </Fragment>
                     }
-                  </Col>
-                  {this.state.selectedOrganisation.id != '' ?
-                    <Col s={12} m={6} l={6} xl={6}>
-                      <select className="mt-5 pl-0 col s8 Dropdown" name="selectedLocation" label="location" onChange={this._handleLoc} value={this.state.selectedLocation.id} disabled={this.state.allOrganisations.length != 0 ? false : true}>
-                        <option value="" disabled >Choose Location</option>
+                  </div>
+                </Col>
+                {this.state.selectedOrganisation.id != '' ?
+                  <Col s={12} m={6} l={6} xl={6} className="org-loc">
+                    <label>Location</label>
+                    <div>
+                      <select className="mt-1 ml-0 pl-0 col s8 Dropdown" name="selectedLocation" onChange={this._handleLoc} value={this.state.selectedLocation.id} disabled={this.state.allOrganisations.length != 0 ? false : true}>
+                        <option value="" disabled >Select a location</option>
                         {
-                          (Object.keys(this.state.allLocations)).map((iteratedValue, i) =>
-                            <option id={i} value={this.state.allLocations[iteratedValue].id}>{this.state.allLocations[iteratedValue].name}</option>
-                          )}
+                          (Object.keys(this.state.allLocations)).map((iteratedValue, i) =>{
+                            if (this.state.allLocations[iteratedValue].statusFlag == "new" || this.state.allLocations[iteratedValue].statusFlag == "modified" || this.state.allLocations[iteratedValue].statusFlag == undefined) {
+                              return  <option id={i} value={this.state.allLocations[iteratedValue].id}>{this.state.allLocations[iteratedValue].name}</option>
+                            } else if (this.state.allLocations[iteratedValue].statusFlag == "delete" || this.state.allLocations[iteratedValue].statusFlag == "ignore") {
+                              return <option id={i} value={this.state.allLocations[iteratedValue].id} className="hide">deleted Organization</option>
+                            }
+                          }
+                            // <option id={i} value={this.state.allLocations[iteratedValue].id}>{this.state.allLocations[iteratedValue].name}</option>
+                          )
+                         
+                          
+                          }
                       </select >
+                      
                       {this.state.applicationMode == 'VIEW' ?
                         null :
                         <Fragment>
@@ -489,13 +559,8 @@ class CreateProject extends Component {
                             applicationMode={this.state.applicationMode}
                             selectedOrganisation={this.state.selectedOrganisation}
                             userId={this.props.userId} />
-                          {(this.state.selectedLocation.id !== "") ?
-                            <Fragment>
-                              <Button className='col s12 m2 l2 xl2 orgIcon mt-3' name="deleteLoc" onClick={this._handleModal}  >
-                                <i className="material-icons" title='Delete'>
-                                  delete</i>
-                              </Button>
-                              <FormDeleteModal header={"Delete Location"} name="deleteLoc" open={this.state.deleteLoc}
+                          
+                          <FormDeleteModal header={"Delete Location"} name="deleteLoc" open={this.state.deleteLoc}
                                 setValues={this._setValues}
                                 handleModalClose={this._handleModalClose}
                                 allOrganisations={this.state.allOrganisations}
@@ -505,11 +570,7 @@ class CreateProject extends Component {
                                 tenantId={this.state.id}
                                 applicationMode={this.state.applicationMode}
                                 userId={this.props.userId} />
-
-                              <Button className='col s12 m2 l2 xl2 orgIcon mt-3' name="editLoc" onClick={this._handleModal} >
-                                <i className="material-icons" title='Update'>
-                                  edit</i>
-                              </Button>
+                              
                               <FormEditModal header={"Edit Location"} name="editLoc" open={this.state.editLoc}
                                 setValues={this._setValues}
                                 handleModalClose={this._handleModalClose}
@@ -520,44 +581,60 @@ class CreateProject extends Component {
                                 tenantId={this.state.id}
                                 applicationMode={this.state.applicationMode}
                                 userId={this.props.userId} />
+                         
+                          
+                          {(this.state.selectedLocation.id !== "") ?
+                            <Fragment>
+                              <Button className='col s12 m2 l2 xl2 orgIcon mt-3' name="deleteLoc" onClick={this._handleModal}  >
+                                <i className="material-icons" title='Delete'>
+                                  delete</i>
+                              </Button>
+                              <Button className='col s12 m2 l2 xl2 orgIcon mt-3' name="editLoc" onClick={this._handleModal} >
+                                <i className="material-icons" title='Update'>
+                                  edit</i>
+                              </Button>
                             </Fragment> : null
                           }
                         </Fragment>
                       }
-                    </Col> : null
-                  }
-                </Col>
-              </Row>
-            </Col>
-            {this.state.selectedOrganisation.id !== '' &&
-              <Col className="z-depth-4 col-centered mb-3 p-0" s={12} m={12} l={12} xl={12}>
-                <TabsProject currentProject={this.state.currentProject} selectedOrganisation={this.state.selectedOrganisation} selectedLocation={this.state.selectedLocation} applicationMode={this.state.applicationMode} upadateNew={this.upadateNew}
-                  SaveStudyConfig={this.SaveStudyConfig}
-                  SaveEnrollment={this.SaveEnrollment}
-                  SaveRoles={this.SaveRoles}
-                  SavePages={this.SavePages} />
+                      {this.state.selectedLocation.id !== ""?
+                        <div className="col s12 pl-0">
+                          <p className="mb-0">Parent: {this.state.locParentName}</p>
+                        </div>
+                      : null}
+                      
+                    </div>
+                  </Col> : null
+                }
               </Col>
-            }
-            <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
-              {/* Display Edit in view mode */}
-              {this.state.applicationMode == "VIEW" &&
-                <Button className="mt-1 CreateProjectPublish btn_primary" name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}>Edit</Button>}
-
-              {/* Display publish in create and edit mode */}
-              {this.state.applicationMode !== 'VIEW' &&
-                <Fragment>
-                  <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
-                  {/* Display Discard in if project name is not empty */}
-                  <Button className="mt-3 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true} waves='light'>Save</Button>
-                  <Button className="mt-3 mr-1 CreateProjectPublish btn_primary"   >Discard</Button>
-                </Fragment>
-              }
-            </Col>
-          </Row> :
-          <Col s={12} className="valign-wrapper loader-overlay-view">
-            <Preloader className="spinner" size='big' />
+            </Row>
           </Col>
-        }
+          {this.state.selectedOrganisation.id !== '' &&
+            <Col className="z-depth-4 col-centered mb-3 p-0" s={12} m={12} l={12} xl={12}>
+              <TabsProject currentProject={this.state.currentProject} selectedOrganisation={this.state.selectedOrganisation} selectedLocation={this.state.selectedLocation} applicationMode={this.state.applicationMode} upadateNew={this.upadateNew}
+                SaveStudyConfig={this.SaveStudyConfig}
+                SaveEnrollment={this.SaveEnrollment}
+                SaveRoles={this.SaveRoles}
+                SavePages={this.SavePages} />
+            </Col>
+          }
+          <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
+            {/* Display Edit in view mode */}
+            {this.state.applicationMode == "VIEW" &&
+              <Button className="mt-1 CreateProjectPublish btn_primary" name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}>Edit</Button>}
+
+            {/* Display publish in create and edit mode */}
+            {this.state.applicationMode !== 'VIEW' &&
+              <Fragment>
+                <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
+                {/* Display Discard in if project name is not empty */}
+                {this.state.applicationMode  === "CREATE" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
+                <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  >Discard</Button>
+              </Fragment>
+            }
+          </Col>
+        </Row>
+        {/* } */}
       </Fragment>
 
     )

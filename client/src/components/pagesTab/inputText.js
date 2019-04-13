@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import { Row, Input, Button, Modal, Col } from 'react-materialize';
 import LoadingSpinner from './loadingSpinner';
 import inputJson from './text.json';
-import Collapsible from 'react-collapsible';
+
 
 class IntputText extends Component {
 

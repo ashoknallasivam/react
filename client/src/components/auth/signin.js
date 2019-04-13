@@ -19,21 +19,8 @@ class Signin extends Component {
       environment: null,
       submitted: false
     };
-    this.rememberMe = false;
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  componentDidMount() {
-    if (localStorage.chkbx && localStorage.chkbx != "") {
-      this.rememberMe = JSON.parse(localStorage.chkbx);
-      this.setState({ username: localStorage.username });
-      this.setState({ password: localStorage.password });
-    } else {
-      this.rememberMe = false;
-      this.setState({ username: "" });
-      this.setState({ password: "" });
-    }
   }
 
   componentWillMount() {
@@ -76,19 +63,6 @@ class Signin extends Component {
       this.props.history.push('/twofactor')
     } else {
       this.setState({ submitted: true });
-    }
-  }
-
-  rememberMeHandler = () => {
-    this.rememberMe = !this.rememberMe;
-    if (this.rememberMe == true) {
-      localStorage.username = this.state.username;
-      localStorage.password = this.state.password;
-      localStorage.chkbx = this.rememberMe;
-    } else {
-      localStorage.username = '';
-      localStorage.password = '';
-      localStorage.chkbx = '';
     }
   }
 
@@ -159,13 +133,8 @@ class Signin extends Component {
                 </Col>
                 {this.renderAlert()}
               </Row>
-              <Row className="remember-user">
-                <input type="checkbox" id="remember-me" onChange={this.rememberMeHandler} key={this.rememberMe}
-                  defaultChecked={this.rememberMe} disabled={(username && password) ? false : true} />
-                <label htmlFor="remember-me">Remember me</label>
-              </Row>
               <Row className="center submit-container">
-                <button className="btn waves-light btn_primary" type="submit" name="action">Submit
+                <button className="btn btn_primary" type="submit" name="action">Submit
                   <i className="material-icons right">send</i>
                 </button>
               </Row>

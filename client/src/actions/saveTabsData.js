@@ -233,29 +233,6 @@ export const SaveOrganization = (tenantId, data) => (dispatch, getState) => {
         }
     })
     let neworgsList = newProject.orgsList;
-    console.log(index)
-    // console.log(neworgsList[index])
-    // if (data.statusFlag == 'modified') {
-    //     neworgsList[index] = data;
-    //     newProject = {
-    //         ...newProject,
-    //         orgs: {
-    //             ...newProject.orgs,
-    //             
-    //         },
-    //     }
-    // }
-     // else {
-    //     // create Organization
-    //     newProject = {
-    //         ...newProject,
-    //         orgs: {
-    //             ...newProject.orgs,
-    //             [data.id]: { ...data }
-    //         },
-    //         orgsList: [...newProject.orgsList, data]
-    //     }
-    // }
     if(index !== ''){
         newProject.orgs= {
             ...newProject.orgs,

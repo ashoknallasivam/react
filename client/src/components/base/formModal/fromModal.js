@@ -98,9 +98,23 @@ class FormModal extends Component {
                 value:''
               },
          });
-
+         let allLocations = {};
+        //  this.props.orgsList.map((data, index) => {
+        //    if (data.ttoId == newOrg.id) {
+     
+        //      allLocations = { ...allLocations, [data.id]: { ...data } }
+     
+        //    }
+        //    if (data.id == newOrg.id) {
+        //      selectedOrganisation = data
+        //    }
+        //  })
+         //let newLoc = {id:""}
          this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
+         //this.props.setValues('selectedOrganisation', newOrg)
+         //this.props.setValues('selectedLocation', newLoc)
          this.props.setValues('allOrganisations',allOrganisations)
+         //this.props.setValues('allLocations',allLocations)
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
           }
@@ -142,6 +156,7 @@ class FormModal extends Component {
            });   
            this.props.actions.SaveLocation(newLoc.tenantId, newLoc)
            this.props.setValues('allLocations',allLocations)
+           //this.props.setValues('selectedLocation', newLoc)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)
             }

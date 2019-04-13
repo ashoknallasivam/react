@@ -53,10 +53,10 @@ class dynamicControls extends React.Component {
   
   // Function to get data from child component
 	getInput(inputJSON){
-       console.log(inputJSON);
+      //  console.log(inputJSON);
 	  //Send the data to store via action 
 	 // this.props.actions.SavePages(this.state.tenantId,pageJSON)
-      console.log('Send this in a POST request:', inputJSON);
+      // console.log('Send this in a POST request:', inputJSON);
     }
 	
 	renderForm = (idx) => {
@@ -112,7 +112,7 @@ class dynamicControls extends React.Component {
 			options: optionsPayload,
    };
      
-	console.log('Send this in a POST request:', formPayload);
+	// console.log('Send this in a POST request:', formPayload);
 	//console.log(this.props.pageJson);
 	console.log(this.state);
 	

@@ -6,7 +6,7 @@ import locale from "react-json-editor-ajrm/locale/en";
 import PagePreview from './pagePreview';
 import DynamicControls from './dynamicControls';
 import uuid from 'uuid';
-
+import './pages.scss';
 
 
 class PagesTab extends Component {
@@ -69,15 +69,21 @@ class PagesTab extends Component {
 	CreatePage(event) {
 
 		const schema = {
-
-		}
+			  key: '',
+			  collection: '',
+			  title: '',
+			  subtitle: '',
+			  layout: [
+				
+			  ]
+			}
 
 		this.setState({
 
 			pageId: uuid.v4(),
 			statusFlag: 'new',
 			pageJson: schema,
-			editor: 'Edit',
+			editor: 'Add',
 			selectedPage: ''
 
 
@@ -86,15 +92,23 @@ class PagesTab extends Component {
 	}
 
 	// Function to get data from child component
-	getData(dynamicJSON) {
+	getData(dynamicJSON,key,collection,title,subtitle) {
 
 		//console.log(dynamicJSON);
 
 		let recipesCopy = JSON.parse(JSON.stringify(this.state.pageJson))
 		recipesCopy.layout = dynamicJSON
+		recipesCopy.key = key
+		recipesCopy.collection = collection
+		recipesCopy.title = title
+		recipesCopy.subtitle = subtitle
 
-		this.setState({ pageJson: recipesCopy })
+        this.setState({ pageJson: recipesCopy  }, () => {
+			this.handleSave(); // Call back function as SetState is Asynch
+		})
 
+
+        		
 		//console.log(this.state.pageJson);
 
 
@@ -138,7 +152,29 @@ class PagesTab extends Component {
 	jsonValue(e, data) {
 		// console.log("Json: " + e.plainText);
 		//alert(JSON.stringify(e.json));
-		this.setState({ pageJson: JSON.parse(e.json) });
+		
+		this.setState({ pageJson: JSON.parse(e.json) }, () => {
+			this.handleSave(); // Call back function as SetState is Asynch
+		})
+	}
+	
+	
+	handleSave() {
+      //alert('SAVE');
+       if (this.state.pageJson) {
+
+			//let newJson = {'_id': uuid.v4(),'statusFlag':'new','location':this.state.selectedLocation.id, ...this.state.pageJson};
+			let newJson = { '_id': this.state.pageId, 'statusFlag': this.state.statusFlag, 'location': this.state.selectedLocation.id, ...this.state.pageJson };
+			this.props.actions.SavePages(this.state.tenantId, newJson)
+			this.props.SavePages(newJson)
+			//console.log(newJson);		
+		}
+        this.setState({
+			pageJson: this.state.pageJson,
+			
+    	});
+				
+		
 
 	}
 
@@ -146,7 +182,7 @@ class PagesTab extends Component {
 	handleSubmit(e) {
 
 		e.preventDefault();
-		//alert('Submit');   
+		  
 		if (this.state.pageJson) {
 
 			//let newJson = {'_id': uuid.v4(),'statusFlag':'new','location':this.state.selectedLocation.id, ...this.state.pageJson};
@@ -177,11 +213,11 @@ class PagesTab extends Component {
 		var dynamicForm = '';
 
 		if (viewOnly == false) {
-			dynamicForm = <DynamicControls sendData={this.getData} pageJson={pageJson} pages={this.props.pages} selectedPage={this.state.selectedPage} />;
+			dynamicForm = <DynamicControls sendData={this.getData} pageJson={pageJson} pages={this.props.pages} selectedPage={this.state.selectedPage} mode={this.state.editor} />;
 		}
 
 
-		if (this.state.editor == 'Edit') {
+		if (this.state.editor == 'Edit' || this.state.editor == 'Add' ) {
 
 
 			jEditor =
@@ -208,29 +244,6 @@ class PagesTab extends Component {
 										/>
 									</Col>
 								</Row>
-
-
-								{viewOnly == false ? (
-									<Row >
-										<Col s={4}>
-											<button className="btn " type="submit" name="action">Submit</button>
-
-
-											{/*<Modal header="Modal Header" trigger={trigger}>
-										Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-										{dynamicForm}
-										 </Modal>*/}
-										</Col>
-										<Col s={4}>
-											{/* <button className="btn " type="submit" name="action" onClick={this.showDynamicForm}>Add</button>*/}
-
-										</Col>
-									</Row>
-
-								) : ('')
-
-								}
-
 							</form>
 						</div>
 					</Col>
@@ -243,7 +256,7 @@ class PagesTab extends Component {
 
 		const rowData = [];
 		const rowIndex = [];
-
+		var dropDown = '';
 		if (this.state.pages) {
 
 			this.state.pages.map((item, index) => (
@@ -258,10 +271,35 @@ class PagesTab extends Component {
 
 
 			));
+            if (this.state.pages.length > 0 ) {
+				
+				dropDown= <div><label>Pages</label>
+											<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
+											  <option value='' >Select Page</option>
+											  {rowData.map(itemval => {
+												  var selected='';
+												  if(itemval.index == this.state.selectedPage )
+												  {
+													  selected = 'selected';
+													  
+												  }
+												  
+												return <option value={itemval.index} selected={selected}>{itemval.title}</option>
 
-			const trigger = <Button>Open Modal</Button>;
+											  })}
+											</select></div>
+				
+			} else {
+									
+				dropDown = <div><label>Pages</label>
+											<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
+											  <option value='' >No pages to display. Create a new page</option>
+											 </select></div>
+				
+			}
+		
 			return (
-
+			
 				<Row className='m-0'>
 					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >&nbsp;</Col>
 					<div >
@@ -269,13 +307,9 @@ class PagesTab extends Component {
 							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
 								<Row>
 									<Col s={6} className='z-depth-8 mr-0'>
-										<Input s={12} name='page_id' id='page_id' type='select' className="pl-0" label='Pages' onChange={this.handleChange} value={this.state.selectedPage} >
-											<option value=''>Select Page</option>
-											{rowData.map(itemval => {
-												return <option value={itemval.index}>{itemval.title}-{itemval.id}</option>
-
-											})}
-										</Input>
+									 
+									 {dropDown}
+										
 									</Col>
 									{viewOnly == false ? (
 										<Col s={2} className='z-depth-8 mr-0'>

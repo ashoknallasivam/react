@@ -42,7 +42,7 @@ export const HeaderData = {
             {
                 "headerName": "Ratio",
                 "field": "ratio",
-                "width": 75
+                "width": 75,
             },
             {
                 "headerName": "Sequence Limit",

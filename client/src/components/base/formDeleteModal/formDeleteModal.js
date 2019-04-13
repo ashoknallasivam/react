@@ -58,7 +58,7 @@ class FormDeleteModal extends Component {
          let selectedOrganisation = {
            id : ''
          }
-        //  this.props.setValues('selectedOrganisation',selectedOrganisation) 
+         this.props.setValues('selectedOrganisation',selectedOrganisation) 
          this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
          this.props.setValues('allOrganisations',allOrganisations) 
          this.props.setValues('orgsList', orgsList)
@@ -88,10 +88,12 @@ class FormDeleteModal extends Component {
                       name:''
                     }
                   })
-                 
+                 let selectedLocation = {
+                   id:''
+                 }
            this.props.actions.SaveLocation(newLoc.tenantId, newLoc) 
            this.props.setValues('allLocations',allLocations)
-           this.props.setValues('selectedLocation',this.state.selectedLocation)
+           this.props.setValues('selectedLocation',selectedLocation)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)
             }

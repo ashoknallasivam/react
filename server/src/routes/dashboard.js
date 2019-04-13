@@ -20,7 +20,7 @@ router.get('/dashboard_data', (req, res) => {
     requestOptions.headers.Authorization = "Bearer " + token;
     // preparing dashboard list.
     mapping(requestOptions).then(response => {
-        res.send(mapToObjectRec(response.mapProjects));
+        res.status(200).send(mapToObjectRec(response.mapProjects));
     }).catch(error => {
         logging.applogger.error(error);
         res.status(500).send({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
@@ -44,7 +44,7 @@ router.get('/dashboard_data/:id', (req, res) => {
     mapping(requestOptions).then(response => {
         selectedProjectInfo(response, inpParam.id, requestOptions).then(response => {
             if(req.query.export!=="true"){
-                res.send(response);
+                res.status(200).send(response);
             } else {
 
                 // export project.
@@ -206,7 +206,10 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
             // listing the selected project role.
         return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
             allRoles = [...response.data];
+            console.log(mapProjects.get(parseInt(projectId)).orgsList)
             for (var role of allRoles) {
+
+
                 for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
                     if (org.id == role.orgId) {
                         role.menus = [];

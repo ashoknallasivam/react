@@ -34,7 +34,7 @@ class Header extends Component {
             importButton = <Link to="" onClick={this.handleImport} className="pl-2">{"Import project(s)"}</Link>;
             profileButton = <ul className="right hide-on-med-and-down">
                 <li>
-                    <a onClick={this.toggleProfileDropDown} className="waves-block waves-light profile-button" data-activates="profile-dropdown">
+                    <a onClick={this.toggleProfileDropDown} className="waves-block profile-button" data-activates="profile-dropdown">
                         <span className="avatar-status avatar-online">
                             <img src={profileImg} alt="avatar" />
                         </span>

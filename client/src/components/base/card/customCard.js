@@ -13,11 +13,12 @@ class CustomCard extends React.Component {
     }
     _handleCardClick = (e) => {
         // this.props.actions.routeTo("/viewedit");
+      
         this.props.history.push({
             pathname: '/viewedit',
             state: {
                 id: e.currentTarget.id,
-                applicationMode: "VIEW"
+                applicationMode: this.props.projectStatus == "save" ? "CREATE" : "VIEW"
             }
         })
     }
@@ -33,14 +34,14 @@ class CustomCard extends React.Component {
         this.props.actions.fetchSingleTenant(e.target.parentElement.id).then(response => {
             let id = this.props.actions.cloneProject(ProjectId);
             this.props.history.push({
-                pathname: '/viewedit',
+                pathname: '/createProject',
                 state: {
                     id: id,
                     applicationMode: "CREATE"
                 }
             })
 
-            this.props.loaderHandler(false)
+            this.props.loaderHandler(false);
         });
     }
     _handleExport = (e) => {

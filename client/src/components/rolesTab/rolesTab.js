@@ -26,7 +26,8 @@ class RolesTab extends Component {
             DeleteModal : false,
             roleDefaultValue:'',
             disabledSelectRole : false,
-            noRoleDisplay: true
+            noRoleDisplay: true,
+            SaveSuccessfullModal :false
         };
         this.rolesData = {};
         this.menuData = {};
@@ -57,7 +58,8 @@ class RolesTab extends Component {
     }
     CancelconfirmationModal = () => {
         this.setState({
-            DeleteModal : false
+            DeleteModal : false,
+            SaveSuccessfullModal: false
         })
     }
     roleBodyCreate = (description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name) => {
@@ -164,6 +166,11 @@ class RolesTab extends Component {
         }
        
     }
+    successfullModel = () =>{
+        this.setState({
+            SaveSuccessfullModal:true
+        })
+    }
     //Roles
     AddRole = (e) => {
         e.preventDefault();
@@ -236,7 +243,8 @@ class RolesTab extends Component {
             roleDefaultValue: false,
             disabledSelectRole : true
         });
-		window.Materialize.toast("Save successful", 2000);
+        //window.Materialize.toast("Save successful", 2000);
+        this.successfullModel();
     }
     UpdateRole = () => {
         const isDuplicatte = (this.props.selectedLocation.id ? this.props.roles :this.props.orgRoles.roles).map((iteratedValue) => {
@@ -261,33 +269,45 @@ class RolesTab extends Component {
             })
             let filteredMenu= [] ;
         if(this.props.selectedLocation.id){
-            this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
-                filteredMenu =[...filteredMenu,data.menuId] 
+            this.props.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
+                if(data.statusFlag == undefined || data.statusFlag == "new")
+                {
+                        filteredMenu =[...filteredMenu,data.menuId] 
+                }
             })}});
         }else{
-            this.state.orgRoles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
-                filteredMenu =[...filteredMenu,data.menuId] 
+            this.props.orgRoles.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
+                if(data.statusFlag == undefined || data.statusFlag == "new")
+                {
+                    filteredMenu =[...filteredMenu,data.menuId] 
+                }
             })}});
         }
 
         let filteredResource= [] ;
         if(this.props.selectedLocation.id){
-            this.state.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
+            this.props.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
                 {  item.resources.map((data)=>{
-                filteredResource =[...filteredResource,data.resourceId] 
+                    if(data.statusFlag == undefined || data.statusFlag == "new")
+                    {
+                        filteredResource =[...filteredResource,data.resourceId] 
+                    }
                     })
                 }}
             );
         }else{
-            this.state.orgRoles.map((item) => {if(item.id == this.state.selectedDropdownRole)
+            this.props.orgRoles.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
                 {  item.resources.map((data)=>{
-                filteredResource =[...filteredResource,data.resourceId] 
+                    if(data.statusFlag == undefined || data.statusFlag == "new")
+                    {
+                        filteredResource =[...filteredResource,data.resourceId] 
+                    }
                     })
                 }}
             );
         }
         let role = {};
-        const updatedRoles = (this.props.selectedLocation.id ? this.props.roles :this.props.orgRoles.roles).map((iteratedValue)=>{
+        const updatedRoles = (this.props.selectedLocation.id ? this.state.roles :this.state.orgRoles).map((iteratedValue)=>{
             if(iteratedValue.id == this.state.selectedRole.id){
                 role = {
                     "id": this.state.selectedRole.id,
@@ -310,9 +330,7 @@ class RolesTab extends Component {
                         let finalMenu = {};
                         finalMenu.menuId = parseInt(r);
                         finalMenu.roleId = this.state.selectedRole.id;
-                        finalMenu.statusFlag = filteredMenu.map((data)=>{
-                                                    data.statusFlag == undefined ? "delete" : "ignore"
-                                                })
+                        finalMenu.statusFlag = "delete"
                         role.menus.push(finalMenu);
                     }else if(filteredMenu.indexOf(parseInt(r)) <= 0 && this.menuData[r] == 1){
                         let finalMenu = {};
@@ -332,16 +350,14 @@ class RolesTab extends Component {
                         role.menus.push(test);
                     }
                 })
-                console.log(filteredMenu)
+                // console.log(filteredMenu)
                 let finalResource = {}//need to create an object that has only manipulated value i.e 
                 Object.keys(this.resourceData).map(r => {
                     if(filteredResource.indexOf(parseInt(r)) >=0 && this.resourceData[r] == 0){
                         let finalResource = {};
                         finalResource.resourceId = parseInt(r);
                         finalResource.roleId = this.state.selectedRole.id;
-                        finalResource.statusFlag = filteredResource.map((data)=>{
-                                                        data.statusFlag == undefined ? "delete" : "ignore"
-                                                    })
+                        finalResource.statusFlag = "delete"
                         role.resources.push(finalResource);
                     }else if(filteredResource.indexOf(parseInt(r)) <= 0 && this.resourceData[r] == 1){
                         let finalResource = {};
@@ -388,11 +404,14 @@ class RolesTab extends Component {
             selectedMenu : viewMenu,
             selectedResource : viewResource,
             roleDefaultValue: false,
-            disabledSelectRole : true
+            disabledSelectRole : true,
+            //roleStatus: false
         })
+        console.log('upadte',role)
         this.props.SaveRoles(role)
         this.props.actions.SaveRoles(this.props.orgRoles.tenantId,role)
-        window.Materialize.toast("Save successful", 2000);
+        //window.Materialize.toast("Save successful", 2000);
+        this.successfullModel();
     }
         
     }
@@ -497,6 +516,7 @@ class RolesTab extends Component {
                 } 
                 role = [...role, item]
             })
+            console.log(role)
                 if(props.orgRoles.roles != undefined || props.roles != undefined ) {
                     this.setState({
                         selectedLocation:props.selectedLocation,
@@ -524,7 +544,7 @@ class RolesTab extends Component {
                 {(this.props.orgRoles.roles || this.props.roles) ?
                 <Fragment>
                     {(this.props.selectedLocation.id == "" && this.props.orgRoles.roles.length>0 )||(this.props.selectedLocation.id != "" && this.props.roles.length>0 )? 
-                    <select className="col s3 mt-1 Dropdown" name="selectedRole" onChange={this.handleRoleDropdown} key={this.state.roleDefaultValue} 
+                    <select className="col s3 mt-1 ml-1 pl-0 Dropdown" name="selectedRole" onChange={this.handleRoleDropdown} key={this.state.roleDefaultValue} 
                     defaultValue={this.state.roleDefaultValue}>
                       <option disabled={this.state.disabledSelectRole}>Select Role</option>
                       { this.props.selectedLocation.id != "" ? 
@@ -700,10 +720,21 @@ class RolesTab extends Component {
                         <p>Are you sure you want to delete it?</p>
 
                             <div className="col s12 m12 l12 xl12">
-                                <button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>Cancel</button>
+                                <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>Cancel</Button>
                                 <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this.DeleteRole} >Delete</Button>
                             </div>
                     </Modal>  
+                    <Modal
+                        id='SaveSuccessfullModal'
+                        modalOptions={{dismissible:false}}
+                        open = {this.state.SaveSuccessfullModal}
+                    >
+                        <p style={{textAlign:'center'}}>Save Successfull</p>
+
+                            <div className="col s12 m12 l12 xl12">
+                                <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>OK</Button>
+                            </div>
+                    </Modal>
                 </Row>
             )
         }

@@ -38,7 +38,7 @@ const actions = {
 
 export const fetchAllTenants = () => (dispatch, getState) => {
     let state = getState();
-    //  if(Object.keys(state.projectList.Projects) > 0 ){
+    //  if ( (Object.keys(state.projectList.Projects)) > 0 ){
     //             console.log('no api call')
     //            return false;
     //  }
@@ -52,7 +52,10 @@ export const fetchAllTenants = () => (dispatch, getState) => {
                 dispatch(action.GetAllTenantsError(response.message))
                 return false
             }
-        })
+        }).catch(error => {
+        dispatch(actions.GetAllTenantsError({ message: error.messages }));
+        return error
+})
 
     //  }
 }
@@ -72,10 +75,13 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
                return false
             }
             else{
-                dispatch(action.GetSavedProjectsError(response.message))
                 return false
             }
+        }).catch(error=>{
+            // console.log(error)
+            return false
         })
+    
 
     //  }
 }
@@ -83,17 +89,22 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
 
 
 export const fetchUserInfo= () => (dispatch, getState) => {
+const state = getState();
+console.log(state.projectList.userId)
+if( state.projectList.userId ==""){
   
     return  axios.get(`${BACKEND_URL}/user`, { headers: authHeaderFinal() }).then(response => {
           
         if(response.status == 200){
-              console.log(response)
               let userId = response.data._id;
               dispatch(actions.GetUserInfo(userId));
              return false
           }
-      })
+      }).catch(error=>{
+        // console.log(error)
+        return false
+    })
 
-  
+  }
 }
 

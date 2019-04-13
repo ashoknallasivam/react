@@ -39,33 +39,54 @@ router.post('/publish', (req, res) => {
     }
 
     // read the flag then call appropriate operation.
-
-    if (inpParam.statusFlag === "new" && inpParam.projectStatus == "publish") {
+    if (inpParam.statusFlag === "new"  && inpParam.projectStatus == "publish") {
         // publish request body.
         let tenantInputObj = {
             "name": inpParam.name
         };
 
         tenantBiz.createTenant(requestOptions, tenantInputObj).then(response => {
+            let publishOrgStatus = {};
+            publishOrgStatus.orgs = [];
             if (response.status === 200) {
-                let test = [];
+                publishOrgStatus.Tenant = response.status;
                 let publishedTenantId = response.data.insertId;
                 if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
-                    inpParam.orgsList.map(oneOrganization => {//top level organization.
+                    inpParam.orgsList.forEach(oneOrganization => {//top level organization.
                         oneOrganization.tenantId = publishedTenantId;
+
                         // calling create organization in loop through.
-                        publishProjectOrganization(requestOptions, oneOrganization);
-
-
-                        // single response to the client.finall response.
-                        //res.status(200).send("Successfully created.");
+                        publishOrgStatus.orgs.push(publishProjectOrganization(requestOptions, oneOrganization));//will 
                     })
                     // single response to the client.finall response.
-                    res.status(200).send("Successfully created.");
+                    publishOrgStatus.orgs.map(item => {
+                        item.then(response => {
+                            if ("success") {
+                                let resultValue= {
+                                    id:publishedTenantId,
+                                    messages : "Successfully created"
+                                }
+                                res.status(200).send(resultValue);
+                            } else {
+                                tenantBiz.deleteTenant(requestOptions, publishedTenantId).then(response => {
+                                    if (response.status === 200) {
+                                        res.status(500).send("Tenant creation failed");
+                                    } else {
+                                        res.status(500).send("Manually need deletion of a failed tenant. " + publishedTenantId);
+                                    }
+                                })
+                            }
+
+                        })
+                    })
 
                 } else {
+                    let resultValue= {
+                        id:response.data.insertId,
+                        messages : "Successfully created"
+                    }
                     // if organization list empty then return with tenant success.
-                    res.status(200).send(response.data);
+                    res.status(200).send(resultValue);
                 }
 
             } else {
@@ -80,37 +101,39 @@ router.post('/publish', (req, res) => {
             "name": inpParam.name
         };
         tenantBiz.updateTenant(requestOptions, inpParam.id, tenantInputObj).then(response => {
+            let publishOrgStatus = {};
+            publishOrgStatus.orgs = [];
             if (response.status === 200) {
                 if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
                     inpParam.orgsList.forEach(oneOrganization => {//top level organization.
                         // calling create organization in loop through.
-                        publishProjectOrganization(requestOptions, oneOrganization)
-
-
-                        // single response to the client.finall response.
-                        //res.status(200).send("Successfully created.");
+                        publishOrgStatus.orgs.push(publishProjectOrganization(requestOptions, oneOrganization));
                     })
-                    // single response to the client.finall response.
-                    res.status(200).send("Successfully updated.");
 
+                    // single response to the client.finall response.
+                    publishOrgStatus.orgs.map(item => {
+                        item.then(response => {
+                            if ("success") {
+                                res.status(200).send("Successfully Updated. ");
+                            } else {
+                                res.status(500).send("A part of the project updation failed. Check in UI and update the rest.");
+                            }
+                        })
+                    })
+                } else {
+                    // if organization list empty then return with tenant success.
+                    res.status(200).send(response.data);
                 }
-                console.log("Successfully updated tenant name.")
             } else {
                 res.status(500).send(response);
             }
         })
-    } else if(inpParam.projectStatus == "publish") {
+    } else if(inpParam.projectStatus == "publish"){
         if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
-            inpParam.orgsList.forEach(oneOrganization => {//top level organization.
+            inpParam.orgsList.map(oneOrganization => {//top level organization.
                 // calling create organization in loop through.
                 publishProjectOrganization(requestOptions, oneOrganization);
-
-
-                // single response to the client.finall response.
-                //res.status(200).send("Successfully created.");
             })
-            // single response to the client.finall response.
-            res.status(200).send("Successfully created.");
 
         } else {
             // if organization list empty then return with tenant success.
@@ -123,10 +146,10 @@ router.post('/publish', (req, res) => {
                 logging.applogger.error(err);
                 res.send(err);
             }else{
-                res.status(200).send({savedProjectId: inpParam.id});
+        res.status(200).send({savedProjectId: inpParam.id});
                 // fs.unlinkSync('AllProjects.json', function (err) {
                 //     if (err) throw err;
-                // })
+            // })
             }
             
         });
@@ -134,14 +157,13 @@ router.post('/publish', (req, res) => {
 
 });
 
-
-
-
 module.exports = router;
 
 // // publish organization list for particular project.
 function publishProjectOrganization(requestOptions, oneOrganization) {
-    var globalTto = oneOrganization.ttoId;
+    let globalTto = oneOrganization.ttoId;
+    let allOrgStatus = [];// will contain orgs and its children status
+    let orgPromises = [];
     // read the flag then call appropriate 
     if (oneOrganization.statusFlag === "new") {
         // publish request body.
@@ -153,35 +175,33 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
             "level": oneOrganization.level
         };
 
-        return organizationBiz.createOrganization(requestOptions, inputObj).then(response => {
-            var arr = []
+        orgPromises.push(organizationBiz.createOrganization(requestOptions, inputObj).then(response => {
             if (inputObj.level === 0) {
                 globalTto = response.data.insertId;
             }
+            let publishOrgStatus = {};
             if (response.status === 200) {
-                arr.push(response.status);
+                publishOrgStatus.org = response.status;
                 let orgUserBody = {"ttoId" : globalTto, "ltoId":  inputObj.ttoId == null? null: response.data.insertId, userId: oneOrganization.userId}
                 if(inputObj.level !== 0){   
                     organizationBiz.createOrganizationUser(requestOptions, orgUserBody);
                 }
                 if (oneOrganization.roles !== undefined && oneOrganization.roles.length !== 0) {
-                    publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, globalTto, response.data.insertId == globalTto ? null : response.data.insertId);
-                    arr.push(response.status)
+                    publishOrgStatus.roles = publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, globalTto, response.data.insertId == globalTto ? null : response.data.insertId, oneOrganization.userId);//this will return a single response for all roles
                 }
-                // creating raconfigs
+                // creating raconfigs.
                 if (oneOrganization.raConfig !== undefined && oneOrganization.raConfig.length !== 0) {
-                    publishRaConfigList(requestOptions, oneOrganization.raConfig, response.data.insertId, oneOrganization.tenantId);
+                    publishOrgStatus.raConfigStatus = publishRaConfigList(requestOptions, oneOrganization.raConfig, response.data.insertId, oneOrganization.tenantId);
 
                 }
-                // creating enrollments
+                // creating enrollments.
                 if (oneOrganization.enrollmentTargets !== undefined && oneOrganization.enrollmentTargets.length !== 0) {
-                    publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, response.data.insertId);
+                    publishOrgStatus.enrollmentTargetStatus = publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, response.data.insertId);
                 }
-                // creating pages // bounds are need.
+                // creating pages.
                 if (oneOrganization.pages !== undefined && oneOrganization.pages.length !== 0) {
-                    publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, globalTto, response.data.insertId == globalTto ? null : response.data.insertId);
+                    publishOrgStatus.pagesStatus = publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, globalTto, response.data.insertId == globalTto ? null : response.data.insertId);
                 }
-
                 // checking the organization have any chilren or not.
                 if (oneOrganization.children.length !== 0) {
                     oneOrganization.children.forEach(oneChildren => {
@@ -193,11 +213,13 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
                         publishProjectOrganization(requestOptions, oneChildren);
                     })
                 }
+                allOrgStatus.push(publishOrgStatus);
+            } else {
+                publishOrgStatus.org = response.status;
+                allOrgStatus.push(publishOrgStatus);
             }
-            return response
-        })
+        }));
     } else if (oneOrganization.statusFlag === "modified") {
-
         let inputObj = {
             "name": oneOrganization.name,
             "tenantId": oneOrganization.tenantId,
@@ -205,22 +227,24 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
             "parentId": oneOrganization.parentId,
             "level": oneOrganization.level
         };
-        return organizationBiz.updateOrganization(requestOptions, oneOrganization.id, inputObj).then(response => {
+        orgPromises.push(organizationBiz.updateOrganization(requestOptions, oneOrganization.id, inputObj).then(response => {
+            let publishOrgStatus = {};
             if (response.status === 200) {
+                publishOrgStatus.org = response.status;
                 if (oneOrganization.roles !== undefined && oneOrganization.roles.length !== 0) {
-                    publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
+                    publishOrgStatus.roles = publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id, oneOrganization.userId);
                 }
                 // creating raconfigs
                 if (oneOrganization.raConfig !== undefined && oneOrganization.raConfig.length !== 0) {
-                    publishRaConfigList(requestOptions, oneOrganization.raConfig, oneOrganization.id, oneOrganization.tenantId);
+                    publishOrgStatus.raConfigStatus = publishRaConfigList(requestOptions, oneOrganization.raConfig, oneOrganization.id, oneOrganization.tenantId);
                 }
                 // creating enrollments
                 if (oneOrganization.enrollmentTargets !== undefined && oneOrganization.enrollmentTargets.length !== 0) {
-                    publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, oneOrganization.id);
+                    publishOrgStatus.enrollmentTargetStatus = publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, oneOrganization.id);
                 }
                 // creating pages // bounds are need.
                 if (oneOrganization.pages !== undefined && oneOrganization.pages.length !== 0) {
-                    publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
+                    publishOrgStatus.pagesStatus = publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
                 }
 
                 // checking the organization have any chilren or not.
@@ -234,55 +258,81 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
                         publishProjectOrganization(requestOptions, oneChildren);
                     })
                 }
+                allOrgStatus.push(publishOrgStatus);
+            } else {
+                publishOrgStatus.org = response.status;
+                allOrgStatus.push(publishOrgStatus);
             }
 
-        })
+        }));
 
     } else if (oneOrganization.statusFlag === "delete") {
-        return organizationBiz.deleteOrganization(requestOptions, oneOrganization.id).then(response => {
+        orgPromises.push(organizationBiz.deleteOrganization(requestOptions, oneOrganization.id).then(response => {
+            let publishOrgStatus = {};
             if (response.status === 200) {
                 // return success msg.
-                return response
+                publishOrgStatus.org = response.status;
+                allOrgStatus.push(publishOrgStatus);
+
             } else {
+                publishOrgStatus.org = response.status;
+                allOrgStatus.push(publishOrgStatus);
                 logging.applogger.error(response);
             }
-        })
+        }))
     } else {
-
+        let publishOrgStatus = {};
         if (oneOrganization.roles !== undefined && oneOrganization.roles.length !== 0) {
-            publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
+            publishOrgStatus.roles = publishRoleList(requestOptions, oneOrganization.roles, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id, oneOrganization.userId);
         }
         // creating raconfigs
         if (oneOrganization.raConfig !== undefined && oneOrganization.raConfig.length !== 0) {
-            publishRaConfigList(requestOptions, oneOrganization.raConfig, oneOrganization.id, oneOrganization.tenantId);
+            publishOrgStatus.raConfigStatus = publishRaConfigList(requestOptions, oneOrganization.raConfig, oneOrganization.id, oneOrganization.tenantId);
         }
         // creating enrollments
         if (oneOrganization.enrollmentTargets !== undefined && oneOrganization.enrollmentTargets.length !== 0) {
-            publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, oneOrganization.id);
+            publishOrgStatus.enrollmentTargetStatus = publishEnrollementTargetList(requestOptions, oneOrganization.enrollmentTargets, oneOrganization.id);
         }
         // creating pages // bounds are need.
         if (oneOrganization.pages !== undefined && oneOrganization.pages.length !== 0) {
-            publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
+            publishOrgStatus.pagesStatus = publishProjectPageList(requestOptions, oneOrganization.pages, oneOrganization.tenantId, oneOrganization.ttoId, oneOrganization.id);
         }
-
+        allOrgStatus.push(publishOrgStatus);
         // checking the organization have any chilren or not.
         if (oneOrganization.children.length !== 0) {
             oneOrganization.children.forEach(oneChildren => {
                 // set parentId to child.
                 oneChildren.tenantId = oneOrganization.tenantId;
                 oneChildren.parentId = oneOrganization.id;
-                oneChildren.ttoId = oneOrganization.level === 0 ? oneOrganization.id: oneOrganization.ttoId;
+                oneChildren.ttoId = oneOrganization.level === 0 ? oneOrganization.id : oneOrganization.ttoId;
                 // calling childrens of organization.
                 publishProjectOrganization(requestOptions, oneChildren);
             })
         }
     }
+
+    let finalPromise = axios.all(orgPromises);
+    return finalPromise.then(function (results) {
+        let orgResults = allOrgStatus.map(item => {
+            if (item.org !== 200 && item.roles !== "success" && item.raConfigStatus !== "success" && item.enrollmentTargetStatus !== "success" && item.pagesStatus !== "success") {
+                return "failed"
+            } else {
+                return "success";
+            }
+        })
+        if (orgResults.indexOf("failed") > -1) {
+            return "failed"
+        } else {
+            return "success";
+        }
+    })
 }
 
 
 // publish role list for particular project.
-function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId) {
-    let publishRoleStatus = {};
+function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId, userId) {//this function should send a single status success/error with msg of fail
+    let allRolesStatus = [];
+    let rolePromises = [];
     // loop through the roleList.
     if (roleList.length !== 0) {
         roleList.forEach(oneRole => {
@@ -297,23 +347,39 @@ function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId) {
                     "isAutoAssignOnIntake": oneRole.isAutoAssignOnIntake
                 };
 
-                return roleBiz.createRole(requestOptions, roleBody).then(response => {
-
+                rolePromises.push(roleBiz.createRole(requestOptions, roleBody).then(response => {
+                    let publishRoleStatus = {};
                     if (response.status === 200) {
+                        publishRoleStatus.role = response.status;
+                        let userRoleBody = {"roleId": response.data.insertId, "userId": userId};
+                         let boundsBody = { "tenantId": tenantId, "ttoId": globalTto, "ltoId": orgId }
+                         console.log(userRoleBody);
+                         boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
+                             if (response.status === 200) {
+                                 let newHeaders = requestOptions;
+                                 newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"];
+                         console.log(newHeaders);
+                                 roleBiz.createUserRole(newHeaders, userRoleBody).then(response => {
+                                     console.log(response);
+                                 });
+                             }
+                         })
 
                         if (oneRole.menus.length !== 0) {
-                            publishMenuRoleAccessList(requestOptions, oneRole.menus, tenantId, globalTto, orgId, response.data.insertId);
+                            publishRoleStatus.menuStatus = publishMenuRoleAccessList(requestOptions, oneRole.menus, tenantId, globalTto, orgId, response.data.insertId);//this will return either success or failed
                         }
                         if (oneRole.resources.length !== 0) {
-                            publishResourceRoleAccessList(requestOptions, oneRole.resources, tenantId, globalTto, orgId, response.data.insertId);
+                            publishRoleStatus.ResourceStatus = publishResourceRoleAccessList(requestOptions, oneRole.resources, tenantId, globalTto, orgId, response.data.insertId);//this will return either success or failed
 
                         }
-
-                        return response.data;
+                        allRolesStatus.push(publishRoleStatus);
+                        //return response.data;
                     } else {
+                        publishRoleStatus.role = response.status;
+                        allRolesStatus.push(publishRoleStatus);//role creation failed
                         logging.applogger.error(response);
                     }
-                });
+                }));
             } else if (oneRole.statusFlag === "modified") {
                 // preparing role body.
                 let roleBody = {
@@ -325,30 +391,53 @@ function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId) {
                     "isAutoAssignOnIntake": oneRole.isAutoAssignOnIntake
                 };
 
-                return roleBiz.updateRole(requestOptions, oneRole.id, roleBody).then(response => {
+                rolePromises.push(roleBiz.updateRole(requestOptions, oneRole.id, roleBody).then(response => {
+                    let publishRoleStatus = {};
                     if (response.status === 200) {
-
+                        publishRoleStatus.role = response.status;
                         if (oneRole.menus.length !== 0) {
-                            publishMenuRoleAccessList(requestOptions, oneRole.menus, tenantId, oneRole.orgId, orgId, oneRole.id);
+                            publishRoleStatus.menu = publishMenuRoleAccessList(requestOptions, oneRole.menus, tenantId, oneRole.orgId, orgId, oneRole.id);
                         }
                         if (oneRole.resources.length !== 0) {
-                            publishResourceRoleAccessList(requestOptions, oneRole.resources, tenantId, globalTto, orgId, oneRole.id);
+                            publishRoleStatus.resource = publishResourceRoleAccessList(requestOptions, oneRole.resources, tenantId, globalTto, orgId, oneRole.id);
 
                         }
-                        return response.data;
+                        allRolesStatus.push(publishRoleStatus);
                     } else {
+                        publishRoleStatus.role = response.status;
+                        allRolesStatus.push(publishRoleStatus);//role creation failed
                         logging.applogger.error(response);
                     }
-                });
+                }));
 
             } else if (oneRole.statusFlag === "delete") {
-                return roleBiz.deleteRole(requestOptions, oneRole.id).then(response => {
+                let publishRoleStatus = {};
+                rolePromises.push(roleBiz.deleteRole(requestOptions, oneRole.id).then(response => {
                     if (response.status === 200) {
-                        return response;
+                        publishRoleStatus.role = response.status;
+                        allRolesStatus.push(publishRoleStatus);
                     } else {
+                        publishRoleStatus.role = response.status;
+                        allRolesStatus.push(publishRoleStatus);
                         logging.applogger.error(response);
                     }
-                });
+                }));
+            }
+        })
+        //allRoles single response
+        let finalPromise = axios.all(rolePromises);
+        return finalPromise.then(function (results) {
+            let roleResults = allRolesStatus.map(item => {
+                if (item.role !== 200 && item.menu !== "success" && item.resource !== "success") {
+                    return "failed"
+                } else {
+                    return "success";
+                }
+            })
+            if (roleResults.indexOf("failed") > -1) {
+                return "failed"
+            } else {
+                return "success";
             }
         })
     }
@@ -362,6 +451,7 @@ function publishMenuRoleAccessList(requestOptions, menuRoleAccessList, tenantId,
         "ltoId": ltoId
     }
     return boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
+        let menuAccessPromise = [];
         if (response.status === 200) {
             let newHeaders = requestOptions;
             newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"]
@@ -373,27 +463,30 @@ function publishMenuRoleAccessList(requestOptions, menuRoleAccessList, tenantId,
                             "roleId": roleId,
                             "menuId": oneMenuRoleAccess.menuId,
                         };
-                        return menuBiz.createMenuRoleAccess(newHeaders, menuRoleAccessBody).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        });
-
+                        menuAccessPromise.push(menuBiz.createMenuRoleAccess(newHeaders, menuRoleAccessBody))
                     } else if (oneMenuRoleAccess.statusFlag === "delete") {
-                        return menuBiz.deleteMenuRoleAccess(newHeaders, oneMenuRoleAccess.menuId).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        });
-
+                        menuAccessPromise.push(menuBiz.deleteMenuRoleAccess(newHeaders, oneMenuRoleAccess.menuId));
                     }
 
                 });
             }
+            let finalPromise = axios.all(menuAccessPromise);
+            return finalPromise.then(function (results) {
+                let menuRoleAccessResults = []
+                results.map(item => {
+                    if (item.status !== 200) {
+                        menuRoleAccessResults.push('failed')
+
+                    } else {
+                        menuRoleAccessResults.push('success')
+                    }
+                })
+                if (menuRoleAccessResults.indexOf("failed") > -1) {
+                    return "failed"
+                } else {
+                    return "success";
+                }
+            })
         }
     })
 
@@ -407,6 +500,7 @@ function publishResourceRoleAccessList(requestOptions, resourceRoleAccessList, t
         "ltoId": ltoId
     }
     return boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
+        let resourceAccessPromise = [];
         if (response.status === 200) {
             let newHeaders = requestOptions;
             newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"]
@@ -420,31 +514,33 @@ function publishResourceRoleAccessList(requestOptions, resourceRoleAccessList, t
                             "roleId": roleId,
                             "resourceId": oneResourceRoleAccess.resourceId
                         };
-                        return resourceBiz.createResourceRoleAccess(newHeaders, resourceRoleAccessBody).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        })
+                        resourceAccessPromise.push(resourceBiz.createResourceRoleAccess(newHeaders, resourceRoleAccessBody))
 
                     } else if (oneResourceRoleAccess.statusFlag === "delete") {
-                        return resourceBiz.deleteResourceRoleAccess(newHeaders, oneResourceRoleAccess.resourceId).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-
-                        })
-
+                        resourceAccessPromise.push(resourceBiz.deleteResourceRoleAccess(newHeaders, oneResourceRoleAccess.resourceId))
                     }
 
                 });
+                let finalPromise = axios.all(resourceAccessPromise);
+                return finalPromise.then(function (results) {
+                    let resourceRoleAccessResults = []
+                    results.map(item => {
+                        if (item.status !== 200) {
+                            resourceRoleAccessResults.push('failed')
+
+                        } else {
+                            resourceRoleAccessResults.push('success')
+                        }
+                    })
+                    if (resourceRoleAccessResults.indexOf("failed") > -1) {
+                        return "failed"
+                    } else {
+                        return "success";
+                    }
+                })
             }
         }
     })
-
 }
 
 // publish ra-config list for particular project.
@@ -452,7 +548,7 @@ function publishRaConfigList(requestOptions, raConfigList, ltoId, tenantId) {
 
     // loop through the raConfigList.
     if (raConfigList.length !== 0) {
-        var statusPromises = []
+        let raConfigPromises = [];
         raConfigList.forEach(oneRaConfig => {
             if (oneRaConfig.statusFlag === "new") {
 
@@ -465,15 +561,7 @@ function publishRaConfigList(requestOptions, raConfigList, ltoId, tenantId) {
                     "blockSize": oneRaConfig.blockSize,
                     "groups": oneRaConfig.groups
                 };
-                raConfigBiz.createRaConfig(requestOptions, tenantId, raConfiBody).then(response => {
-                    if (response.status === 200) {
-                        statusPromises.push(response.status)
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
-
+                raConfigPromises.push(raConfigBiz.createRaConfig(requestOptions, tenantId, raConfiBody));
             } else if (oneRaConfig.statusFlag === "modified") {
                 // need to prepare body.
                 let raConfiBody = {
@@ -482,25 +570,29 @@ function publishRaConfigList(requestOptions, raConfigList, ltoId, tenantId) {
                     "blockSize": oneRaConfig.blockSize,
                     "groups": oneRaConfig.groups
                 };
-                return raConfigBiz.updateRaConfig(requestOptions, oneRaConfig._id, tenantId, raConfiBody).then(response => {
-                    if (response.status === 200) {
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
-
+                raConfigPromises.push(raConfigBiz.updateRaConfig(requestOptions, oneRaConfig._id, tenantId, raConfiBody));
             } else if (oneRaConfig.statusFlag === "delete") {
-                return raConfigBiz.deleteRaConfig(requestOptions, oneRaConfig._id, tenantId).then(response => {
-                    if (response.status === 200) {
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
+                raConfigPromises.push(raConfigBiz.deleteRaConfig(requestOptions, oneRaConfig._id, tenantId));
             }
 
         });
+        //all raconfig single response
+        let finalPromise = axios.all(raConfigPromises);
+        return finalPromise.then(function (results) {
+            let raConfigResults = results.map(item => {
+                if (item.status !== "success") {
+                    return "failed"
+                } else {
+                    return "success";
+                }
+            })
+            if (raConfigResults.indexOf("failed") > -1) {
+                return "failed"
+            } else {
+                return "success";
+            }
+        })
+
     }
 }
 
@@ -509,6 +601,7 @@ function publishEnrollementTargetList(requestOptions, enrollmentTargetList, orgI
 
     //loop through the enrollmentTargetList.
     if (enrollmentTargetList.length !== 0) {
+        let enrollmentPromises = [];
         enrollmentTargetList.forEach(oneEnrollmentTarget => {
             // read the flag and do the operation.
             if (oneEnrollmentTarget.statusFlag === "new") {
@@ -519,13 +612,8 @@ function publishEnrollementTargetList(requestOptions, enrollmentTargetList, orgI
                     "month": oneEnrollmentTarget.month,
                     "target": oneEnrollmentTarget.target
                 };
-                return enrollmentBiz.createEnrollmentTarget(requestOptions, enrollmentBody).then(response => {
-                    if (response.status === 200) {
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
+                enrollmentPromises.push(enrollmentBiz.createEnrollmentTarget(requestOptions, enrollmentBody));
+
             } else if (oneEnrollmentTarget.statusFlag === "modified") {
                 // preparing EnrollmentTarget body.
                 let enrollmentBody = {
@@ -533,24 +621,28 @@ function publishEnrollementTargetList(requestOptions, enrollmentTargetList, orgI
                     "month": oneEnrollmentTarget.month,
                     "target": oneEnrollmentTarget.target
                 };
-                return enrollmentBiz.updateEnrollmentTarget(requestOptions, oneEnrollmentTarget.id, enrollmentBody).then(response => {
-                    if (response.status === 200) {
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
+                enrollmentPromises.push(enrollmentBiz.updateEnrollmentTarget(requestOptions, oneEnrollmentTarget.id, enrollmentBody));
 
             } else if (oneEnrollmentTarget.statusFlag === "delete") {
-                return enrollmentBiz.deleteEnrollmentTarget(requestOptions, oneEnrollmentTarget.id).then(response => {
-                    if (response.status === 200) {
-                        return response;
-                    } else {
-                        logging.applogger.error(response);
-                    }
-                })
+                enrollmentPromises.push(enrollmentBiz.deleteEnrollmentTarget(requestOptions, oneEnrollmentTarget.id));
             }
         });
+        //all enrollment target single response
+        let finalPromise = axios.all(enrollmentPromises);
+        return finalPromise.then(function (results) {
+            let enrollmentResults = results.map(item => {
+                if (item.status !== "success") {
+                    return "failed"
+                } else {
+                    return "success";
+                }
+            })
+            if (enrollmentResults.indexOf("failed") > -1) {
+                return "failed"
+            } else {
+                return "success";
+            }
+        })
     }
 }
 
@@ -562,6 +654,7 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
     }
     return boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
         if (response.status === 200) {
+            let pagePromises = [];
             let newHeaders = requestOptions;
             newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"]
 
@@ -577,13 +670,7 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
                             "subtitle": onePage.subtitle,
                             "layout": onePage.layout
                         }
-                        return pageBiz.createPage(newHeaders, pageBody).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        });
+                        pagePromises.push(pageBiz.createPage(newHeaders, pageBody))
 
                     } else if (onePage.statusFlag === "modified") {
                         let pageBody = {
@@ -593,26 +680,31 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
                             "subtitle": onePage.subtitle,
                             "layout": onePage.layout
                         }
-                        return pageBiz.updatePage(newHeaders, onePage._id, pageBody).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        });
+                        pagePromises.push(pageBiz.updatePage(newHeaders, onePage._id, pageBody))
+
 
                     } else if (onePage.statusFlag === "delete") {
-                        return pageBiz.deletePage(newHeaders, onePage._id).then(response => {
-                            if (response.status === 200) {
-                                return response;
-                            } else {
-                                logging.applogger.error(response);
-                            }
-                        });
-
+                        pagePromises.push(pageBiz.deletePage(newHeaders, onePage._id))
                     }
 
                 });
+                let finalPromise = axios.all(pagePromises);
+                return finalPromise.then(function (results) {
+                    let pageResults = []
+                    results.map(item => {
+                        if (item.status !== 200) {
+                            pageResults.push('failed')
+
+                        } else {
+                            pageResults.push('success')
+                        }
+                    })
+                    if (pageResults.indexOf("failed") > -1) {
+                        return "failed"
+                    } else {
+                        return "success";
+                    }
+                })
             }
         }
     });
