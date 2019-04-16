@@ -127,16 +127,26 @@ class dynamicControls extends React.Component {
 			};
 
 		});
+		
+		
         this.setState({
 			
 			key: this.state.key,
 			collection: this.state.collection,
 			title: this.state.title,
 			subtitle: this.state.subtitle,
-			values: newControls
-
+			
 
 		});
+		
+			this.setState({
+			
+			
+			values: newControls,
+			options: newControls,
+
+		});
+		
 				
 		
 
@@ -149,12 +159,13 @@ class dynamicControls extends React.Component {
 			this.createControlSchema(idx); // Call back function as SetState is Asynch
 		})
 		
-		console.log(this.state.values);
+		//console.log(this.state.values);
 	};
 
 
 	addClick() {
 		this.setState(prevState => ({ values: [...prevState.values, ''] }))
+		this.setState(prevState => ({ options: [...prevState.options, ''] }))
 		this.setState({ isModalOpen: false })
 		
 		
@@ -190,9 +201,21 @@ class dynamicControls extends React.Component {
 		e.preventDefault();
 
 		if (this.state.mode == 'Edit') {
+			
+		  	
           const combinedArrays = [...this.props.pages[this.props.selectedPage].layout, ...this.state.values];
+		  console.log("Value:",this.state.values);
+		  console.log("Options:",this.state.options);
+		  //console.log("Layout:",this.props.pages[this.props.selectedPage].layout);
+		  //console.log("Combined:",combinedArrays);
+		  
+		  if(this.state.values.length > 0)
+		  {
 		  this.props.sendData(combinedArrays,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
+		  this.setState({ options: '' });
+		  }
 		} else {
+			//console.log(this.state.values);	
 			const combinedArrays = [...this.state.values];
 			this.props.sendData(combinedArrays,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
 		}
@@ -305,7 +328,7 @@ class dynamicControls extends React.Component {
                                 const validation =q.options.validation.required.toString() ;
 
                                 required =  validation == true ? required : '';
-                                console.log(idx);
+                                //console.log(idx);
  
 									   
 								if(q.type == 'checkbox'){
@@ -367,7 +390,7 @@ class dynamicControls extends React.Component {
                                 const validation =q.options.validation.required.toString() ;
 
                                 required =  validation == true ? required : '';
-                                console.log(required);
+                                //console.log(required);
  
 									   
 								if(q.type == 'checkbox'){
@@ -460,33 +483,37 @@ class dynamicControls extends React.Component {
 	render() {
 
     const { key, collection, title, subtitle } = this.state;
+	var label = '<div>Hello<div>'
 		return (
 		  
 			<div key={this.state.selectedPage} >
-					<Row >
-			          <Button className='orgIcon s12 m2 l2 xl2' name="addPage" onClick={this.handleOpenModal}>
-						  <i className="material-icons" title='Add Control' >add_circle</i>
-						</Button><Button className='orgIcon s12 m2 l2 xl2' name="json" >
-						  <i className="material-icons" title='JSON Schema' >code</i>
-						</Button>
-					</Row>
+					
 
 					<Row>
 					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
     				<form onSubmit={this.handleSubmit} >
 					
 						 <Row>
-						 <Input s={8} label="Key" id="key" name="key" type="text" value={key} validate onChange={this.handleControlChange('')} required/>
+						 <label className="required-field"></label>
+						 <Input s={8} id="key" label="Key" name="key" type="text" value={key} validate onChange={this.handleControlChange('')} required />
 						 </Row>
 						 <Row>
+						 <label className="required-field"></label>
 							<Input s={8} label="Collection" id="collection" name="collection" type="text" value={collection} validate onChange={this.handleControlChange('')} required/>
 						 </Row>
 						 <Row>
+						 <label className="required-field"></label>
 							<Input s={8} label="Title" id="title" name="title" type="text" value={title} validate onChange={this.handleControlChange('')} required/>
 						 </Row>
 						 <Row>
+						 <label className="required-field"></label>
 							<Input s={8} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleControlChange('')} required />
 						 </Row>
+						 <Row ><div><label>Add Controls</label></div>
+						  <Button type="button" className='orgIcon s12 m2 l2 xl2' name="addPage" onClick={this.handleOpenModal}>
+							  <i className="material-icons" title='Add Control' >add_circle</i>
+							</Button>
+						</Row>
 						 <Row>
 							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
 								{this.createUI()}

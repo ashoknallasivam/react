@@ -116,6 +116,11 @@ class FormEditModal extends Component {
 			newLoc.name = this.state.selectedLocation.name;
 			newLoc.userId = this.props.userId;
 			newLoc.tenantId = this.state.selectedLocation.tenantId;
+			newLoc.enrollmentTargets= this.state.selectedLocation.enrollmentTargets != undefined ? this.state.selectedLocation.enrollmentTargets : [];
+            newLoc.raConfig =this.state.selectedLocation.raConfig != undefined ? this.state.selectedLocation.raConfig : [];
+            newLoc.roles=this.state.selectedLocation.roles != undefined ? this.state.selectedLocation.roles : [];
+            newLoc.pages=this.state.selectedLocation.pages != undefined ? this.state.selectedLocation.enrollmentTargets : [];
+            newLoc.functions = this.state.selectedLocation.functions != undefined ? this.state.selectedLocation.functions : [];
 			newLoc.statusFlag =
 				this.props.applicationMode == 'CREATE'
 					? 'new'

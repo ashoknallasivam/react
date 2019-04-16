@@ -8,7 +8,12 @@ exports.createBounds = (requestOptions, inpParam) => {
     return axios.post(`${config.RAPTER_URL}/bounds`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };

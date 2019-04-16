@@ -8,7 +8,12 @@ exports.getResourceList = (requestOptions) => {
     return axios.get(`${config.RAPTER_URL}/resource`, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };

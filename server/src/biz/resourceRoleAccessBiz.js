@@ -8,8 +8,13 @@ exports.getResourceRoleAccessList = (requestOptions) => {
     return axios.get(`${config.RAPTER_URL}/resource-role-access`, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 // find resource-role-access by using id.
@@ -17,8 +22,13 @@ exports.getResourceRoleAccess = (requestOptions, resourceRoleId) => {
     return axios.get(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 
@@ -27,8 +37,13 @@ exports.createResourceRoleAccess = (requestOptions, inpParam) => {
     return axios.post(`${config.RAPTER_URL}/resource-role-access`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 
@@ -37,8 +52,13 @@ exports.updateResourceRoleAccess = (requestOptions, resourceRoleId, inpParam) =>
     return axios.put(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 // delete resource-role-access.
@@ -46,7 +66,12 @@ exports.deleteResourceRoleAccess = (requestOptions, resourceRoleId) => {
     return axios.delete(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };

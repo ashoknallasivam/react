@@ -14,12 +14,15 @@ class Dashboard extends React.Component {
    }
    componentDidMount() {
     this.props.actions.fetchAllTenants().then((response)=>{
-       
+       if(response.status !== 200){
+          alert(this.props.error)
+       }
       this.setState({
          preloader: false
       })
       this.props.actions.fetchSavedTenants()
     });
+
       }
 
    componentWillReceiveProps(props){

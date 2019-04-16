@@ -6,6 +6,8 @@ import profileImg from "../../../../public/assets/images/logo/materialize-logo.p
 import './header.scss';
 import UserMenu from "../userMenu";
 import { Link } from 'react-router-dom';
+import { format } from "util";
+import axios from "axios";
 
 class Header extends Component {
     constructor(props) {
@@ -17,9 +19,27 @@ class Header extends Component {
     toggleProfileDropDown = () => {
         this.setState({ isdropDownOpen: !this.state.isdropDownOpen });
     }
-    handleImport = () => {
+    handleImport = (e) => {
+        this.refs.fileUpload.click();
     }
 	handleClick= (e) =>{
+    }
+    onChangFile =(e) =>{
+        e.stopPropagation();
+        e.preventDefault();
+        let file = e.target.files[0];
+        this.setState({file});
+        let form = new FormData();
+        form.append('json',file)
+        axios({
+            url : '/',
+            method:'POST',
+            headers:{
+                authorization : "token"
+            },
+            data: form
+        })
+        console.log(file)
     }
     render() {
         var homeLink = '';
@@ -31,7 +51,9 @@ class Header extends Component {
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} name="VIEW">{"Home"}</Link>;
             createLink = <Link to={"/createProject"} onClick={this.handleClick} className="pl-2" name="CREATE">{"Create"}</Link>;
-            importButton = <Link to="" onClick={this.handleImport} className="pl-2">{"Import project(s)"}</Link>;
+            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
+            <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
+            </Button>;
             profileButton = <ul className="right hide-on-med-and-down">
                 <li>
                     <a onClick={this.toggleProfileDropDown} className="waves-block profile-button" data-activates="profile-dropdown">

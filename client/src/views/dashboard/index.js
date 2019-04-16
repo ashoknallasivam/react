@@ -5,7 +5,8 @@ import {fetchAllTenants, fetchSavedTenants,fetchUserInfo} from '../../actions';
 
 const mapStateToProps=(state)=>{
     return{
-        projectList: state.projectList.Projects
+        projectList: state.projectList.Projects,
+        error : state.projectList.error
     }
 }
 

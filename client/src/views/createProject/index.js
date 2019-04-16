@@ -2,13 +2,14 @@ import CreateProject from './CreateProject'
 
 import {bindActionCreators} from 'redux';
 import { connect } from 'react-redux';
-import {fetchSingleTenant, SaveTenant, SaveOrganization, SaveLocations, publishProject, saveProject,fetchUserInfo,removeProject} from '../../actions';
+import {fetchSingleTenant, SaveTenant, SaveOrganization, SaveLocations, publishProject, saveProject,fetchUserInfo,removeProject,deleteSavedProject,fetchSingleSavedTenant} from '../../actions';
 
 
 const mapStateToProps=(state)=>{
     return{
         projectList : state.projectList.Projects,
-        userId : state.projectList.userId
+        userId : state.projectList.userId,
+        error : state.projectList.error
     }
 }
 const mapDispatchToProps = (dispatch) => {
@@ -22,7 +23,9 @@ const mapDispatchToProps = (dispatch) => {
                 SaveLocations,
                 publishProject,
                 saveProject,
-                removeProject
+                removeProject,
+                deleteSavedProject,
+                fetchSingleSavedTenant
             }, dispatch
         )
     }

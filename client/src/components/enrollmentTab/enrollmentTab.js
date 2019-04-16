@@ -17,7 +17,8 @@ class EnrollmentTab extends Component {
             startDate: null,
             isModal: '',
             id: '',
-            isMandatoryValidation: false
+            isMandatoryValidation: false,
+            buttonDisable: true,
         }
         this.editedRowData = {};
         this.updatedData = {};
@@ -43,7 +44,6 @@ class EnrollmentTab extends Component {
         // }
         // }
     }
-
     _editRowHandler = (data) => {
         const d = new Date(data.month);
         d.setDate(d.getDate());
@@ -62,7 +62,7 @@ class EnrollmentTab extends Component {
     }
     _enrollmentDateHandler = (data) => {
         if (this.isValidDate(data) && data != null) {
-            this.setState({isMandatoryValidation: false});
+            this.setState({isMandatoryValidation: false,buttonDisable: false });
             this.month = data // for showing in UI
             this.formatedMonth = data //for sending in backend
             this.setState({
@@ -91,11 +91,10 @@ class EnrollmentTab extends Component {
     _inputHandlerChange = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
         this.updatedData[e.target.name] = value;
-        this.setState({isMandatoryValidation: false});
+        this.setState({isMandatoryValidation: false,buttonDisable: false });
     }
     _cancelEnrollmentTarget = () => {
-        this.setState({ openModal: false,id:'' });
-        this.setState({ deleteModal: false });
+        this.setState({ openModal: false,id:'',buttonDisable: true ,deleteModal: false});
         this.updatedData = {};
         this.editedRowData = {};
     }
@@ -132,7 +131,7 @@ class EnrollmentTab extends Component {
                         this.updatedData["id"] = this.previousId;
                         this.updatedData["orgId"] = this.props.selectedLocation.id;
                         this.updatedData["statusFlag"] = "new";
-                        this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
+                        this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] ,buttonDisable: true})
                         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
                         this.props.SaveEnrollment(this.updatedData)
                         this._cancelEnrollmentTarget();
@@ -166,7 +165,7 @@ class EnrollmentTab extends Component {
                         this.props.SaveEnrollment(combinedData);
                         this.gridChildren.refreshCells(true);
                         this._cancelEnrollmentTarget();
-                        this.setState({ startDate: null })
+                        this.setState({ startDate: null,buttonDisable: true })
                         this.editedRowData.target = "";
                    // }
                 //})
@@ -238,7 +237,7 @@ class EnrollmentTab extends Component {
                                     modalOptions={{ dismissible: false }}
                                     actions={
                                         <div>
-                                            <Button onClick={this.state.isModal == "Add" ? this._addEnrollmentTarget : this._updateEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt mr-2" >{localConstant.commonConstants.OK}</Button>
+                                            <Button onClick={this.state.isModal == "Add" ? this._addEnrollmentTarget : this._updateEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt mr-2" disabled={this.state.buttonDisable} >{localConstant.commonConstants.OK}</Button>
                                             <Button onClick={this._cancelEnrollmentTarget} className="btn_secondary otherButtonAddDetUpt" >{localConstant.commonConstants.CANCEL}</Button>
                                         </div>
                                     }

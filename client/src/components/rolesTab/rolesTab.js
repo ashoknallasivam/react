@@ -268,11 +268,13 @@ class RolesTab extends Component {
                 RoleNameAlreadyExist: false
             })
             let filteredMenu= [] ;
+            let filteredMenuId= [] ;
         if(this.props.selectedLocation.id){
             this.props.roles.map((item) => {if(item.id == this.state.selectedDropdownRole){  item.menus.map((data)=>{
                 if(data.statusFlag == undefined || data.statusFlag == "new")
                 {
-                        filteredMenu =[...filteredMenu,data.menuId] 
+                        filteredMenu =[...filteredMenu,data.menuId]
+                        filteredMenuId =[...filteredMenuId,data.id] 
                 }
             })}});
         }else{
@@ -280,17 +282,20 @@ class RolesTab extends Component {
                 if(data.statusFlag == undefined || data.statusFlag == "new")
                 {
                     filteredMenu =[...filteredMenu,data.menuId] 
+                    filteredMenuId =[...filteredMenuId,data.id]
                 }
             })}});
         }
 
-        let filteredResource= [] ;
+        let filteredResource= [] ;//[1, 2, 3, 5, 7], [{resourceId: 1, id: 20}]
+        let filteredResourceId = [];
         if(this.props.selectedLocation.id){
             this.props.roles.map((item) => {if(item.id == this.state.selectedDropdownRole)
                 {  item.resources.map((data)=>{
                     if(data.statusFlag == undefined || data.statusFlag == "new")
                     {
                         filteredResource =[...filteredResource,data.resourceId] 
+                        filteredResourceId = [...filteredResourceId,data.id]
                     }
                     })
                 }}
@@ -301,6 +306,7 @@ class RolesTab extends Component {
                     if(data.statusFlag == undefined || data.statusFlag == "new")
                     {
                         filteredResource =[...filteredResource,data.resourceId] 
+                        filteredResourceId = [...filteredResourceId,data.id]
                     }
                     })
                 }}
@@ -328,6 +334,7 @@ class RolesTab extends Component {
                 Object.keys(this.menuData).map(r => {
                     if(filteredMenu.indexOf(parseInt(r)) >=0 && this.menuData[r] == 0){
                         let finalMenu = {};
+                        finalMenu.id = filteredMenuId[filteredMenu.indexOf(parseInt(r))];;
                         finalMenu.menuId = parseInt(r);
                         finalMenu.roleId = this.state.selectedRole.id;
                         finalMenu.statusFlag = "delete"
@@ -355,7 +362,9 @@ class RolesTab extends Component {
                 Object.keys(this.resourceData).map(r => {
                     if(filteredResource.indexOf(parseInt(r)) >=0 && this.resourceData[r] == 0){
                         let finalResource = {};
+                        finalResource.id = filteredResourceId[filteredResource.indexOf(parseInt(r))];
                         finalResource.resourceId = parseInt(r);
+                        console.log(filteredResourceId);
                         finalResource.roleId = this.state.selectedRole.id;
                         finalResource.statusFlag = "delete"
                         role.resources.push(finalResource);

@@ -28,6 +28,7 @@ class CreateProject extends Component {
       selectedLocation: {
         id: ''
       },
+      locParentName:'',
       preloader: true,
       fetched: false,
       applicationMode: '',
@@ -42,16 +43,19 @@ class CreateProject extends Component {
         name: false,
         organisation: false,
         location: false
-      }
+      },
+      requiredName: false,
     }
   }
   componentDidMount() {
-    this.props.actions.fetchUserInfo()
+    this.props.actions.fetchUserInfo();
+
 
     // checking for the id of clicked card and fetching data
     if (this.props.location.state !== undefined) {
       if (this.props.location.state.applicationMode === "VIEW" ) {
         this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response => {
+          console.log(response)
           if(response.status == 200)
           {
           this.setState({
@@ -60,13 +64,14 @@ class CreateProject extends Component {
           })
           }
           else{
-            alert('Fetching data error, try refreshing the page')
+           alert(response.data.message ?  response.data.message : response.statusText)
             this.setState({
               preloader: false,
             })
           }
         });
-      } else {
+      }
+       else {
         this.setState({
           preloader: false
         })
@@ -120,6 +125,7 @@ class CreateProject extends Component {
         orgsList: currentProject !== undefined ? currentProject.orgsList : []
       })
     }
+   
   }
   
   _handleOrgDropdown = (e) => {
@@ -128,6 +134,7 @@ class CreateProject extends Component {
     let selectedOrganisation = {};
     let locList = [];
     this.state.currentProject.orgsList.map((data, index) => {
+      console.log(data)
       if (data.ttoId == e.target.value) {
         allLocations = { ...allLocations, [data.id]: { ...data } }
       }
@@ -142,131 +149,6 @@ class CreateProject extends Component {
         id: ''
       }
     });
-  }
-  SaveStudyConfig = (data) => {
-    this.setState(({
-      selectedLocation: {
-        ...this.state.selectedLocation,
-        raConfig: [data]
-      }
-    }))
-  }
-  SaveStudyConfig = (data) => {
-    // this.setState(({
-    //   selectedLocation: {
-    //     ...this.state.selectedLocation,
-    //     raConfig : [data]
-    //   }
-    // }))
-    let selectedLocation = this.state.selectedLocation;
-    let rollIndex = '';
-    this.state.selectedLocation.raConfig.map((item, i) => {
-      if (data.id == item.id) {
-        rollIndex = i;
-      }
-    })
-
-    if (rollIndex !== '') {
-      selectedLocation.raConfig[rollIndex] = data;
-      this.setState({
-        selectedLocation
-
-      })
-    } else {
-      selectedLocation.raConfig = [...selectedLocation.raConfig, data];
-      this.setState({
-        selectedLocation
-      })
-    }
-  }
-  SaveEnrollment = (data) => {
-    let selectedLocation = this.state.selectedLocation;
-    let rollIndex = '';
-    this.state.selectedLocation.enrollmentTargets.map((item, i) => {
-      if (data.id == item.id) {
-        rollIndex = i;
-      }
-    })
-
-    if (rollIndex !== '') {
-      selectedLocation.enrollmentTargets[rollIndex] = data;
-      this.setState({
-        selectedLocation
-
-      })
-    } else {
-      selectedLocation.enrollmentTargets = [...selectedLocation.enrollmentTargets, data];
-      this.setState({
-        selectedLocation
-      })
-    }
-  }
-  SaveRoles = (data) => {
-    let selectedLocation = this.state.selectedLocation;
-    let selectedOrganisation = this.state.selectedOrganisation;
-    let roleIndex = '';
-    //store in loc
-    if (data.orgId == this.state.selectedLocation.id) {
-      this.state.selectedLocation.roles.map((item, i) => {
-        if (data.id == item.id) {
-          roleIndex = i;
-        }
-      })
-
-      if (roleIndex !== '') {
-        selectedLocation.roles[roleIndex] = data;
-        this.setState({
-          selectedLocation
-        })
-      } else {
-        selectedLocation.roles = [...selectedLocation.roles, data];
-        this.setState({
-          selectedLocation
-        })
-      }
-    }
-    // store in org
-    else if (data.orgId == this.state.selectedOrganisation.id) {
-      this.state.selectedOrganisation.roles.map((item, i) => {
-        if (data.id == item.id) {
-          roleIndex = i;
-        }
-      })
-
-      if (roleIndex !== '') {
-        selectedOrganisation.roles[roleIndex] = data;
-        this.setState({
-          selectedOrganisation
-        })
-      } else {
-        selectedOrganisation.roles = [...selectedOrganisation.roles, data];
-        this.setState({
-          selectedOrganisation
-        })
-      }
-    }
-  }
-  SavePages = (data) => {
-    let selectedLocation = this.state.selectedLocation;
-    let pageIndex = '';
-    this.state.selectedLocation.pages.map((item, i) => {
-      if (data._id == item._id) {
-        pageIndex = i;
-      }
-    })
-
-    if (pageIndex !== '') {
-      selectedLocation.pages[pageIndex] = data;
-      this.setState({
-        selectedLocation
-      })
-    } else {
-      selectedLocation.pages = [...selectedLocation.pages, data];
-      this.setState({
-        selectedLocation
-      })
-    }
-
   }
   _handleLoc = (e) => {
     (Object.keys(this.state.allLocations)).map((item) => {
@@ -284,6 +166,149 @@ class CreateProject extends Component {
       }
     })
   }
+  SaveStudyConfig = (data) => {
+    this.setState(({
+      selectedLocation: {
+        ...this.state.selectedLocation,
+        raConfig: [data]
+      }
+    }))
+  }
+  SaveStudyConfig = (data) => {
+    // this.setState(({
+    //   selectedLocation: {
+    //     ...this.state.selectedLocation,
+    //     raConfig : [data]
+    //   }
+    // }))
+    let selectedLocation = this.state.selectedLocation;
+    let allLocations = this.state.allLocations;
+    let rollIndex = '';
+    
+    this.state.selectedLocation.raConfig.map((item, i) => {
+      if (data.id == item.id) {
+        rollIndex = i;
+      }
+    })
+
+    if (rollIndex !== '') {
+      selectedLocation.raConfig[rollIndex] = data;
+      allLocations[selectedLocation.id] = selectedLocation
+      this.setState({
+        selectedLocation,
+        allLocations
+
+      })
+    } else {
+      selectedLocation.raConfig = [...selectedLocation.raConfig, data];
+      allLocations[selectedLocation.id] = selectedLocation
+            this.setState({
+        selectedLocation,
+        allLocations
+      })
+    }
+  }
+  SaveEnrollment = (data) => {
+    let selectedLocation = this.state.selectedLocation;
+    let allLocations = this.state.allLocations;
+    let rollIndex = '';
+    this.state.selectedLocation.enrollmentTargets.map((item, i) => {
+      if (data.id == item.id) {
+        rollIndex = i;
+      }
+    })
+
+    if (rollIndex !== '') {
+      selectedLocation.enrollmentTargets[rollIndex] = data;
+      allLocations[selectedLocation.id] = selectedLocation
+      this.setState({
+        selectedLocation
+
+      })
+    } else {
+      selectedLocation.enrollmentTargets = [...selectedLocation.enrollmentTargets, data];
+      allLocations[selectedLocation.id] = selectedLocation
+      this.setState({
+        selectedLocation
+      })
+    }
+  }
+  SaveRoles = (data) => {
+    let selectedLocation = this.state.selectedLocation;
+    let allLocations = this.state.allLocations;
+    let selectedOrganisation = this.state.selectedOrganisation;
+    let roleIndex = '';
+    //store in loc
+    if (data.orgId == this.state.selectedLocation.id) {
+      this.state.selectedLocation.roles.map((item, i) => {
+        if (data.id == item.id) {
+          roleIndex = i;
+        }
+      })
+
+      if (roleIndex !== '') {
+        selectedLocation.roles[roleIndex] = data;
+        allLocations[selectedLocation.id] = selectedLocation
+        this.setState({
+          selectedLocation
+        })
+      } else {
+        selectedLocation.roles = [...selectedLocation.roles, data];
+        allLocations[selectedLocation.id] = selectedLocation
+        this.setState({
+          selectedLocation
+        })
+      }
+    }
+    // store in org
+    else if (data.orgId == this.state.selectedOrganisation.id) {
+      this.state.selectedOrganisation.roles.map((item, i) => {
+        if (data.id == item.id) {
+          roleIndex = i;
+        }
+      })
+
+      if (roleIndex !== '') {
+        selectedOrganisation.roles[roleIndex] = data;
+        allLocations[selectedLocation.id] = selectedLocation
+        this.setState({
+          selectedOrganisation
+        })
+      } else {
+        selectedOrganisation.roles = [...selectedOrganisation.roles, data];
+        allLocations[selectedLocation.id] = selectedLocation
+        this.setState({
+          selectedOrganisation
+        })
+      }
+    }
+  }
+  SavePages = (data) => {
+    let selectedLocation = this.state.selectedLocation;
+    let allLocations = this.state.allLocations;
+    let pageIndex = '';
+    this.state.selectedLocation.pages.map((item, i) => {
+      if (data._id == item._id) {
+        pageIndex = i;
+      }
+    })
+
+    if (pageIndex !== '') {
+      selectedLocation.pages[pageIndex] = data;
+      allLocations[selectedLocation.id] = selectedLocation
+      this.setState({
+        selectedLocation
+      })
+    } else {
+      selectedLocation.pages = [...selectedLocation.pages, data];
+      allLocations[selectedLocation.id] = selectedLocation
+      this.setState({
+        selectedLocation
+      })
+    }
+
+  }
+
   // gets variable name and value from formModal and sets state
   _setValues = (e, data) => {
     this.setState({
@@ -293,7 +318,8 @@ class CreateProject extends Component {
   }
   _hanldetenatnInput = (e) => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
+      requiredName: false,
     })
   }
   _handleModal = (e) => {
@@ -301,14 +327,16 @@ class CreateProject extends Component {
       this.setState({
         validations: {
           name: true
-        }
+        },
+        requiredName: true,
       })
     } else {
       this.setState({
         [e.currentTarget.name]: true,
         validations: {
           name: false
-        }
+        },
+        requiredName: false,
       })
     }
   }
@@ -335,7 +363,7 @@ class CreateProject extends Component {
       }
       this.props.actions.SaveTenant(this.state.id, data);
     } else {
-      window.Materialize.toast('Please fill project name', 4000)
+     // window.Materialize.toast('Please fill project name', 4000)
     }
   }
   _handleModalClose = (e) => {
@@ -360,6 +388,7 @@ class CreateProject extends Component {
          id: ''
        },
      });
+     this.props.actions.removeProject(this.state.id)
      this.props.actions.fetchSingleTenant(this.state.id).then(response => {
       if(response.status === 200 )
       { 
@@ -367,7 +396,6 @@ class CreateProject extends Component {
          preloader: false,
        })
       }else{
-
         alert('Fetching data failed, try refreshing the ')
         this.setState({
           preloader: false,
@@ -375,33 +403,47 @@ class CreateProject extends Component {
       }
      });
    }
-   else{
+   else  if(this.state.currentProject.projectStatus == "save"){
+    // this.props.actions.removeProject(this.state.id)
+      this.props.actions.fetchSingleSavedTenant(this.state.id)
+    
+ }else{
      this.props.actions.removeProject(this.state.id)
      this.props.history.push({
        pathname: '/dashboard',
    })
    }
+  
    }
+
   finalPublish = () => {
-    debugger
     this.setState({
       preloader: true
     })
+    //Publish the project 
+    debugger
     this.props.actions.publishProject(this.state.id).then(response => {
-    
+      //Publish Succcess
       if (response.status == 200) {
+        alert(response.data.messages)
+        
+        //Fetching the published project form api
         this.props.actions.fetchSingleTenant(response.data.id).then(response => {
           this.setState({
             preloader: false,
-            publishInfo: response.message
           })
-          if (response.data.status == 200) {
-            alert("Project is Successfully Published")
+
+          //Fetching success
+          if (response.status == 200) {
             this.props.history.push({
               pathname: '/dashboard',
             })
-          } else {
-            alert("Project is Successfully Published")
+            //removing the published project form the store
+        this.props.actions.removeProject(this.state.id)
+          } 
+           //Fetching Failed
+          else {
+            alert(response.data.messages ? response.data.messages : response.statusText)
             this.props.history.push({
               pathname: '/dashboard',
             })
@@ -412,8 +454,12 @@ class CreateProject extends Component {
           }
         })
       } 
+      //Publish Failed
       else {
-        alert("Publish error. Please refer logs. ")
+        alert(response.data.messages ? response.data.messages : response.statusText)
+        // this.props.history.push({
+        //   pathname: '/dashboard',
+        // })
         this.setState({
           preloader: false,
         })
@@ -425,7 +471,7 @@ class CreateProject extends Component {
   finalSave = () => {
     this.props.actions.saveProject(this.state.id).then(response => {
       this.setState({
-        preloader: false,
+        preloader: false
       })
 
       this.props.history.push({
@@ -436,6 +482,31 @@ class CreateProject extends Component {
         }
       })
     })
+  }
+  deleteSaved = () =>{
+    this.setState({
+      preloader: true
+    })
+    this.props.actions.deleteSavedProject(this.state.id).then(response =>{
+
+      if(response.status == 200 ){
+        alert(response.data.messages ? response.data.messages : response.statusText)
+      }else{
+        alert(response.data.messages ? response.data.messages : response.statusText)
+      }
+      this.props.history.push({
+        pathname: '/dashboard',
+      })
+      this.props.actions.removeProject(this.state.id)
+      this.setState({
+        preloader: false
+      })
+
+    })
+  }
+  componentWillUnmount(){
+    if(this.state.applicationMode == "CREATE")
+    this.props.actions.removeProject(this.state.id)
   }
 
   render() {
@@ -451,7 +522,7 @@ class CreateProject extends Component {
               <Col s={12} m={12} l={12} xl={12} className='project_name mt-1'>
                 <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0 project_name' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false} onBlur={this.saveTenant} />
               </Col>
-
+              {this.state.requiredName == true ? <p className = "m-0 ml-2 errorMessage"> Project name is required </p>:null }
               <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
                 <Col s={12} m={6} l={6} xl={6} className="org-loc">
                   <label>Organization</label>
@@ -538,9 +609,7 @@ class CreateProject extends Component {
                           }
                             // <option id={i} value={this.state.allLocations[iteratedValue].id}>{this.state.allLocations[iteratedValue].name}</option>
                           )
-                         
-                          
-                          }
+                        }
                       </select >
                       
                       {this.state.applicationMode == 'VIEW' ?
@@ -628,7 +697,8 @@ class CreateProject extends Component {
               <Fragment>
                 <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
                 {/* Display Discard in if project name is not empty */}
-                {this.state.applicationMode  === "CREATE" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
+                { this.state.currentProject && this.state.currentProject.projectStatus == "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.deleteSaved} disabled={(this.state.name !== '') ? false : true}>Delete</Button>}
+                {this.state.applicationMode  === "CREATE" && this.state.currentProject && this.state.currentProject.projectStatus !== "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
                 <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  >Discard</Button>
               </Fragment>
             }

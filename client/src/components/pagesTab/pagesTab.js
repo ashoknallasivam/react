@@ -18,7 +18,9 @@ class PagesTab extends Component {
 			editor: '',
 			applicationMode: '',
 			selectedPage: '',
-			pages: this.props.pages,
+			pages: '',
+			selectedLocation:'',
+            
 		};
 
 		this.CreatePage = this.CreatePage.bind(this);
@@ -44,26 +46,37 @@ class PagesTab extends Component {
 
 	componentWillReceiveProps(nextProps) {
 
-		nextProps.pages.map((item, index) => (
-
-			this.state.pageId == item._id ?
-
-				this.setState({
-					selectedPage: index
-				}) : ''
-
-
-		));
-
-		this.setState({
-			pages: nextProps.pages,
-			tenantId: nextProps.tenantId,
-			selectedLocation: nextProps.selectedLocation,
-			applicationMode: nextProps.applicationMode
-		});
-		//alert('WillReceiveProps called')
-		//console.log(nextProps);
+		if(nextProps.pages != undefined )
+		{
+					
+			this.setState({ pages: nextProps.pages }, () => {
+				this.updatePageIndex(); // Call back function as SetState is Asynch
+			})
+			
+			this.setState({
+					tenantId: nextProps.tenantId,
+					selectedLocation: nextProps.selectedLocation,
+					applicationMode: nextProps.applicationMode
+			});
+	   }
+		
 	}
+	
+	
+	updatePageIndex() {
+		
+		this.state.pages.map((item, index) => {
+			
+            		this.state.pageId == item._id ?
+
+					this.setState({
+						selectedPage: index
+					}) : ''
+					
+		});
+	}
+	
+	
 
 	// Set state editor with value as 'Add'
 	CreatePage(event) {
@@ -257,9 +270,9 @@ class PagesTab extends Component {
 		const rowData = [];
 		const rowIndex = [];
 		var dropDown = '';
-		if (this.state.pages) {
+		if (this.props.pages) {
 
-			this.state.pages.map((item, index) => (
+			this.props.pages.map((item, index) => (
 
 				rowData.push({
 					id: item._id,
@@ -271,14 +284,13 @@ class PagesTab extends Component {
 
 
 			));
-            if (this.state.pages.length > 0 ) {
+            if (this.props.pages.length > 0 ) {
 				
-				dropDown= <div><label>Pages</label>
-											<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
+				dropDown= <div><select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
 											  <option value='' >Select Page</option>
 											  {rowData.map(itemval => {
 												  var selected='';
-												  if(itemval.index == this.state.selectedPage )
+												  if(itemval.index === this.state.selectedPage )
 												  {
 													  selected = 'selected';
 													  
@@ -287,14 +299,11 @@ class PagesTab extends Component {
 												return <option value={itemval.index} selected={selected}>{itemval.title}</option>
 
 											  })}
-											</select></div>
+									</select></div>
 				
 			} else {
 									
-				dropDown = <div><label>Pages</label>
-											<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
-											  <option value='' >No pages to display. Create a new page</option>
-											 </select></div>
+				dropDown = <div><p>No pages to display. Create a new page</p></div>
 				
 			}
 		
@@ -304,9 +313,9 @@ class PagesTab extends Component {
 					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >&nbsp;</Col>
 					<div >
 						<div className='col s12 m12 l12 xl12 mb-2' >
-							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
+							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
 								<Row>
-									<Col s={6} className='z-depth-8 mr-0'>
+									<Col s={8} className='z-depth-8 mr-0'>
 									 
 									 {dropDown}
 										
@@ -336,7 +345,7 @@ class PagesTab extends Component {
 
 			);
 
-		} else { return <Row><LoadingSpinner /></Row>; }
+		} else { return <p className="pl-2"><Row className='m-0'>{/*<LoadingSpinner />*/}No data to display</Row></p>; }
 
 
 

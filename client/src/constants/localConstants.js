@@ -38,6 +38,7 @@ export const localeConstants_en = {
         //Study-Config
         CUMULATIVE_RATIO_VALIDATION: "Cumulative Ratio should be equal to 1",
         RATIO_VALIDATION: "Ratio should not be more than 1",
+        ZERO_VALIDATION: "Ratio should be between 0 and 1",
         //Enrollment
         VALID_DATE: "Please enter a valid Date",
         DUPLICATE_MONTH: "Enrollment target for this Month and Year exists",

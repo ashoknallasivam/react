@@ -7,3 +7,9 @@
   width: 35%;
   will-change: top, opacity;
 }
+.required-field::after {
+    content: "*";
+    color: red;
+	padding-top:30px;
+	float: left;
+}

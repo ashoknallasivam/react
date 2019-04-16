@@ -30,20 +30,19 @@ router.get('/dashboard_data', (req, res) => {
 //API for complete project information.
 router.get('/dashboard_data/:id', (req, res) => {
     // token validation.
-    //let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWRlYjJkMzFiZjYwMGMyYjRkZDU2MiIsImlzRnVsbHlBdXRoZW50aWNhdGVkIjp0cnVlLCJpYXQiOjE1NTQ0NDUzMDgsImV4cCI6MTU1NDUzMTcwOH0.ZJNQ7r1q391pJYs90nVOVCOU90xXpgJgyayR6BHhN0U"
     let token = req.token;
     if (token === undefined || token === "" || token === null) {
         res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
         return;
     }
-    
+
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
 
     let inpParam = req.params;
     mapping(requestOptions).then(response => {
         selectedProjectInfo(response, inpParam.id, requestOptions).then(response => {
-            if(req.query.export!=="true"){
+            if (req.query.export !== "true") {
                 res.status(200).send(response);
             } else {
 
@@ -53,16 +52,16 @@ router.get('/dashboard_data/:id', (req, res) => {
                     if (err) {
                         logging.applogger.error(err);
                         res.send(err);
-                    }else{
+                    } else {
                         res.download('AllProjects.json', "exportedProject_" + req.params.id + ".json");
                         // fs.unlinkSync('AllProjects.json', function (err) {
                         //     if (err) throw err;
                         // })
                     }
-                    
+
                 });
             }
-            
+
         }).catch(error => {
             //logging.applogger.error(error);
             res.status(500).send(error);
@@ -82,17 +81,17 @@ router.get('/saved_projects', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-    fs.readdir('savedProjects', function(err, items) {
+    fs.readdir('savedProjects', function (err, items) {
         if (err) {
             logging.applogger.error(err);
             res.send(err);
-        }else{
+        } else {
             let allSavedProjects = [];
             let parsedData;
             var promise = []
-            for (var i=0; i<items.length; i++) {
+            for (var i = 0; i < items.length; i++) {
                 promise.push(new Promise((resolve, reject) => {
-                    fs.readFile('savedProjects/' + items[i], (err, data) => {  
+                    fs.readFile('savedProjects/' + items[i], (err, data) => {
                         if (err) throw reject(err);
                         parsedData = JSON.parse(data);
                         resolve(parsedData)
@@ -100,13 +99,26 @@ router.get('/saved_projects', (req, res) => {
                     })
                 }));
             }
-            Promise.all(promise).then(function (values) {               
+            Promise.all(promise).then(function (values) {
                 res.send(JSON.stringify(values));
             })
         }
     });
 });
-
+router.delete('/saveProject/:id', (req, res) => {
+    fs.readdir('savedProjects', function (err, items) {
+        if (err) {
+            res.status(500).send(err);
+            logging.applogger.error(err);
+        } else {
+            let item = req.params.id + ".json";
+            fs.unlink('savedProjects/' + item, (err) => {
+                if (err) throw err;
+                res.status(200).send("Successfully file was deleted.");
+            })
+        }
+    });
+});
 
 module.exports = router;
 
@@ -204,104 +216,104 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                 mapOrgs.get(parseInt(Object.keys(promises)[index])).pages = [...response.data]
             })
             // listing the selected project role.
-        return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
-            allRoles = [...response.data];
-            console.log(mapProjects.get(parseInt(projectId)).orgsList)
-            for (var role of allRoles) {
+            return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
+                allRoles = [...response.data];
+                //console.log(mapProjects.get(parseInt(projectId)).orgsList)
+                for (var role of allRoles) {
 
 
-                for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
-                    if (org.id == role.orgId) {
-                        role.menus = [];
-                        role.resources = [];
-                        let newHeaders = requestOptions;
-                        newHeaders.headers['x-rapter-bounds'] = org.bounds["x-rapter-bounds"]
-                        menuPromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/menu-role-access`, newHeaders).catch(error => {
-                            //logging.applogger.error(error);
-                        });
-                        resourcePromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/resource-role-access`, newHeaders).catch(error => {
-                            //logging.applogger.error(error);
-                        });
+                    for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
+                        if (org.id == role.orgId) {
+                            role.menus = [];
+                            role.resources = [];
+                            let newHeaders = requestOptions;
+                            newHeaders.headers['x-rapter-bounds'] = org.bounds["x-rapter-bounds"]
+                            menuPromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/menu-role-access`, newHeaders).catch(error => {
+                                //logging.applogger.error(error);
+                            });
+                            resourcePromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/resource-role-access`, newHeaders).catch(error => {
+                                //logging.applogger.error(error);
+                            });
 
-                        mapOrgs.get(org.id).roles.push(role);
+                            mapOrgs.get(org.id).roles.push(role);
+                        }
                     }
                 }
-            }
-            // listing the selected project menu-role-access.
-            return axios.all(Object.values(menuPromises)).then(function (results) {
-                results.forEach(function (response, index) {
-                    (mapProjects.get(parseInt(projectId)).orgsList.map(orginList => {
-                        if(orginList.id == parseInt(Object.keys(menuPromises)[index].split("O")[1])){
-                            orginList.roles.map(role => {
-                                if (Object.keys(menuPromises)[index].split("O")[0] == role.id){
-                            
-                                    typeof response === "undefined" ? role.menus = [] : response.data.map(menuAccess => {
-                                        if(menuAccess.roleId == role.id){
-                                            role.menus.push(menuAccess);
-                                        }
-                                    });
-                                }
-                            })
-                        }
-                    }))
-                });
-                // listing the selected project resource-role-access.
-                return axios.all(Object.values(resourcePromises)).then(function (results) {
+                // listing the selected project menu-role-access.
+                return axios.all(Object.values(menuPromises)).then(function (results) {
                     results.forEach(function (response, index) {
                         (mapProjects.get(parseInt(projectId)).orgsList.map(orginList => {
-                            if(orginList.id == parseInt(Object.keys(resourcePromises)[index].split("O")[1])){
+                            if (orginList.id == parseInt(Object.keys(menuPromises)[index].split("O")[1])) {
                                 orginList.roles.map(role => {
-                                    if (Object.keys(resourcePromises)[index].split("O")[0] == role.id){
-                                
-                                        typeof response === "undefined" ? role.resources = [] : response.data.map(resourceAccess => {
-                                            if(resourceAccess.roleId == role.id){
-                                                role.resources.push(resourceAccess);
+                                    if (Object.keys(menuPromises)[index].split("O")[0] == role.id) {
+
+                                        typeof response === "undefined" ? role.menus = [] : response.data.map(menuAccess => {
+                                            if (menuAccess.roleId == role.id) {
+                                                role.menus.push(menuAccess);
                                             }
                                         });
                                     }
                                 })
                             }
                         }))
-                    })
-                    // listing the selected project enrollment-target.
-                    return axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
-                        allEnrollmentTarget = [...response.data];
-                        for (var enrollmentTarget of allEnrollmentTarget) {
-                            for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
-                                if (org.id == enrollmentTarget.orgId) {
-                                    mapOrgs.get(org.id).enrollmentTargets.push(enrollmentTarget);
+                    });
+                    // listing the selected project resource-role-access.
+                    return axios.all(Object.values(resourcePromises)).then(function (results) {
+                        results.forEach(function (response, index) {
+                            (mapProjects.get(parseInt(projectId)).orgsList.map(orginList => {
+                                if (orginList.id == parseInt(Object.keys(resourcePromises)[index].split("O")[1])) {
+                                    orginList.roles.map(role => {
+                                        if (Object.keys(resourcePromises)[index].split("O")[0] == role.id) {
+
+                                            typeof response === "undefined" ? role.resources = [] : response.data.map(resourceAccess => {
+                                                if (resourceAccess.roleId == role.id) {
+                                                    role.resources.push(resourceAccess);
+                                                }
+                                            });
+                                        }
+                                    })
                                 }
-                            }
-                        }
-                        // listing the selected project ra-config.
-                        return axios.get(`${config.RAPTER_URL}/ra-config?tenantId=` + parseInt(projectId), requestOptions).then(response => {
-                            allRaConfig = [...response.data];
-                            for (var raConfig of allRaConfig) {
+                            }))
+                        })
+                        // listing the selected project enrollment-target.
+                        return axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
+                            allEnrollmentTarget = [...response.data];
+                            for (var enrollmentTarget of allEnrollmentTarget) {
                                 for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
-                                    if (org.id == raConfig.stratum[0].value) {
-                                        mapOrgs.get(org.id).raConfig.push(raConfig);
+                                    if (org.id == enrollmentTarget.orgId) {
+                                        mapOrgs.get(org.id).enrollmentTargets.push(enrollmentTarget);
                                     }
                                 }
                             }
-                            mapProjects.get(parseInt(projectId)).orgs = mapToObjectRec(mapProjects.get(parseInt(projectId)).orgs);
-                            return (mapProjects.get(parseInt(projectId)));
+                            // listing the selected project ra-config.
+                            return axios.get(`${config.RAPTER_URL}/ra-config?tenantId=` + parseInt(projectId), requestOptions).then(response => {
+                                allRaConfig = [...response.data];
+                                for (var raConfig of allRaConfig) {
+                                    for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
+                                        if (org.id == raConfig.stratum[0].value) {
+                                            mapOrgs.get(org.id).raConfig.push(raConfig);
+                                        }
+                                    }
+                                }
+                                mapProjects.get(parseInt(projectId)).orgs = mapToObjectRec(mapProjects.get(parseInt(projectId)).orgs);
+                                return (mapProjects.get(parseInt(projectId)));
+                            }).catch(error => {
+                                logging.applogger.error(error);
+                                return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+                            });
                         }).catch(error => {
                             logging.applogger.error(error);
                             return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
                         });
                     }).catch(error => {
-                        logging.applogger.error(error);
+                        //logging.applogger.error(error);
                         return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
                     });
-                }).catch(error => {
-                    //logging.applogger.error(error);
-                    return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-                });
-            })
-        }).catch(error => {
-            //logging.applogger.error(error);
-            return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
-        });
+                })
+            }).catch(error => {
+                //logging.applogger.error(error);
+                return ({ code: error.response.status, status: error.response.statusText, messages: error.response.data.error });
+            });
         })
     }).catch(error => {
         //logging.applogger.error(error);

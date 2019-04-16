@@ -28,37 +28,52 @@ const actions = {
             payload: payload,
         };
     },
+    GetSavedProjectsError: (payload) => {
+      return {
+          type: 'SAVED_PROJECT_ERROR',
+          payload: payload,
+      };
+  },
     GetUserInfo: (payload) => {
         return {
             type: 'GET_USER_INFO_SUCCESS',
             payload: payload,
         };
-    }
+    },
+    
+    GetUserInfoError: (payload) => {
+      return {
+          type: 'GET_USER_INFO_ERROR',
+          payload: payload,
+      };
+  },
 }
 
 export const fetchAllTenants = () => (dispatch, getState) => {
-    let state = getState();
-    //  if ( (Object.keys(state.projectList.Projects)) > 0 ){
-    //             console.log('no api call')
-    //            return false;
-    //  }
-    //  else{
-      return axios.get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() }).then(response => {
-            if(response.status === 200){
-               dispatch(actions.GetAllTenantsSuccess(response.data));
-               return false
-            }
-            else{
-                dispatch(action.GetAllTenantsError(response.message))
-                return false
-            }
-        }).catch(error => {
-        dispatch(actions.GetAllTenantsError({ message: error.messages }));
-        return error
-})
-
-    //  }
-}
+  let state = getState();
+  if (state.projectList.isAllFetched == true ){
+    let response = {
+      status : 200
+    }
+    return Promise.resolve(response);
+  } else {
+    return axios
+      .get(`${BACKEND_URL}/dashboard_data`, { headers: authHeaderFinal() })
+      .then(response => {
+        if (response.status == 200) {
+          dispatch(actions.GetAllTenantsSuccess(response.data));
+          return response;
+        } else {
+          dispatch(action.GetAllTenantsError(response.message));
+          return false;
+        }
+      })
+      .catch(error => {
+        dispatch(actions.GetAllTenantsError( error.message));
+        return false;
+      });
+  }
+};
 
 
 export const fetchSavedTenants= () => (dispatch, getState) => {
@@ -77,13 +92,10 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
             else{
                 return false
             }
-        }).catch(error=>{
-            // console.log(error)
-            return false
-        })
-    
-
-    //  }
+        }) .catch(error => {
+          dispatch(actions.GetSavedProjectsError( error.message));
+          return false;
+        });
 }
 
 
@@ -100,10 +112,10 @@ if( state.projectList.userId ==""){
               dispatch(actions.GetUserInfo(userId));
              return false
           }
-      }).catch(error=>{
-        // console.log(error)
-        return false
-    })
+      }).catch(error => {
+        dispatch(actions.GetUserInfoError( error.message));
+        return false;
+      });
 
   }
 }

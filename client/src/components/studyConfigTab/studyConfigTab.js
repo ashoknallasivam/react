@@ -20,6 +20,7 @@ class StudyConfigTab extends Component {
             deleteStatus: "",
             buttonDisable: true,
             errorStatus: false,
+            checkZeroError: false,
             mandatoryValidation: false,
             saveSuccessfullModal: false
         }
@@ -86,7 +87,7 @@ class StudyConfigTab extends Component {
             const rg = new RegExp(expression, "g");
             const match = rg.exec(e.target.value);
             e.target.value = match[1] + match[2];
-            this.setState({ errorStatus: false, mandatoryValidation: false });
+            this.setState({ errorStatus: false, mandatoryValidation: false, checkZeroError: false });
         }
         else if (e.target.value != '.') {
             if (e.target.value.includes('..')) {
@@ -122,11 +123,11 @@ class StudyConfigTab extends Component {
     // Add Groups - Modal open
     addStudyConfigModal = () => {
         this.clearModal();
-        this.setState({ openModal: true, groupStatus: "add", errorStatus: false, mandatoryValidation: false });
+        this.setState({ openModal: true, groupStatus: "add", errorStatus: false, mandatoryValidation: false, checkZeroError: false });
     }
     // Edit Groups - Modal open
     editStudyConfigModal = (data) => {
-        this.setState({ openModal: true, groupStatus: "", errorStatus: false, mandatoryValidation: false });
+        this.setState({ openModal: true, groupStatus: "", errorStatus: false, mandatoryValidation: false, checkZeroError: false });
         this.editedRowData = data;
         this.groupIndex = this.state.groups.findIndex(item => item == this.editedRowData);
     }
@@ -144,18 +145,23 @@ class StudyConfigTab extends Component {
             !objectUtil.isEmpty(this.updatedData.ratio) && !objectUtil.isEmpty(this.updatedData.sequenceLimit)) {
             let length = this.updatedData.ratio.length;
             let ratio = this.updatedData.ratio;
-            if (ratio.indexOf('.') == 0) {
-                this.updatedData.ratio = "0" + ratio;
+            if (ratio != 0 && ratio != '.') {
+                if (ratio.indexOf('.') == 0) {
+                    this.updatedData.ratio = "0" + ratio;
+                }
+                else if (ratio.charAt(length - 1) == '.') {
+                    this.updatedData.ratio = ratio.charAt(length - 2);
+                }
+                else this.updatedData.ratio = ratio;
+                this.setState({
+                    groups: [...this.state.groups, this.updatedData], buttonDisable: false, mandatoryValidation: false
+                });
+                if (this.state.errorStatus == false)
+                    this.cancelStudyConfigModal();
             }
-            else if (ratio.charAt(length - 1) == '.') {
-                this.updatedData.ratio = ratio.charAt(length - 2);
+            else {
+                this.setState({ checkZeroError: true })
             }
-            else this.updatedData.ratio = ratio;
-            this.setState({
-                groups: [...this.state.groups, this.updatedData], buttonDisable: false, mandatoryValidation: false
-            });
-            if (this.state.errorStatus == false)
-                this.cancelStudyConfigModal();
         }
         else this.setState({ mandatoryValidation: true });
     }
@@ -176,10 +182,15 @@ class StudyConfigTab extends Component {
         newGroups[this.groupIndex] = combinedData;
         if (!objectUtil.isEmpty(combinedData.assignment) && !objectUtil.isEmpty(combinedData.description) &&
             combinedData.ratio != "" && combinedData.sequenceLimit != "") {
-            this.setState({ groups: newGroups, buttonDisable: false, mandatoryValidation: false });
-            if (this.state.errorStatus == false)
-                this.cancelStudyConfigModal();
-            this.clearModal();
+            if (combinedData.ratio != 0 && combinedData.ratio != '.') {
+                this.setState({ groups: newGroups, buttonDisable: false, mandatoryValidation: false });
+                if (this.state.errorStatus == false)
+                    this.cancelStudyConfigModal();
+                this.clearModal();
+            }
+            else {
+                this.setState({ checkZeroError: true })
+            }
         }
         else this.setState({ mandatoryValidation: true });
     }
@@ -328,6 +339,9 @@ class StudyConfigTab extends Component {
                                                 defaultValue={this.editedRowData.sequenceLimit} key={this.editedRowData.sequenceLimit} /></Col>
                                         {this.state.errorStatus == true ?
                                             <p className="errorMessage m-0 pl-3">{localConstant.warningMessages.RATIO_VALIDATION}</p>
+                                            : null}
+                                        {this.state.checkZeroError == true ?
+                                            <p className="errorMessage m-0 pl-3">{localConstant.warningMessages.ZERO_VALIDATION}</p>
                                             : null}
                                     </div>
                                 </Modal>

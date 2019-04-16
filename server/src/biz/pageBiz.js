@@ -8,8 +8,13 @@ exports.getPageList = (requestOptions) => {
     return axios.get(`${config.RAPTER_URL}/page`, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 // find page by using id.
@@ -17,8 +22,13 @@ exports.getPage = (requestOptions, pageId) => {
     return axios.get(`${config.RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 
@@ -27,8 +37,13 @@ exports.createPage = (requestOptions, inpParam) => {
     return axios.post(`${config.RAPTER_URL}/page`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 
@@ -37,8 +52,13 @@ exports.updatePage = (requestOptions, pageId, inpParam) => {
     return axios.put(`${config.RAPTER_URL}/page/` + pageId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };
 // delete page.
@@ -46,7 +66,12 @@ exports.deletePage = (requestOptions, pageId) => {
     return axios.delete(`${config.RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
         return response;
     }).catch(error => {
-        logging.applogger.error(error);
-        return { code: error.response.status, status: error.response.statusText, messages: error.response.error };
+        let rtVal = {
+            code:error.response.status,
+            status:error.response.statusText,
+            messages: error.response.error === undefined?error.response.data.sqlMessage: error.response.error
+        };
+        
+        return rtVal;
     });
 };

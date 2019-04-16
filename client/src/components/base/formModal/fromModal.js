@@ -99,28 +99,19 @@ class FormModal extends Component {
               },
          });
          let allLocations = {};
-        //  this.props.orgsList.map((data, index) => {
-        //    if (data.ttoId == newOrg.id) {
-     
-        //      allLocations = { ...allLocations, [data.id]: { ...data } }
-     
-        //    }
-        //    if (data.id == newOrg.id) {
-        //      selectedOrganisation = data
-        //    }
-        //  })
-         //let newLoc = {id:""}
+         let newLoc = {id:""}
          this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
-         //this.props.setValues('selectedOrganisation', newOrg)
-         //this.props.setValues('selectedLocation', newLoc)
+         this.props.setValues('selectedOrganisation', newOrg)
+         this.props.setValues('selectedLocation', newLoc)
          this.props.setValues('allOrganisations',allOrganisations)
-         //this.props.setValues('allLocations',allLocations)
+         this.props.setValues('allLocations',allLocations)
          this.props.setValues('orgsList', orgsList)
          this.props.handleModalClose(this.props.name)
           }
         }
       }
       _handleLoc = () => {
+        
         let newLoc = {};
         if (this.state.locName !== '') {
             newLoc.id = uuid.v4();
@@ -146,17 +137,28 @@ class FormModal extends Component {
                 window.Materialize.toast('Already Exist', 5000)
                 return false;
             } else if(this.state.parenOfLoc.value !== '') {
+              let locParentName = '';
               let allLocations ={...this.props.allLocations, ...{[newLoc.id]: {...newLoc}}}
               let orgsList =[...this.props.orgsList,{...newLoc}]
+              Object.keys(allLocations).map(item=>{
+                orgsList.map(parent=>{
+                  if(parent.id == allLocations[item].parentId)
+                  {
+                    locParentName = parent.name
+                  }
+                })
+              }) 
               this.setState({ 
                 locName:'',
                 parenOfLoc:{
                   value:''
                 }
-           });   
+           });
+           
            this.props.actions.SaveLocation(newLoc.tenantId, newLoc)
            this.props.setValues('allLocations',allLocations)
-           //this.props.setValues('selectedLocation', newLoc)
+           this.props.setValues('selectedLocation',newLoc)
+           this.props.setValues('locParentName',locParentName)
            this.props.setValues('orgsList',orgsList)
            this.props.handleModalClose(this.props.name)
             }
@@ -195,11 +197,18 @@ class FormModal extends Component {
                         required />
                 {this.props.name == "addLoc" &&
                    <select name="parenOfLoc" onChange={this._input} value={this.state.parenOfLoc.value}>
-                        <option value="" disabled> Choose option </option>
+                        <option value="" disabled> Select Parent </option>
                         {
-                            this.locList.map((data,i)=>
-                                <option value={data.id}>{data.name}</option>
-                            )
+                            this.locList.map((data,i)=>{
+                              if (data.statusFlag == "new" || data.statusFlag == "modified"
+                               || data.statusFlag == undefined) {
+                                return <option value={data.id}>{data.name}</option>
+                               }
+                               else if (data.statusFlag == "delete" || 
+                               data.statusFlag == "ignore") {
+                                return <option value={data.id} className="hide">deleteed loc</option>
+                               }
+                              })
                         } 
                    </select> 
                 }

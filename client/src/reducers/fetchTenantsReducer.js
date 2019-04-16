@@ -3,7 +3,7 @@ import { debug } from "util";
 const initialState = {
     Projects: {},
     userId:'',
-    error: []
+    error: {}
 }
 const store = (state = initialState, action) => {
     switch (action.type) {
@@ -24,7 +24,8 @@ const store = (state = initialState, action) => {
         case 'FETCH_ALL_TENANTS_SUCCESS':
             state = {
                 ...state,
-                Projects: action.payload
+                Projects: action.payload,
+                isAllFetched: true
             };
             return state;
 
@@ -153,6 +154,13 @@ const store = (state = initialState, action) => {
                 }
             }
             return state;
+            case 'SAVED_PROJECT_ERROR':
+            state = {
+                ...state,
+                error: action.payload
+               
+            }
+            return state;
 
         case 'GET_USER_INFO_SUCCESS':
             state = {
@@ -160,17 +168,17 @@ const store = (state = initialState, action) => {
                 userId: action.payload
             }
             return state;
+            case 'GET_USER_INFO_ERROR':
+            state = {
+                ...state,
+                error: action.payload
+               
+            }
+            return state;
         
         case 'REMOVE_PROJECT':
          delete state.Projects[action.payload]
         return state;
-        // case 'GET_USER_INFO_ERROR':
-        // state = {
-        //     ...state,
-        //    error: action.payload 
-        //  }
-        // return state;
-
         default:
             return state;
     }
