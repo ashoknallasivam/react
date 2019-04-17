@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Input, Button, Modal, Col } from 'react-materialize';
+import { Row, Input, Tab, Tabs, Button, Modal, Col } from 'react-materialize';
 import LoadingSpinner from './loadingSpinner';
 import JSONInput from "react-json-editor-ajrm/index";
 import locale from "react-json-editor-ajrm/locale/en";
@@ -224,26 +224,30 @@ class PagesTab extends Component {
 		viewOnly = this.state.applicationMode == 'EDIT' || this.state.applicationMode == 'CREATE' ? false : true;
 
 		var dynamicForm = '';
+		var previewPage = '';
 
-		if (viewOnly == false) {
-			dynamicForm = <DynamicControls sendData={this.getData} pageJson={pageJson} pages={this.props.pages} selectedPage={this.state.selectedPage} mode={this.state.editor} />;
-		}
-
-
+    			
 		if (this.state.editor == 'Edit' || this.state.editor == 'Add' ) {
 
-
-			jEditor =
-				<Row className='m-0'>
-					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
-						{dynamicForm}
-
-					</Col>
-					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
-						<div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+			dynamicForm = <DynamicControls 
+								sendData={this.getData} 
+								pageJson={pageJson} 
+								pages={this.props.pages} 
+								selectedPage={this.state.selectedPage} 
+								mode={this.state.editor} />
+								
+			previewPage = <PagePreview 
+								sendData={this.getData} 
+								pageJson={pageJson} 
+								pages={this.props.pages} 
+								selectedPage={this.state.selectedPage} 
+								mode={this.state.editor} />					
+			
+            jEditor = <Tabs className='tab-demo z-depth-1'>
+					   <Tab title="JSON Schema" icon='add_circle' active><div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
 							<form className="col-md-4" onSubmit={this.handleSubmit} >
 								<Row className="margin">
-									<Col className="input-field p-0" s={12}>
+								 	<Col className="input-field p-0" s={12}>
 										<JSONInput
 											placeholder={pageJson} // data to display
 											theme="light_mitsuketa_tribute"
@@ -258,12 +262,10 @@ class PagesTab extends Component {
 									</Col>
 								</Row>
 							</form>
-						</div>
-					</Col>
-
-
-
-				</Row>
+						</div></Tab>
+					 <Tab title="Preview" >{previewPage}</Tab>
+				   </Tabs>			
+								
 
 		}
 
@@ -285,8 +287,8 @@ class PagesTab extends Component {
 
 			));
             if (this.props.pages.length > 0 ) {
-				
-				dropDown= <div><select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
+				dropDown= <div>
+							<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
 											  <option value='' >Select Page</option>
 											  {rowData.map(itemval => {
 												  var selected='';
@@ -299,49 +301,48 @@ class PagesTab extends Component {
 												return <option value={itemval.index} selected={selected}>{itemval.title}</option>
 
 											  })}
-									</select></div>
-				
+								</select>
+								</div>
 			} else {
-									
 				dropDown = <div><p>No pages to display. Create a new page</p></div>
-				
 			}
 		
 			return (
-			
-				<Row className='m-0'>
-					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >&nbsp;</Col>
-					<div >
+               <div className="switch mb-3 mt-3">
+				<Row>
+					<Col s={6}>
 						<div className='col s12 m12 l12 xl12 mb-2' >
-							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={6} >
+							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
 								<Row>
-									<Col s={8} className='z-depth-8 mr-0'>
-									 
-									 {dropDown}
-										
+									<Col s={11} className='z-depth-8 mr-0'>
+										{dropDown}
 									</Col>
+									
 									{viewOnly == false ? (
-										<Col s={2} className='z-depth-8 mr-0'>
+										<Col s={1} className='z-depth-8 mr-0'>
 
 											<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="addOrg" onClick={this.CreatePage}>
 												<i className="material-icons" title='Add Page'>
 													add_circle</i>
 											</Button>
-
-
 										</Col>
 									) : ('')
 									}
 								</Row>
 							</Col>
-
 							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
-								{jEditor}
+								{dynamicForm}
 							</Col>
-
 						</div>
-					</div>
-				</Row>
+					</Col>
+					<Col s={6} >
+						{jEditor}
+					</Col>
+				 </Row>
+                </div>
+			
+			 
+				
 
 			);
 

@@ -113,8 +113,11 @@ router.delete('/saveProject/:id', (req, res) => {
         } else {
             let item = req.params.id + ".json";
             fs.unlink('savedProjects/' + item, (err) => {
-                if (err) throw err;
-                res.status(200).send("Successfully file was deleted.");
+                if (err){
+                    res.status(500).send(err);
+                }else{
+                    res.status(200).send("Successfully file was deleted.");
+                }
             })
         }
     });

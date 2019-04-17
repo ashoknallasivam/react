@@ -57,6 +57,17 @@
               }
             }
           },
+		  {
+			"name": "defaultValue",
+			"type": "text",
+			"label": "Default value",
+			"options": {
+				"validation": {
+					"required": false
+				},
+				"hint": "Provide a default value"
+			}
+		  },
           {
             "name": "autocomplete",
             "type": "checkbox",
@@ -141,7 +152,39 @@
                       "required": false
                     }
                   }
-                }
+                },
+				{
+					"name": "requiredIf",
+					"type": "fieldset",
+					"label": "Required If?",
+					"options": {
+						"fields": [
+							{
+								"name": "property",
+								"type": "text",
+								"label": "Property name",
+								"options": {
+									"hint":"Property name of field dependency.",
+									"validation": {
+										"required": false
+									}
+								}
+							},
+							{
+								"name": "value",
+								"type": "text",
+								"label": "Property value",
+								"options": {
+									"hint":
+										"Value of dependent field.",
+									"validation": {
+										"required": false
+									}
+								}
+							}
+						]
+					}
+				}
               ]
             }
           }

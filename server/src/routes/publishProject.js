@@ -87,18 +87,21 @@ router.post('/publish', (req, res) => {
                         id:publishedTenantId,
                         messages : "Successfully created. "
                     }
-                    fs.readdir('savedProjects', function (err, items) {
-                        if (err) {
-                            //res.status(500).send(err);
-                            logging.applogger.error(err);
-                        } else {
-                            let item = inpParam.id + ".json";
-                            fs.unlink('savedProjects/' + item, (err) => {
-                                if (err) throw err;
-                                //res.status(200).send("Successfully file was deleted.");
-                            })
-                        }
-                    });
+                    // fs.readdir('savedProjects', function (err, items) {
+                    //     if (err) {
+                    //         //res.status(500).send(err);
+                    //         logging.applogger.error(err);
+                    //     } else {
+                    //         let item = inpParam.id + ".json";
+                    //         fs.unlink('savedProjects/' + item, (err) => {
+                    //             if (err) {
+                    //                 res.status(500).send(err);
+                    //             }else{
+                    //                 res.status(200).send("Successfully file was deleted.");
+                    //             }
+                    //         })
+                    //     }
+                    // });
                     res.status(200).send(resultValue);
 
                 } else {

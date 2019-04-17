@@ -119,21 +119,10 @@ class PagePreview extends React.Component {
   
   return (
    <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+   <Row><Col>&nbsp;</Col></Row>
    <form onSubmit={this.handleSubmit} >
-    <Row>
-     <Input s={8} label="Key" id="key" name="key" type="text" value={this.state.key} validate onChange={this.handleChange} required/>
-     </Row>
      <Row>
-        <Input s={8} label="Collection" id="collection" name="collection" type="text" value={this.state.collection} validate onChange={this.handleChange} required/>
-     </Row>
-     <Row>
-        <Input s={8} label="Title" id="title" name="title" type="text" value={this.state.title} validate onChange={this.handleChange} required/>
-     </Row>
-     <Row>
-        <Input s={8} label="Sub Title" id="subtitle" name="subtitle" type="text" value={this.state.subtitle} validate onChange={this.handleChange} required />
-     </Row>
-     <Row>
-    
+      
     {this.state.layout.map(value => {
         const { type, label, name } = value
         
@@ -148,7 +137,7 @@ class PagePreview extends React.Component {
              minLength={value.options.validation.minLength}
              maxLength={value.options.validation.maxLength}
              onChange={this.handleChange}
-            />
+            /><h6>{value.options.hint}</h6>
             </div>;
         } else if (type == 'radio') {
            return <div >
@@ -207,26 +196,11 @@ class PagePreview extends React.Component {
         
     </Row>
     
-
-	<Row>
-	 <Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={8} >
-      {this.createUI()}        
-      <input type='button' className="btn" value='add fields' onClick={this.addClick.bind(this)}/>
-      <input type="submit" className="btn" value="Submit" />
-	  </Col>
-    </Row> 
-	 	
-    
     </form>
 		
 		</div>
 		);
-	 
-	 
-	
 
-	
-	
 
   }
 }

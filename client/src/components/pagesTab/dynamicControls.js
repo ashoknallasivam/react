@@ -22,6 +22,7 @@ class dynamicControls extends React.Component {
 			collection: this.props.pageJson.collection,
 			title: this.props.pageJson.title,
 			subtitle: this.props.pageJson.subtitle,
+			layout: [],
 			pageJson: this.props.pageJson,
 			type: '',
 			name: '',
@@ -55,6 +56,7 @@ class dynamicControls extends React.Component {
 			collection: this.props.pageJson.collection,
 			title: this.props.pageJson.title,
 			subtitle: this.props.pageJson.subtitle,
+			layout: this.props.pageJson.layout,
 			pageJson: this.props.pageJson,
 			name: this.props.name,
 			label: this.props.label,
@@ -75,6 +77,7 @@ class dynamicControls extends React.Component {
 			collection: nextProps.pageJson.collection,
 			title: nextProps.pageJson.title,
 			subtitle: nextProps.pageJson.subtitle,
+			layout: nextProps.pageJson.layout,
 			pageJson: nextProps.pageJson,
 			name: nextProps.name,
 			label: nextProps.label,
@@ -140,8 +143,7 @@ class dynamicControls extends React.Component {
 		});
 		
 			this.setState({
-			
-			
+		
 			values: newControls,
 			options: newControls,
 
@@ -236,7 +238,7 @@ class dynamicControls extends React.Component {
 			let label = m.label;
 			if (type == "heading") {
 				return (
-					<div >
+					<div>
 						<h5>{label}</h5>
 					</div>
 				);
@@ -361,7 +363,6 @@ class dynamicControls extends React.Component {
 
 						})	
 
-
 						return <div >
 						     	<h5>{o.label}</h5>
 						       		<div>{autoitems}</div>
@@ -401,7 +402,12 @@ class dynamicControls extends React.Component {
 									   </div><h6>{q.options.hint}</h6>
                                          </div>;
 									
-								} else {
+								} else if (q.type == 'fieldset') {
+                                	return  <div><div>	
+										  </div><h6>{q.label}</h6>
+                                         </div>;
+										
+								}	else {
                                 	return  <div><div>	
 										<Input
 											s={12}
@@ -442,9 +448,10 @@ class dynamicControls extends React.Component {
 			}
 			return (
 				<Collapsible accordion={false}>
-			<CollapsibleItem header={label} icon="keyboard_arrow_down">
-			{input}
-			</CollapsibleItem></Collapsible>
+					<CollapsibleItem header={label} icon="keyboard_arrow_down">
+						{input}
+					</CollapsibleItem>
+				</Collapsible>
 			);
 
 
@@ -452,10 +459,11 @@ class dynamicControls extends React.Component {
 		});
 		
 		return (
-				<Collapsible accordion={false}>
-			<CollapsibleItem header='Text' icon="keyboard_arrow_down">
-			{formUI}
-			</CollapsibleItem></Collapsible>
+			<Collapsible accordion={false}>
+				<CollapsibleItem header='Text' icon="keyboard_arrow_down">
+					{formUI}
+				</CollapsibleItem>
+			</Collapsible>
 			);
 		
 	}
@@ -465,13 +473,14 @@ class dynamicControls extends React.Component {
 
 			<div key={i}>
 
-				<Row><Col s={11}>
-					{this.renderForm(i)}
+				<Row>
+					<Col s={11}>
+						{this.renderForm(i)}
 					</Col>
 					<Col s={1} >
 					<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
 							<i className="material-icons" title='Delete'>delete</i>
-						</Button>
+					</Button>
 					</Col>
 				</Row>
 
@@ -482,40 +491,59 @@ class dynamicControls extends React.Component {
 
 	render() {
 
-    const { key, collection, title, subtitle } = this.state;
-	var label = '<div>Hello<div>'
+    const { key, collection, title, subtitle, layout } = this.state;
+	
+	const existingControls =  this.state.layout.map((el, i) =>
+
+			<div key={i}>
+				<Row><Col s={11}>
+					{this.renderForm(i)}
+					</Col>
+					<Col s={1} >
+					<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+							<i className="material-icons" title='Delete'>delete</i>
+						</Button>
+					</Col>
+				</Row>
+			</div>
+
+		)
+	
 		return (
 		  
 			<div key={this.state.selectedPage} >
-					
-
-					<Row>
+				<Row>
 					<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
     				<form onSubmit={this.handleSubmit} >
 					
 						 <Row>
 						 <label className="required-field"></label>
-						 <Input s={8} id="key" label="Key" name="key" type="text" value={key} validate onChange={this.handleControlChange('')} required />
+						 <Input s={10} id="key" label="Key" name="key" type="text" value={key} validate onChange={this.handleControlChange('')} required />
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={8} label="Collection" id="collection" name="collection" type="text" value={collection} validate onChange={this.handleControlChange('')} required/>
+							<Input s={10} label="Collection" id="collection" name="collection" type="text" value={collection} validate onChange={this.handleControlChange('')} required/>
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={8} label="Title" id="title" name="title" type="text" value={title} validate onChange={this.handleControlChange('')} required/>
+							<Input s={10} label="Title" id="title" name="title" type="text" value={title} validate onChange={this.handleControlChange('')} required/>
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={8} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleControlChange('')} required />
+							<Input s={10} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleControlChange('')} required />
 						 </Row>
+						 <Row>
+						 <label>Dynamic Controls</label>
+							{existingControls}
+						 </Row>
+						 
 						 <Row ><div><label>Add Controls</label></div>
 						  <Button type="button" className='orgIcon s12 m2 l2 xl2' name="addPage" onClick={this.handleOpenModal}>
 							  <i className="material-icons" title='Add Control' >add_circle</i>
 							</Button>
-						</Row>
+						 </Row>
 						 <Row>
-							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
+							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={10} >
 								{this.createUI()}
 							</Col>
 						</Row>
@@ -554,12 +582,6 @@ class dynamicControls extends React.Component {
 						</Modal>
 			</div>
 		);
-
-
-
-
-
-
 
 	}
 }
