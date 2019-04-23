@@ -71,15 +71,32 @@ class EnrollmentTab extends Component {
             this.formatedMonth.setMinutes(30);
             this.formatedMonth.setHours(5);
             this.formatedMonth = this.formatedMonth.toISOString();
-            this.state.enrollmentTargets.map(record => {
-                if (record.id!= this.state.id && record.month == this.formatedMonth) {
-                    window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
-                    this.setState({ startDate: null })
-                    return false;
+
+            let isDuplicate = this.state.enrollmentTargets.map((iteratedValue) => {
+                if (iteratedValue.month === this.formatedMonth) {
+                  return true
                 }
-            })
-            
+              });
+              if (isDuplicate.includes(true) )  {
+                window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
+                    this.setState({ startDate: null })
+                    this.updatedData.month = ""
+          }
+          else{
             this.updatedData["month"] = this.formatedMonth;
+          }
+            // this.props.enrollmentTargets.map(record => {
+            //     debugger
+            //     if (record.month == this.formatedMonth && record.id!= this.state.id ) {
+            //         window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
+            //         this.setState({ startDate: null })
+            //         //return false;
+            //     }
+            //     else{
+            //         this.updatedData["month"] = this.formatedMonth;
+            //     }
+            // })            
+       
         }
         else {
             if (data != null) {
@@ -91,7 +108,11 @@ class EnrollmentTab extends Component {
     _inputHandlerChange = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
         this.updatedData[e.target.name] = value;
-        this.setState({isMandatoryValidation: false,buttonDisable: false });
+        if(this.updatedData.target != "")
+        {
+            this.setState({buttonDisable: false });
+        }
+        this.setState({isMandatoryValidation: false });
     }
     _cancelEnrollmentTarget = () => {
         this.setState({ openModal: false,id:'',buttonDisable: true ,deleteModal: false});
@@ -108,25 +129,6 @@ class EnrollmentTab extends Component {
         this.previousId = uuid.v4();
         if (this.updatedData && !(objectUtil.isEmpty(this.updatedData))) {
             if (this.enrollmentValidation(this.updatedData)) {
-                // this.state.enrollmentTargets && this.state.enrollmentTargets.map(record => {           
-                //     if (record.month == this.formatedMonth) {
-                //         window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
-                //         this.setState({ startDate: null })
-                //     }
-                //     else {
-                //         console.log("1",this.updatedData)
-                //         this.updatedData["month"] = this.formatedMonth;
-                //         this.updatedData["id"] = this.previousId;
-                //         this.updatedData["orgId"] = this.props.selectedLocation.id;
-                //         this.updatedData["statusFlag"] = "new";
-                //         console.log("2",this.updatedData)
-                //         this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] })
-                //         console.log("3",this.updatedData)
-                //         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
-                //         this.props.SaveEnrollment(this.updatedData)
-                //         this._cancelEnrollmentTarget();
-                //     }
-                // })
                 this.updatedData["month"] = this.formatedMonth;
                         this.updatedData["id"] = this.previousId;
                         this.updatedData["orgId"] = this.props.selectedLocation.id;
@@ -138,7 +140,6 @@ class EnrollmentTab extends Component {
             }
         }
         else {
-            //window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
             this.setState({isMandatoryValidation: true});
         }
     }
@@ -151,9 +152,10 @@ class EnrollmentTab extends Component {
         }
         //this.updatedData["month"] = this.formatedMonth;
         this.updatedData["orgId"] = this.props.selectedLocation.id;
-        const combinedData = Object.assign(this.editedRowData, this.updatedData);
+        const combinedData = { ...this.editedRowData, ...this.updatedData };
+
         //if (this.updatedData && !(objectUtil.isEmpty(this.updatedData))) {
-            if (this.enrollmentValidation(combinedData)) {
+            if (combinedData.month!="" && combinedData.target!="" ) {
                 // this.state.enrollmentTargets.map(record => {
                 //     //console.log(record.month)
                 //     if (record.month == combinedData.month) {
@@ -169,6 +171,9 @@ class EnrollmentTab extends Component {
                         this.editedRowData.target = "";
                    // }
                 //})
+            }
+            else{
+                this.setState({isMandatoryValidation: true});
             }
         //}
     }
@@ -212,7 +217,6 @@ class EnrollmentTab extends Component {
         return true;
     }
     render() {
-        console.log(this.state.enrollmentTargets)
         return (
             <Fragment>
                 {this.state.enrollmentTargets ?

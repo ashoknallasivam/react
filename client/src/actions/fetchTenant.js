@@ -70,7 +70,7 @@ export const fetchAllTenants = () => (dispatch, getState) => {
       })
       .catch(error => {
         dispatch(actions.GetAllTenantsError( error.message));
-        return false;
+        return error.message;
       });
   }
 };
@@ -102,7 +102,7 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
 
 export const fetchUserInfo= () => (dispatch, getState) => {
 const state = getState();
-console.log(state.projectList.userId)
+// console.log(state.projectList.userId)
 if( state.projectList.userId ==""){
   
     return  axios.get(`${BACKEND_URL}/user`, { headers: authHeaderFinal() }).then(response => {

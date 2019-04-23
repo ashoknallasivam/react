@@ -48,6 +48,12 @@ const actions = {
       type: "DELETE_SAVED_PROJECT_ERROR",
       payload: payload
     };
+  },
+  SaveProjectError: payload =>{
+    return {
+      type: "DELETE_SAVED_PROJECT_ERROR",
+      payload: payload
+    };
   }
 
 };
@@ -166,7 +172,8 @@ export const saveProject = id => (dispatch, getState) => {
     })
     .catch(error =>{
       console.log(error)
-		dispatch(actions.SaveProjectError(error.message));
+      return error.message
+		// dispatch(actions.SaveProjectError(error.message));
 	})
 };
 
@@ -248,8 +255,13 @@ export const exportProject = id => (dispatch, getState) => {
     })
     .then(response => {
       if (response.status == 200) {
+        let exprtProj = {
+          ...response.data,
+          statusFlag: "new"
+        }
+
         const url = window.URL.createObjectURL(
-          new Blob([JSON.stringify(response.data)])
+          new Blob([JSON.stringify(exprtProj)])
         );
         const link = document.createElement("a");
         link.href = url;
@@ -277,21 +289,21 @@ export const removeProject = id => (dispatch, getState) => {
 
 
 export const deleteSavedProject = id => (dispatch, getState) => {
-  console.log(id)
+  // console.log(id)
   if(id) {
   return axios
     .delete(`${BACKEND_URL}/saveProject/${id}`)
     .then(response => {
-      console.log(response)
+      // console.log(response)
       if (response.status == 200) {
         return response;
       } else {
-        console.log(response)
+        // console.log(response)
         return response;
       }
     })
     .catch(error => {
-      console.log(response)
+      // console.log(response)
      dispatch(actions.DeleteSavedProjectError(error))
      return error.response;
     });
@@ -304,17 +316,17 @@ export const fetchSingleSavedTenant = id => (dispatch, getState) => {
     return axios
       .get(`${BACKEND_URL}/saveProject/${id}`)
       .then(response => {
-        console.log(response)
+        // console.log(response)
         if (response.status == 200) {
           dispatch(actions.GetSingleTenantSuccess(response.data))
           return response;
         } else {
-          console.log(response)
+          // console.log(response)
           return response;
         }
       })
       .catch(error => {
-        console.log(response)
+        // console.log(response)
        return error.response;
       });
     }

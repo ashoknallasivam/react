@@ -125,6 +125,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     padding: 0;
     margin: 0;
     text-transform: none !important; 
+    overflow-x: hidden !important;
     font-size: 16px;
 }
 .btn_add {
@@ -277,9 +278,19 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
         margin-top: 25px;
     }
 
-    .tabs {
-        overflow-x: hidden !important;
-    }
+    // .tabs {
+    //     overflow-x: hidden !important;
+    // }
+    // .tabs {
+    //     position: relative;
+    //     overflow-x: hidden !important;
+    //     overflow-y: hidden;
+    //     height: 48px;
+    //     width: 100%;
+    //     background-color: #fff;
+    //     margin: 0 auto;
+    //     white-space: nowrap;
+    // }
 
     .role-body {
         position: relative;
@@ -636,3 +647,15 @@ body {
         padding: 3px 5px;
     }
     // .container{ max-width: 97% !important; }
+    .functions{
+        label.active {
+             font-size: 15px !important;
+            }
+            label{
+                font-size: 15px !important;
+            }
+         
+    }
+    .deleteBtn {
+        background-color: red;
+    }

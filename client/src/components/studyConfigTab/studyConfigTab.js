@@ -22,7 +22,8 @@ class StudyConfigTab extends Component {
             errorStatus: false,
             checkZeroError: false,
             mandatoryValidation: false,
-            saveSuccessfullModal: false
+            saveSuccessfullModal: false,
+            cumulativeRatioError: false
         }
         this.updatedData = {};
         this.editedRowData = {};
@@ -87,7 +88,7 @@ class StudyConfigTab extends Component {
             const rg = new RegExp(expression, "g");
             const match = rg.exec(e.target.value);
             e.target.value = match[1] + match[2];
-            this.setState({ errorStatus: false, mandatoryValidation: false, checkZeroError: false });
+            this.setState({ errorStatus: false, mandatoryValidation: false, checkZeroError: false, cumulativeRatioError: false });
         }
         else if (e.target.value != '.') {
             if (e.target.value.includes('..')) {
@@ -123,11 +124,11 @@ class StudyConfigTab extends Component {
     // Add Groups - Modal open
     addStudyConfigModal = () => {
         this.clearModal();
-        this.setState({ openModal: true, groupStatus: "add", errorStatus: false, mandatoryValidation: false, checkZeroError: false });
+        this.setState({ openModal: true, groupStatus: "add", errorStatus: false, mandatoryValidation: false, checkZeroError: false, cumulativeRatioError: false });
     }
     // Edit Groups - Modal open
     editStudyConfigModal = (data) => {
-        this.setState({ openModal: true, groupStatus: "", errorStatus: false, mandatoryValidation: false, checkZeroError: false });
+        this.setState({ openModal: true, groupStatus: "", errorStatus: false, mandatoryValidation: false, checkZeroError: false, cumulativeRatioError: false });
         this.editedRowData = data;
         this.groupIndex = this.state.groups.findIndex(item => item == this.editedRowData);
     }
@@ -141,6 +142,11 @@ class StudyConfigTab extends Component {
     }
     // Add Groups - Ok Button
     submitStudyConfigGroups = () => {
+        let sum = 0;
+        this.state.groups.map(item => { sum = sum + parseFloat(item.ratio) });
+        if (this.updatedData["ratio"] == undefined) {
+            this.updatedData.ratio = (1 - sum).toFixed(2);
+        }
         if (!objectUtil.isEmpty(this.updatedData.assignment) && !objectUtil.isEmpty(this.updatedData.description) &&
             !objectUtil.isEmpty(this.updatedData.ratio) && !objectUtil.isEmpty(this.updatedData.sequenceLimit)) {
             let length = this.updatedData.ratio.length;
@@ -153,11 +159,15 @@ class StudyConfigTab extends Component {
                     this.updatedData.ratio = ratio.charAt(length - 2);
                 }
                 else this.updatedData.ratio = ratio;
-                this.setState({
-                    groups: [...this.state.groups, this.updatedData], buttonDisable: false, mandatoryValidation: false
-                });
-                if (this.state.errorStatus == false)
+                if (this.state.errorStatus == false && (sum + parseFloat(ratio)) <= 1) {
+                    this.setState({
+                        groups: [...this.state.groups, this.updatedData], buttonDisable: false, mandatoryValidation: false
+                    });
                     this.cancelStudyConfigModal();
+                }
+                else {
+                    this.setState({ cumulativeRatioError: true });
+                }
             }
             else {
                 this.setState({ checkZeroError: true })
@@ -183,10 +193,16 @@ class StudyConfigTab extends Component {
         if (!objectUtil.isEmpty(combinedData.assignment) && !objectUtil.isEmpty(combinedData.description) &&
             combinedData.ratio != "" && combinedData.sequenceLimit != "") {
             if (combinedData.ratio != 0 && combinedData.ratio != '.') {
-                this.setState({ groups: newGroups, buttonDisable: false, mandatoryValidation: false });
-                if (this.state.errorStatus == false)
+                let sum = 0;
+                newGroups.map(item => { sum = sum + parseFloat(item.ratio) });
+                if (this.state.errorStatus == false && sum <= 1) {
+                    this.setState({ groups: newGroups, buttonDisable: false, mandatoryValidation: false });
                     this.cancelStudyConfigModal();
-                this.clearModal();
+                    this.clearModal();
+                }
+                else {
+                    this.setState({ cumulativeRatioError: true });
+                }
             }
             else {
                 this.setState({ checkZeroError: true })
@@ -205,7 +221,7 @@ class StudyConfigTab extends Component {
         const selectedData = this.gridChild.getSelectedRows();
         this.gridChild.removeSelectedRows(selectedData);
         const rowsToDisplay = this.gridChild.gridApi.clientSideRowModel.rowsToDisplay.map(row => row.data);
-        this.setState({ groups: rowsToDisplay, deleteModal: false });
+        this.setState({ groups: rowsToDisplay, deleteModal: false, buttonDisable: false });
     }
     // StudyConfig Save
     studyConfigSaveHandler = () => {
@@ -245,7 +261,7 @@ class StudyConfigTab extends Component {
                 this.props.SaveStudyConfig(StudyConfig);
                 this.setState({ _id: _id, buttonDisable: true, saveSuccessfullModal: true });
             }
-            else window.Materialize.toast(localConstant.warningMessages.CUMULATIVE_RATIO_VALIDATION, 2000);
+            else window.Materialize.toast(localConstant.warningMessages.SAVE_CUMULATIVE_RATIO_VALIDATION, 2000);
         }
         else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
     }
@@ -277,6 +293,10 @@ class StudyConfigTab extends Component {
         this.clearStudyConfig();
     }
     render() {
+        let sum = 0;
+        this.state.groups.map(item => {
+            sum = sum + parseFloat(item.ratio)
+        })
         return (
             <Fragment>
                 {this.props.StudyConfig ?
@@ -313,7 +333,7 @@ class StudyConfigTab extends Component {
                                                 {localConstant.commonConstants.CANCEL}</Button>
                                         </div>
                                     }
-                                    header={localConstant.study_Config.STUDY_CONFIG} >
+                                    header={localConstant.study_Config.GROUPS} >
                                     <div className='row pr-2 mb-0' >
                                         <Col s={12}>
                                             {this.state.mandatoryValidation == true ?
@@ -330,7 +350,8 @@ class StudyConfigTab extends Component {
                                                 key={this.editedRowData.description} /></Col>
                                         <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
                                             <Input label={localConstant.study_Config.RATIO} type='text' name="ratio"
-                                                onChange={this.ratioInputHandler} autoComplete='off' defaultValue={this.editedRowData.ratio} s={10}
+                                                onChange={this.ratioInputHandler} autoComplete='off' s={10}
+                                                defaultValue={(this.editedRowData.ratio != "") ? this.editedRowData.ratio : parseFloat((1 - sum).toFixed(2))}
                                                 key={this.editedRowData.ratio} /></Col>
                                         <Col s={6} className="pl-0"><label className="s1 danger-txt left mt-8">*</label>
                                             <Input label={localConstant.study_Config.SEQUENCE_LIMIT} type='number' min="0"
@@ -342,6 +363,9 @@ class StudyConfigTab extends Component {
                                             : null}
                                         {this.state.checkZeroError == true ?
                                             <p className="errorMessage m-0 pl-3">{localConstant.warningMessages.ZERO_VALIDATION}</p>
+                                            : null}
+                                        {this.state.cumulativeRatioError == true ?
+                                            <p className="errorMessage m-0 pl-3">{localConstant.warningMessages.CUMULATIVE_RATIO_VALIDATION}</p>
                                             : null}
                                     </div>
                                 </Modal>
@@ -362,7 +386,8 @@ class StudyConfigTab extends Component {
                                     <label className="danger-txt left ml-3">*</label>
                                     <label className="ml-1 mb-0" style={{ fontSize: '18px' }} >{localConstant.study_Config.GROUPS}</label>
                                     {this.props.applicationMode == "VIEW" ? null :
-                                        <Button className="right btn_secondary otherButtonAddDetUpt mr-2" onClick={this.addStudyConfigModal} >
+                                        <Button className="right btn_secondary otherButtonAddDetUpt mr-2" onClick={this.addStudyConfigModal}
+                                            disabled={sum == 1 ? true : false} >
                                             {localConstant.study_Config.ADD_GROUPS}</Button>}
                                 </div>
                                 <ReactGrid
@@ -371,12 +396,12 @@ class StudyConfigTab extends Component {
                                     onRef={ref => { this.gridChild = ref }} />
                                 {this.props.applicationMode != "VIEW" ?
                                     <div className="pl-2">
-                                        <Button onClick={this.studyConfigSaveHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1"
-                                            disabled={this.state.buttonDisable}>{localConstant.commonConstants.SAVE}</Button>
+                                        {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
+                                            className="btn_secondary otherButtonAddDetUpt ml-2 mb-1 deleteBtn">{localConstant.commonConstants.DELETE}</Button> : null}
                                         <Button onClick={this.studyConfigCancelHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1"
                                             disabled={this.state.buttonDisable}>{localConstant.commonConstants.CANCEL}</Button>
-                                        {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
-                                            className="btn_secondary otherButtonAddDetUpt ml-2 mb-1">{localConstant.commonConstants.DELETE}</Button> : null}
+                                        <Button onClick={this.studyConfigSaveHandler} className="btn_secondary right otherButtonAddDetUpt ml-2 mb-1 mr-2"
+                                            disabled={this.state.buttonDisable}>{localConstant.commonConstants.SAVE}</Button>
                                     </div>
                                     : null}
                             </div>}

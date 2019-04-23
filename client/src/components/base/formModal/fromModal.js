@@ -77,8 +77,10 @@ class FormModal extends Component {
           newOrg.ttoId = null;
           newOrg.parentId = null;
           newOrg.roles=[];
+          newOrg.functions={};
           newOrg.userId = this.props.userId;
           newOrg.statusFlag='new';
+
 
           let isDuplicate = this.props.orgsList.map((iteratedValue) => {
             if (iteratedValue.name === this.state.orgName) {
@@ -124,7 +126,6 @@ class FormModal extends Component {
             newLoc.raConfig =[];
             newLoc.roles=[];
             newLoc.pages=[];
-            newLoc.functions = [];
             newLoc.userId = this.props.userId;
             newLoc.statusFlag= "new";
             const isDuplicatte = this.props.orgsList.map((iteratedValue)=>{
@@ -190,7 +191,7 @@ class FormModal extends Component {
                
                 <Input s={12} m={12} l={12} xl={12} 
                         label={(this.props.name == 'addLoc')? 'Add Location' : 'Add Organization' }
-                        className='mt-0 pl-2' 
+                        className='mt-0' 
                         name={(this.props.name == 'addLoc')? "locName" : "orgName"  }  
                         value={(this.props.name == 'addLoc')? this.state.locName : this.state.orgName }
                         onChange={this._input} 
@@ -212,7 +213,7 @@ class FormModal extends Component {
                         } 
                    </select> 
                 }
-                        <div className="col s12 m12 l12 xl12">
+                        <div className="col s12 m12 l12 xl12 mt-2">
                                     <Button className="btn_secondary  otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this._handleClose}>Cancel</Button>
                                     {this.props.name == "addLoc"&&  
                                         <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' 

@@ -71,23 +71,6 @@ export const SaveStudyConfig = (tenantId, data) => (dispatch, getState) => {
 
 }
 
-export const SaveFunctions = (tenantId, data) => (dispatch, getState) => {
-    let state = getState();
-
-    // let Project = state.projectList.Project[tenantId]
-    // let org = Project.orgsList.map((item,i)=>{
-    //     if (data.id == item.id){
-    //         return i;
-    //     }
-    // })
-    // Project = {
-    //     ...Project,
-    //     [orgsList[org]] : data
-    // }
-    console.log(tenantId, data)
-
-
-}
 export const SaveEnrollment = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
     let newProject = state.projectList.Projects[tenantId];
@@ -274,6 +257,24 @@ export const SaveLocation = (tenantId, data) => (dispatch, getState) => {
 
     dispatch(actions.SaveLocation(newProject));
 
+}
+
+
+export const SaveFunctions = (tenantId,id, data) => (dispatch, getState) => {
+    let state = getState();
+    let newProject = state.projectList.Projects[tenantId];
+    let functionsData = {
+        tenantId : tenantId,
+        ttoId :  id,
+        functionsList:data
+    };
+    newProject.orgs[id].functions= functionsData
+    newProject.orgsList.map((data, index)=>{
+        if(data.id == id){
+            data.functions= functionsData
+        }
+    } )
+    dispatch(actions.SaveEnrollment(newProject));
 }
 
 

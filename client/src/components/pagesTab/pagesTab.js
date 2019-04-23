@@ -244,26 +244,25 @@ class PagesTab extends Component {
 								mode={this.state.editor} />					
 			
             jEditor = <Tabs className='tab-demo z-depth-1'>
-					   <Tab title="JSON Schema" icon='add_circle' active><div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
-							<form className="col-md-4" onSubmit={this.handleSubmit} >
-								<Row className="margin">
-								 	<Col className="input-field p-0" s={12}>
-										<JSONInput
-											placeholder={pageJson} // data to display
-											theme="light_mitsuketa_tribute"
-											id='json_content'
-											locale={locale}
-											onChange={this.jsonValue}
-											height="340px"
-											width="500px"
-											onKeyPressUpdate={false}
-											viewOnly={viewOnly}
-										/>
-									</Col>
-								</Row>
-							</form>
-						</div></Tab>
-					 <Tab title="Preview" >{previewPage}</Tab>
+					   <Tab title={<i className="orgIcon material-icons" title='JSON Schema' >code</i>} active>
+						   <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+									<Row className="margin">
+										<Col className="input-field p-0" s={12}>
+											<JSONInput
+												placeholder={pageJson} // data to display
+												theme="light_mitsuketa_tribute"
+												id='json_content'
+												locale={locale}
+												onChange={this.jsonValue}
+												height="340px"
+												width="500px"
+												onKeyPressUpdate={false}
+												viewOnly={viewOnly}
+											/>
+										</Col>
+									</Row>
+							</div></Tab>
+					 <Tab title={<i className="orgIcon material-icons" title='Preview' >launch</i>} >{previewPage}</Tab>
 				   </Tabs>			
 								
 
@@ -280,6 +279,7 @@ class PagesTab extends Component {
 					id: item._id,
 					title: item.title,
 					collection: item.collection,
+					key: item.key,
 					index: index
 
 				})
@@ -298,7 +298,7 @@ class PagesTab extends Component {
 													  
 												  }
 												  
-												return <option value={itemval.index} selected={selected}>{itemval.title}</option>
+												return <option value={itemval.index} selected={selected}>{itemval.key}</option>
 
 											  })}
 								</select>

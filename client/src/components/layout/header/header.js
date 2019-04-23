@@ -22,24 +22,24 @@ class Header extends Component {
     handleImport = (e) => {
         this.refs.fileUpload.click();
     }
-	handleClick= (e) =>{
+    handleClick = (e) => {
     }
-    onChangFile =(e) =>{
+    onChangFile = (e) => {
         e.stopPropagation();
         e.preventDefault();
         let file = e.target.files[0];
-        this.setState({file});
+        this.setState({ file });
         let form = new FormData();
-        form.append('json',file)
+        form.append('json', file)
         axios({
-            url : '/',
-            method:'POST',
-            headers:{
-                authorization : "token"
+            url: '/',
+            method: 'POST',
+            headers: {
+                authorization: "token"
             },
             data: form
         })
-        console.log(file)
+        // console.log(file)
     }
     render() {
         var homeLink = '';
@@ -51,19 +51,23 @@ class Header extends Component {
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} name="VIEW">{"Home"}</Link>;
             createLink = <Link to={"/createProject"} onClick={this.handleClick} className="pl-2" name="CREATE">{"Create"}</Link>;
-            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
-            <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
+            importButton = <Button onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
+                <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
             </Button>;
             profileButton = <ul className="right hide-on-med-and-down">
                 <li>
-                    <a onClick={this.toggleProfileDropDown} className="waves-block profile-button" data-activates="profile-dropdown">
-                        <span className="avatar-status avatar-online">
+                    {/* <a onClick={this.toggleProfileDropDown} className="waves-block profile-button" data-activates="profile-dropdown"> */}
+                        {/* <span className="avatar-status avatar-online">
                             <img src={profileImg} alt="avatar" />
-                        </span>
-                    </a>
+                        </span> */}
+                        <Link to="/signout" className="grey-text text-lighten-5" onClick={this.toggleProfileDropDown} >
+                            {"Logout"}
+                        </Link>
+                    {/* </a> */}
+
                 </li>
             </ul>;
-            userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen} toggleProfileDropDown={this.toggleProfileDropDown} />
+            // userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen} toggleProfileDropDown={this.toggleProfileDropDown} />
         }
 
         return (

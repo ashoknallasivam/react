@@ -83,7 +83,7 @@ class Signin extends Component {
     } else {
       return (<div>
         <Row id="login-page">
-          <Col className="z-depth-4 offset-xl4 " s={12} m={6} l={4} xl={4}>
+          <Col className="z-depth-4 offset-xl4 mt-2 " s={12} m={6} l={4} xl={4}>
             <form className="col-md-4" onSubmit={this.handleSubmit} >
               <Row>
                 <Col className="input-field center" s={12}>
@@ -91,14 +91,16 @@ class Signin extends Component {
                 </Col>
               </Row>
               <Row className="margin">
-                <Col className="input-field p-0" s={12}>
-                  <Input s={12} name='environment' id='environment' type='select' icon='storage' className="pl-0" label='Environment' onChange={this.handleChange} required>
+                {/* <Col className="" > */}
+                  <i class="material-icons left mt-5 mb-4 pl-3">
+                    toc</i>
+                  <select  name='environment' id='environment' className="col s10" label='Environment' onChange={this.handleChange} required>
                     <option value=''>Select Environment</option>
                     {env.map(itemval => {
                       return <option value={itemval.value}>{itemval.label}</option>
                     })}
-                  </Input>
-                </Col>
+                  </select>
+                {/* </Col> */}
               </Row>
               <Row className="margin">
                 <Col className="input-field p-0" s={12}>
@@ -134,9 +136,12 @@ class Signin extends Component {
                 {this.renderAlert()}
               </Row>
               <Row className="center submit-container">
-                <button className="btn btn_primary" type="submit" name="action">Submit
-                  <i className="material-icons right">send</i>
-                </button>
+                {/* <button className="btn btn_secondary otherButtonAddDetUpt " type="submit" name="action">NEXT
+                  <i className="material-icons">arrow forward</i>
+                </button> */}
+                <button class="btn btn_primary otherButtonAddDetUpt right" type="submit" name="action"><span style={{fontSize: "15px"}}>NEXT </span><i class="material-icons" style={{fontSize: "25px",verticalAlign: "top"}}>
+arrow_right_alt
+</i></button>
               </Row>
             </form>
           </Col>

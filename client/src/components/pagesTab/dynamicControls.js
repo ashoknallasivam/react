@@ -1,18 +1,39 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal,Collapsible,CollapsibleItem  } from 'react-materialize';
-import InputText from './inputText';
-import inputJson from './text.json';
-import ExpansionPanel from 'material-expansion-panel';
-
-
+import ActionControl from './controls/ActionControl'; 
+import AddressControl from './controls/AddressControl'; 
+import ArrayControl from './controls/ArrayControl'; 
+import ButtonControl from './controls/ButtonControl'; 
+import CheckboxControl from './controls/CheckboxControl'; 
+import CheckgroupControl from './controls/CheckgroupControl'; 
+import DateControl from './controls/DateControl'; 
+import EmailControl from './controls/EmailControl'; 
+import FieldsetControl from './controls/FieldsetControl'; 
+import HeadingControl from './controls/HeadingControl'; 
+import LayoutControl from './controls/LayoutControl'; 
+import NumberControl from './controls/NumberControl'; 
+import PanelControl from './controls/PanelControl'; 
+import PasswordControl from './controls/PasswordControl'; 
+import PhoneControl from './controls/PhoneControl'; 
+import RadioControl from './controls/RadioControl'; 
+import SelectControl from './controls/SelectControl'; 
+import SliderControl from './controls/SliderControl'; 
+import SsnControl from './controls/SsnControl'; 
+import StatesControl from './controls/StatesControl'; 
+import StaticControl from './controls/StaticControl'; 
+import StaticpanelControl from './controls/StaticpanelControl'; 
+import TextControl from './controls/TextControl'; 
+import TextareaControl from './controls/TextareaControl'; 
+import TextmaskControl from './controls/TextmaskControl'; 
+import TimeControl from './controls/TimeControl'; 
+import SlidertoogleControl from './controls/SlidertoogleControl'; 
+import ZipControl from './controls/ZipControl';
+import elementType from './controls/json/element-type.json';
 
 class dynamicControls extends React.Component {
 	
-	
-
 	constructor(props) {
-		
 		
 		super(props);
 
@@ -25,12 +46,8 @@ class dynamicControls extends React.Component {
 			layout: [],
 			pageJson: this.props.pageJson,
 			type: '',
-			name: '',
-			label: '',
-			inputJson: inputJson,
 			selected: '',
 			values: [],
-			options: [],
 			items: [],
 			pages: this.props.pages,
 			selectedPage: this.props.selectedPage,
@@ -58,15 +75,14 @@ class dynamicControls extends React.Component {
 			subtitle: this.props.pageJson.subtitle,
 			layout: this.props.pageJson.layout,
 			pageJson: this.props.pageJson,
-			name: this.props.name,
-			label: this.props.label,
 			pages: this.props.pages,
 			selectedPage: this.props.selectedPage,
 			mode: this.props.mode
 
 
 		});
-
+		
+		
 	}
 
 	componentWillReceiveProps(nextProps) {
@@ -79,15 +95,13 @@ class dynamicControls extends React.Component {
 			subtitle: nextProps.pageJson.subtitle,
 			layout: nextProps.pageJson.layout,
 			pageJson: nextProps.pageJson,
-			name: nextProps.name,
-			label: nextProps.label,
 			pages: nextProps.pages,
 			selectedPage: nextProps.selectedPage,
 			mode: nextProps.mode
 
 
 		});
-
+      
 	}
 
 
@@ -97,7 +111,7 @@ class dynamicControls extends React.Component {
 			this.setState({ selectedPage: this.props.selectedPage, values: [], mode: this.props.mode });
 		}
 
-
+       
 
 	}
 
@@ -106,25 +120,61 @@ class dynamicControls extends React.Component {
 		this.setState({ [name]: value });
 
 		value != '' ? this.setState({ type: value }) : ''
-
+		
+		
+		
+       
 	}
 
 
 	createControlSchema(idx) {
 
+
 		const newControls = this.state.values.map((key, sidx) => {
 			if (idx !== sidx) return key;
-
+            
+			if(this.state.name !== undefined)
+			{
+				var name = this.state.name;
+			}
+			if(this.state.type !== undefined)
+			{
+				var type = this.state.type;
+			}
+			if(this.state.label !== undefined)
+			{
+				var label = this.state.label;
+			}
+			if(this.state.hint !== undefined)
+			{
+				var hint = this.state.hint;
+			}
+			if(this.state.autocomplete !== undefined)
+			{
+				if(this.state.autocomplete == 'on')
+				{
+					var autocomplete = true;
+				}else{
+					var autocomplete = false;
+				}
+			}
+			if(this.state.label_0 !== undefined)
+			{
+				
+				var items = [{ label: this.state.label_0 },{ label: this.state.label_1 }]
+			}
+			
+			
 			return { ...key, 
-			name: this.state.name, 
-			type: this.state.type, 
-			label: this.state.label, 
+			name,
+			type, 
+			label, 
 			options: { 
-				hint: this.state.hint, 
-				autocomplete: this.state.autocomplete, 
-				items: [{ label: this.state.label_0 },{ label: this.state.label_1 }],
+				hint, 
+				autocomplete, 
+				items,
 				validation: { required: this.state.required, minLength:this.state.minLength, maxLength:this.state.maxLength , 
-							   //requiredIf : { property: this.state.property, value:this.state.value }  
+							   requiredIf : { property: this.state.property, value:this.state.value }  
 						}
 				} 
 			};
@@ -141,36 +191,51 @@ class dynamicControls extends React.Component {
 			
 
 		});
-		
-			this.setState({
-		
-			values: newControls,
-			options: newControls,
 
-		});
-		
-				
-		
+			
+		this.setState({ values: newControls }, () => console.log(this.state.values));
 
 	}
 
 	handleControlChange = idx => evt => {
+		
 		const { name, value } = evt.target;
 
 		this.setState({ [name]: value }, () => {
 			this.createControlSchema(idx); // Call back function as SetState is Asynch
 		})
 		
-		//console.log(this.state.values);
+		
+		
 	};
-
-
+   
+		createTest() {
+			
+			//console.log(this.state.values)
+		}
+		
 	addClick() {
-		this.setState(prevState => ({ values: [...prevState.values, ''] }))
-		this.setState(prevState => ({ options: [...prevState.options, ''] }))
+		
+			var initialState =  {  
+			name: this.state.name, 
+			type: this.state.type, 
+			label: this.state.label, 
+			options: { 
+				hint: this.state.hint, 
+				items: [{  }],
+				validation: { requiredIf : { }  
+						}
+				} 
+			}
+		
+		
+
+		this.setState(prevState => ({ values: [...prevState.values, initialState ] }),() => {
+			this.createTest(); // Call back function as SetState is Asynch
+		})
+
 		this.setState({ isModalOpen: false })
-		
-		
+
 	}
 
 	removeClick(i) {
@@ -179,13 +244,21 @@ class dynamicControls extends React.Component {
 		this.setState({ values });
 	}
 	
+	removeControlsClick(i) {
+		let layout = [...this.state.layout];
+		layout.splice(i, 1);
+		this.setState({ layout });
+	}
+	
     handleControlSubmit(e) {
+
 		e.preventDefault();
-		 if (this.state.type != '') {
+		 //if (this.state.type != '') {
 			 
 			 this.addClick();
 			 
-		 }
+		 //}
+		 
 	}
 	
 	handleCloseModal = () => {
@@ -205,19 +278,13 @@ class dynamicControls extends React.Component {
 		if (this.state.mode == 'Edit') {
 			
 		  	
-          const combinedArrays = [...this.props.pages[this.props.selectedPage].layout, ...this.state.values];
-		  console.log("Value:",this.state.values);
-		  console.log("Options:",this.state.options);
-		  //console.log("Layout:",this.props.pages[this.props.selectedPage].layout);
-		  //console.log("Combined:",combinedArrays);
+          const combinedArrays = [...this.state.layout, ...this.state.values];
 		  
-		  if(this.state.values.length > 0)
-		  {
 		  this.props.sendData(combinedArrays,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
-		  this.setState({ options: '' });
-		  }
+		  this.setState({ values: [] });
+		  
 		} else {
-			//console.log(this.state.values);	
+			console.log(this.state.values);	
 			const combinedArrays = [...this.state.values];
 			this.props.sendData(combinedArrays,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
 		}
@@ -227,287 +294,206 @@ class dynamicControls extends React.Component {
 	}
 
 
-	renderForm = (idx) => {
-
-		let model = this.state.inputJson.layout;
-		let input = '';
-		let formUI = model.map((m) => {
-
-			let name = m.name;
-			let type = m.type;
-			let label = m.label;
-			if (type == "heading") {
-				return (
-					<div>
-						<h5>{label}</h5>
-					</div>
-				);
-			}
-
-			if (type == "text") {
-
-				if (name == 'type') {
-					return <div >
-						<Input
-							s={12}
-							label={label}
-							id={name}
-							name={name}
-							type={type}
-							value={this.state.type}
-							minLength={m.options.validation.minLength}
-							maxLength={m.options.validation.maxLength}
-							onChange={this.handleControlChange(idx)}
-							disabled
-						/>
-					</div>
-						;
-				} else {
-					return <div >
-						<Input
-							s={12}
-							label={label}
-							id={name}
-							name={name}
-							type={type}
-							minLength={m.options.validation.minLength}
-							maxLength={m.options.validation.maxLength}
-							onChange={this.handleControlChange(idx)}
-						/>
-					</div>;
-				}
-
-			}
-
-
-
-			if (type == "panel") {
-
-				var arr3 = Object.values(m.options.fields);
-
-				input = arr3.map((o) => {
-					
-					if (o.type == 'text') {
-						return <div>
-						
-						  	<Input
-								s={12}
-								label={o.label}
-								id={o.name}
-								name={o.name}
-								type={o.type}
-								onChange={this.handleControlChange(idx)}
-							/></div>
-					}
-					
-					if (o.type == 'checkbox') {
-					   return <div>
-					    	  <input s={12} type={o.type} id="test6" name={o.name} onChange={this.handleControlChange(idx)}/>
-							  <label htmlFor="test6">{o.label}</label>
-         				   </div>;
-					} 
-
-
-					if (o.type == 'array') {
-						var autoitems ='';
-
-                        const autoitems = Object.entries(o.options).map(([key,value])=>{
-
-                          if(key == 'hint')	
-                          {
-							  return (
-							      <div>{value.toString()}</div>
-							  );
-						  } 
-
-						  if(key == 'fields')	
-                          {
-							  
-                             var autofileds = '';
-                             var required = '';
-                             autofileds = value.map((q,idx) => {
-                                
-                                const validation =q.options.validation.required.toString() ;
-
-                                required =  validation == true ? required : '';
-                                //console.log(idx);
- 
-									   
-								if(q.type == 'checkbox'){
-									
-									return <div><div>
-										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleControlChange(idx)}/>
-										  <label htmlFor="test7">{q.label}</label>
-									   </div><h6>{q.options.hint}</h6>
-                                         </div>;
-									
-								} else {
-                                	return  <div><div>	
-										<Input
-											s={12}
-											label={q.label}
-											id={q.name}
-											name={ `${q.name}_${idx}` }
-											type={q.type}
-											onChange={this.handleControlChange(idx)}
-										/></div><h6>{q.options.hint}</h6>
-                                         </div>;
-										
-								}	
-
-                             });
-
-                              return <div>{autofileds}</div>
-								
-						  } 
-
-						})	
-
-						return <div >
-						     	<h5>{o.label}</h5>
-						       		<div>{autoitems}</div>
-								</div>
-					}
-					
-					if (o.type == 'fieldset') {
-						var autoitems ='';
-
-                        const autoitems = Object.entries(o.options).map(([key,value])=>{
-
-                          if(key == 'hint')	
-                          {
-							  return (
-							      <div>{value.toString()}</div>
-							  );
-						  } 
-
-						  if(key == 'fields')	
-                          {
-							  
-                             var autofileds = '';
-                             var required = '';
-                             autofileds = value.map((q) => {
-                                
-                                const validation =q.options.validation.required.toString() ;
-
-                                required =  validation == true ? required : '';
-                                //console.log(required);
- 
-									   
-								if(q.type == 'checkbox'){
-									
-									return <div><div>
-										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleControlChange(idx)}/>
-										  <label htmlFor="test7">{q.label}</label>
-									   </div><h6>{q.options.hint}</h6>
-                                         </div>;
-									
-								} else if (q.type == 'fieldset') {
-                                	return  <div><div>	
-										  </div><h6>{q.label}</h6>
-                                         </div>;
-										
-								}	else {
-                                	return  <div><div>	
-										<Input
-											s={12}
-											label={q.label}
-											id={q.name}
-											name={q.name}
-											type={q.type}
-											onChange={this.handleControlChange(idx)}
-										/></div><h6>{q.options.hint}</h6>
-                                         </div>;
-										
-								}	
-
-                             });
-
-                              return <div>{autofileds}</div>
-								
-						  } 
-
-
-
-						})	
-
-
-						return <div>
-						     	<h5>{o.label}</h5>
-						       		<div>{autoitems}</div>
-								</div>
-					}
-					
-				});
-
-				input = <div>{input}</div>;
-
-
-
-
-			}
-			return (
-				<Collapsible accordion={false}>
-					<CollapsibleItem header={label} icon="keyboard_arrow_down">
-						{input}
-					</CollapsibleItem>
-				</Collapsible>
-			);
-
-
-
-		});
+	renderExistingControl = (idx,data) => {
 		
-		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header='Text' icon="keyboard_arrow_down">
-					{formUI}
-				</CollapsibleItem>
-			</Collapsible>
-			);
+		const { type } = data;
+		
+		switch(type) {
+
+			case 'action-toolbar':
+			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'address':
+			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'array':
+			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'button':
+			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 
+			case 'checkbox':
+			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'checkbox-group':
+			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'date':
+			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'email':
+			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'fieldset':
+			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'heading':
+			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'layout-editor':
+			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'number':
+			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'panel':
+			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'password':
+			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'phone':
+			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'radio':
+			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'select':
+			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'slider':
+			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'slide-toggle':
+			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'ssn':
+			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'states':
+			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'static':
+			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'static-panel':
+			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'text':
+			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'textarea':
+			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'text-mask':
+			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'time':
+			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'zip':
+			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			default:
+			  return 'No Controls';
+		}
+				
+		if (data.type == 'text') {
+			
+        return ( <TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} /> );
+		
+		}
+		
+		if (data.type == 'static') {
+			
+        return ( <StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} /> );
+		
+		}
+		
+		
+	}
+	
+	
+	renderNewControl = (idx,data) => {
+		
+		
+		
+	
+		const { type } = this.state.values[idx];
+		
+		
+		switch(type) {
+
+			case 'action-toolbar':
+			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'address':
+			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'array':
+			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'button':
+			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 
+			case 'checkbox':
+			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'checkbox-group':
+			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'date':
+			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'email':
+			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'fieldset':
+			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'heading':
+			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'layout-editor':
+			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'number':
+			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'panel':
+			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'password':
+			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'phone':
+			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'radio':
+			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'select':
+			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'slider':
+			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'slide-toggle':
+			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'ssn':
+			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'states':
+			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'static':
+			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'static-panel':
+			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'text':
+			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'textarea':
+			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'text-mask':
+			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
+			case 'time':
+			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			case 'zip':
+			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
+			default:
+			  return 'No Controls';
+		}
+				
+		
+		
 		
 	}
 
 	createUI() {
-		return this.state.values.map((el, i) =>
+		var renderfields ='';
+		const { values } = this.state;
+		
+		 renderfields = values.map((el, i) => {
+										 
+			return  <div key={i}>
+					<Row>
+						<Col s={11}>
+							{ this.renderNewControl(i,el)}
+						</Col>
+						<Col s={1} >
+						<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+								<i className="material-icons" title='Delete'>delete</i>
+						</Button> 
+						</Col>
+					</Row>
+					</div>;
+		});
+			
+       return <div>{renderfields}</div>
 
-			<div key={i}>
-
-				<Row>
-					<Col s={11}>
-						{this.renderForm(i)}
-					</Col>
-					<Col s={1} >
-					<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
-							<i className="material-icons" title='Delete'>delete</i>
-					</Button>
-					</Col>
-				</Row>
-
-			</div>
-
-		)
 	}
 
 	render() {
 
     const { key, collection, title, subtitle, layout } = this.state;
 	
-	const existingControls =  this.state.layout.map((el, i) =>
-
+	const existingControls =  layout.map((el, i) => 
+        
 			<div key={i}>
 				<Row><Col s={11}>
-					{this.renderForm(i)}
+					{this.renderExistingControl(i,el)}
 					</Col>
 					<Col s={1} >
-					<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+					<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeControlsClick.bind(this, i)}>
 							<i className="material-icons" title='Delete'>delete</i>
-						</Button>
+						</Button> 
 					</Col>
 				</Row>
 			</div>
 
-		)
+	)
 	
 		return (
 		  
@@ -533,19 +519,17 @@ class dynamicControls extends React.Component {
 							<Input s={10} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleControlChange('')} required />
 						 </Row>
 						 <Row>
-						 <label>Dynamic Controls</label>
-							{existingControls}
+						 
+							{existingControls} {this.createUI()}
 						 </Row>
 						 
-						 <Row ><div><label>Add Controls</label></div>
+						 <Row >
 						  <Button type="button" className='orgIcon s12 m2 l2 xl2' name="addPage" onClick={this.handleOpenModal}>
 							  <i className="material-icons" title='Add Control' >add_circle</i>
 							</Button>
 						 </Row>
 						 <Row>
-							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={10} >
-								{this.createUI()}
-							</Col>
+							
 						</Row>
 						<Row>
 							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={8} >
@@ -559,18 +543,13 @@ class dynamicControls extends React.Component {
 							<form onSubmit={this.handleControlSubmit} >
 							 <div className='row' >
 							 <div >
-							<label>Add an Element</label>
+							  <label>Add an Element</label>
 								<select defaultValue="" name='type' id='type' onChange={this.handleChange} required>
 								  <option value="" disabled >Choose your option</option>
-								  <option value='text'>Text</option>
-								  <option value='email'>Email</option>
-									{/*<option value='radio'>Radio</option>
-									   <option value='checkbox'>Checkbox</option>
-									   <option value='textarea'>TextArea</option>
-									   <option value='numeric'>Numeric</option>
-									   <option value='date_picker'>DatePicker</option>
-									   <option value='time_picker'>TimePicker</option>*/}
-								</select>
+								  	{elementType.map(itemval => {
+									  return <option value={itemval.value}>{itemval.label}</option>
+									})}
+								  </select>
 								</div>
 							</div>
 							 <div className='row' >

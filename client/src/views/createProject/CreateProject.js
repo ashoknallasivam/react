@@ -55,7 +55,7 @@ class CreateProject extends Component {
     if (this.props.location.state !== undefined) {
       if (this.props.location.state.applicationMode === "VIEW" ) {
         this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response => {
-          console.log(response)
+          // console.log(response)
           if(response.status == 200)
           {
           this.setState({
@@ -92,6 +92,7 @@ class CreateProject extends Component {
     // create mode if preivously selected card value is null
     else {
       // if the project had already data create mode and no id
+      console.log('in create')
       this.setState({
         applicationMode: "CREATE",
         id: uuid.v4(),
@@ -105,6 +106,7 @@ class CreateProject extends Component {
     })
   }
   componentWillReceiveProps(props) {
+    console.log('in will props')
     if (props.location.state !== undefined) {
       let currentProject = props.projectList[props.location.state.id];
       this.setState({
@@ -120,7 +122,7 @@ class CreateProject extends Component {
       this.setState({
         currentProject: currentProject,
         name: currentProject !== undefined ? currentProject.name : '',
-        id: currentProject !== undefined ? currentProject.id : '',
+        id: currentProject !== undefined ? currentProject.id : uuid.v4(),
         allOrganisations: currentProject !== undefined ? currentProject.orgs : {},
         orgsList: currentProject !== undefined ? currentProject.orgsList : []
       })
@@ -134,7 +136,7 @@ class CreateProject extends Component {
     let selectedOrganisation = {};
     let locList = [];
     this.state.currentProject.orgsList.map((data, index) => {
-      console.log(data)
+      // console.log(data)
       if (data.ttoId == e.target.value) {
         allLocations = { ...allLocations, [data.id]: { ...data } }
       }
@@ -166,6 +168,23 @@ class CreateProject extends Component {
       }
     })
   }
+  SaveFunctions = (data) =>{
+    let selectedOrganisation = this.state.selectedOrganisation;
+    let allOrganisations = this.state.allOrganisations;
+    let functionsData = {
+      tenantId : this.state.id,
+      ttoId : this.state.selectedOrganisation.id,
+      functionsList : data
+  }
+  selectedOrganisation.functions = functionsData;
+  allOrganisations[selectedOrganisation.id] = selectedOrganisation
+
+  this.setState({
+    selectedOrganisation,
+    allOrganisations
+  })
+  }
+
   SaveStudyConfig = (data) => {
     this.setState(({
       selectedLocation: {
@@ -353,7 +372,7 @@ class CreateProject extends Component {
       }
       if (this.state.applicationMode == "CREATE") {
         data = {
-          id: this.state.id,
+          id:  this.state.id ,
           name: this.state.name,
           orgs: this.state.allOrganisations,
           orgsList: this.state.orgsList,
@@ -361,7 +380,7 @@ class CreateProject extends Component {
           
         }
       }
-      this.props.actions.SaveTenant(this.state.id, data);
+      this.props.actions.SaveTenant(data.id, data);
     } else {
      // window.Materialize.toast('Please fill project name', 4000)
     }
@@ -403,8 +422,21 @@ class CreateProject extends Component {
       }
      });
    }
-   else  if(this.state.currentProject.projectStatus == "save"){
+   else if(this.state.applicationMode == "CREATE" && this.state.currentProject.projectStatus == "save"){
     // this.props.actions.removeProject(this.state.id)
+    this.setState({
+        name: this.state.currentProject.name,
+        id: this.state.currentProject.id,
+        allOrganisations: this.state.currentProject.orgs,
+        orgsList: this.state.currentProject.orgsList,
+        allLocations: [],
+        selectedOrganisation: {
+          id: ''
+        },
+        selectedLocation: {
+          id: ''
+        },
+    })
       this.props.actions.fetchSingleSavedTenant(this.state.id)
     
  }else{
@@ -421,27 +453,34 @@ class CreateProject extends Component {
       preloader: true
     })
     //Publish the project 
-    debugger
     this.props.actions.publishProject(this.state.id).then(response => {
       //Publish Succcess
       if (response.status == 200) {
         alert(response.data.messages)
-        
+
+        //removing the published project form the store
+        this.props.actions.removeProject(this.state.id)
+
+        //removing the published project from the savedProjects folder
+        if (this.state.currentProject != undefined && this.state.currentProject.projectStatus == "save") {
+          this.props.actions.deleteSavedProject(this.state.id)
+        }
+
         //Fetching the published project form api
         this.props.actions.fetchSingleTenant(response.data.id).then(response => {
           this.setState({
             preloader: false,
           })
 
+
           //Fetching success
           if (response.status == 200) {
             this.props.history.push({
               pathname: '/dashboard',
             })
-            //removing the published project form the store
-        this.props.actions.removeProject(this.state.id)
-          } 
-           //Fetching Failed
+
+          }
+          //Fetching Failed
           else {
             alert(response.data.messages ? response.data.messages : response.statusText)
             this.props.history.push({
@@ -453,7 +492,7 @@ class CreateProject extends Component {
             })
           }
         })
-      } 
+      }
       //Publish Failed
       else {
         alert(response.data.messages ? response.data.messages : response.statusText)
@@ -684,7 +723,8 @@ class CreateProject extends Component {
                 SaveStudyConfig={this.SaveStudyConfig}
                 SaveEnrollment={this.SaveEnrollment}
                 SaveRoles={this.SaveRoles}
-                SavePages={this.SavePages} />
+                SavePages={this.SavePages} 
+                SaveFunctions = {this.SaveFunctions}/>
             </Col>
           }
           <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
@@ -698,7 +738,7 @@ class CreateProject extends Component {
                 <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
                 {/* Display Discard in if project name is not empty */}
                 { this.state.currentProject && this.state.currentProject.projectStatus == "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.deleteSaved} disabled={(this.state.name !== '') ? false : true}>Delete</Button>}
-                {this.state.applicationMode  === "CREATE" && this.state.currentProject && this.state.currentProject.projectStatus !== "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
+                {this.state.applicationMode  === "CREATE" &&  this.state.currentProject &&  this.state.currentProject.projectStatus !== "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
                 <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  >Discard</Button>
               </Fragment>
             }
@@ -706,7 +746,6 @@ class CreateProject extends Component {
         </Row>
         {/* } */}
       </Fragment>
-
     )
   }
 }

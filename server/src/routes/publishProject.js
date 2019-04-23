@@ -15,6 +15,7 @@ let menuBiz = require('../biz/menuRoleAccessBiz');
 let resourceBiz = require('../biz/resourceRoleAccessBiz');
 let pageBiz = require('../biz/pageBiz');
 let boundsbiz = require('../biz/boundsBiz');
+let validateBiz = require('../biz/importValidationBiz');
 let fs = require('fs');
 
 // publish bounds.
@@ -231,6 +232,27 @@ router.post('/publish', (req, res) => {
 
 });
 
+
+router.post('/validate', (req, res) => {
+    console.log(req.body);
+    let inpParam = req.body;
+    if(validateBiz.validateForImport(inpParam)){
+        fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+            if (err) {
+                logging.applogger.error(err);
+                res.send(err);
+            }else{
+        res.status(200).send({savedProjectId: inpParam.id});
+                // fs.unlinkSync('AllProjects.json', function (err) {
+                //     if (err) throw err;
+            // })
+            }
+            
+        });
+    }
+    res.send(validateBiz.validateForImport(req.body));
+})
+
 module.exports = router;
 
 // // publish organization list for particular project.
@@ -255,6 +277,18 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
             }
             let publishOrgStatus = {};
             if (response.status === 200) {
+                // fs.writeFile('functions' + response.data.insertId + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+                //     if (err) {
+                //         logging.applogger.error(err);
+                //         res.send(err);
+                //     }else{
+                // res.status(200).send({savedProjectId: inpParam.id});
+                //         // fs.unlinkSync('AllProjects.json', function (err) {
+                //         //     if (err) throw err;
+                //     // })
+                //     }
+                    
+                // });
                 publishOrgStatus.org = response.status;
                 let orgUserBody = {"ttoId" : globalTto, "ltoId":  inputObj.ttoId == null? null: response.data.insertId, userId: oneOrganization.userId}
                 if(inputObj.level !== 0){   

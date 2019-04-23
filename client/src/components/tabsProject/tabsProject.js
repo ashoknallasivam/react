@@ -18,15 +18,15 @@ class TabsProject extends Component {
             <Row className='m-0'>
                 <Tabs>
                         <TabList className="tabs customTabs z-depth-1 tabs-fixed-width">
-                            <Tab className="tab" >Functions</Tab>
+                            {/* <Tab className="tab" >Functions</Tab> */}
                             <Tab className="tab" >Study Config</Tab>
                             <Tab className="tab" >Enrollment Target</Tab>
                             <Tab className="tab" >Pages</Tab>
                             <Tab className="tab" >Roles</Tab>
                         </TabList>
-                        <TabPanel>
+                        {/* <TabPanel>
                             <FunctionsTab/>
-                        </TabPanel>
+                        </TabPanel> */}
 
                         <TabPanel>
                             <StudyConfigTab 
@@ -35,7 +35,6 @@ class TabsProject extends Component {
                              applicationMode={this.props.applicationMode} 
                              upadateNew= {this.props.upadateNew} 
                              SaveStudyConfig= {this.props.SaveStudyConfig} /> 
-
                         </TabPanel>
 
                         <TabPanel>
@@ -47,7 +46,7 @@ class TabsProject extends Component {
                         </TabPanel>
 
                         <TabPanel>
-                            <RolesTab  orgRoles={this.props.selectedOrganisation} roles = {this.props.selectedLocation.roles} applicationMode={this.props.applicationMode} selectedLocation = {this.props.selectedLocation}  SaveRoles={this.props.SaveRoles} />
+                            <RolesTab SaveFunctions={this.props.SaveFunctions} orgRoles={this.props.selectedOrganisation} roles = {this.props.selectedLocation.roles} applicationMode={this.props.applicationMode} selectedLocation = {this.props.selectedLocation}  SaveRoles={this.props.SaveRoles} />
                         </TabPanel>
                 </Tabs>
             </Row>

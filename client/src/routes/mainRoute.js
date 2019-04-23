@@ -10,7 +10,7 @@ import Signout from './../components/auth/signout';
 import RequireAuth from './../components/auth/require_auth';
 import Pages from './../components/pagesTab';
 import DynamicControls from './../components/pagesTab/dynamicControls';
-import Text from './../components/pagesTab/text';
+
 
 const Routes = () => (
    
@@ -20,6 +20,7 @@ const Routes = () => (
         <Route path="/signout" component={Signout} />
         <Route exact path='/' component={Signin} />
 		<Route path="/twofactor" component={Twofactor} />
+		
         <Route path="/dashboard" component={RequireAuth(Dashboard)} />
 		<Route exact path="/createProject" key="create-project" component={RequireAuth(CreateProject)} />
 		<Route exact path="/viewedit" key="view-edit-project" component={RequireAuth(CreateProject)} />

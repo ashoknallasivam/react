@@ -122,6 +122,22 @@ router.delete('/saveProject/:id', (req, res) => {
         }
     });
 });
+// get particular saved project.
+router.get('/saveProject/:id', (req, res) => {
+    fs.readdir('savedProjects', function (err, items) {
+        if (err) {
+            res.status(500).send(err);
+            logging.applogger.error(err);
+        } else {
+            let item = req.params.id + ".json";
+            fs.readFile('savedProjects/' + item, (err, data) => {
+                if (err) throw err;
+                let resultData = JSON.parse(data);
+                res.status(200).send(JSON.stringify(resultData));
+            })
+        }
+    });
+});
 
 module.exports = router;
 
