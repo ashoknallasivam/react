@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import * as otplib from 'otplib';
 
-const secret = 'KBJVUJDPMESESUSK';
+const secret = 'HR4S64BFLVEEIS2L';
 
 
 class Otp extends React.Component {

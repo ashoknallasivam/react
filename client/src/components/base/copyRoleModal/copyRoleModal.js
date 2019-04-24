@@ -16,16 +16,16 @@ class CopyRoleModal extends Component {
     };
   }
   componentWillMount() {
-    this.props.actions.fetchAllTenants().then(response => {
-      if (response.status !== 200) {
-        //  console.log(response)
-        alert(response);
-      }
-      this.setState({
-        preloader: false
-      });
-      this.props.actions.fetchSavedTenants();
-    });
+  //   this.props.actions.fetchAllTenants().then(response => {
+  //     if (response.status !== 200) {
+  //       //  console.log(response)
+  //       alert(response);
+  //     }
+  //     this.setState({
+  //       preloader: false
+  //     });
+  //     this.props.actions.fetchSavedTenants();
+  //   });
   }
   componentWillReceiveProps(props) {}
 
@@ -130,7 +130,7 @@ class CopyRoleModal extends Component {
 
         <Col s={12}>
           <select
-            className="col s3 mt-1 ml-1 pl-0 Dropdown"
+            className="col  mt-1 ml-1 pl-0 Dropdown"
             name="selectedTenant"
             onChange={this._input}
             value={this.state.selectedTenant}
@@ -147,7 +147,7 @@ class CopyRoleModal extends Component {
           <Col s={6}> 
           {this.state.selectedTenant && (
             <select
-              className="col s3 mt-1 ml-1 pl-0 Dropdown"
+              className="col mt-1 ml-1 pl-0 Dropdown"
               name="organization"
               onChange={this._input}
               value={this.state.organization.id}
@@ -166,7 +166,7 @@ class CopyRoleModal extends Component {
           <Col s={6}> 
           {Object.keys(this.state.organization).length > 0 && (
             <select
-              className="col s3 mt-1 ml-1 pl-0 Dropdown"
+              className="col  mt-1 ml-1 pl-0 Dropdown"
               name="location"
               onChange={this._input}
               value={this.state.location.id}
@@ -185,7 +185,7 @@ class CopyRoleModal extends Component {
         <Row>
           {this.state.allRole && (
             <select
-              className="col s3 mt-1 ml-1 pl-0 Dropdown"
+              className="col  mt-1 ml-1 pl-0 Dropdown"
               name="selectedRole"
               onChange={this._input}
               value={this.state.allRole.id}

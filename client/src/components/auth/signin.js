@@ -139,7 +139,7 @@ class Signin extends Component {
                 {/* <button className="btn btn_secondary otherButtonAddDetUpt " type="submit" name="action">NEXT
                   <i className="material-icons">arrow forward</i>
                 </button> */}
-                <button class="btn btn_primary otherButtonAddDetUpt right" type="submit" name="action"><span style={{fontSize: "15px"}}>NEXT </span><i class="material-icons" style={{fontSize: "25px",verticalAlign: "top"}}>
+                <button className="btn btn_primary otherButtonAddDetUpt right" type="submit" name="action"><span style={{fontSize: "15px"}}>NEXT </span><i class="material-icons" style={{fontSize: "25px",verticalAlign: "top"}}>
 arrow_right_alt
 </i></button>
               </Row>

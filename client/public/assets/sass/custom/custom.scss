@@ -657,5 +657,25 @@ body {
          
     }
     .deleteBtn {
-        background-color: red;
+        background-color: #800000;
+    }
+    .deleteBtn:hover {
+        background-color: #9c0707;
+    }
+    .btn.btn_primary.otherButtonAddDetUpt.copyrole {
+        background: transparent !important;
+        border: unset !important;
+        box-shadow: unset !important;
+        color: black;
+    }
+    
+    
+    
+    .btn.btn_primary.otherButtonAddDetUpt.copyrole i.material-icons {
+        vertical-align: top;
+        color: #004e92;
+    }
+
+    .d-flex{
+        display: flex;
     }

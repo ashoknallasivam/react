@@ -184,14 +184,14 @@ class TextControl extends Component {
 									   
 								if(q.type == 'checkbox'){
 									
-									return <div><div>
+									return <div>
 										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleChange}/>
 										  <label htmlFor="test7">{q.label}</label>
-									   </div><div className="helper-text" >{q.options.hint}</div>
+									   <div className="helper-text" >{q.options.hint}</div>
                                          </div>;
 									
 								} else {
-                                	return  <div><div>	
+                                	return  <div>	
 										<Input
 											s={12}
 											label={q.label}
@@ -199,7 +199,7 @@ class TextControl extends Component {
 											name={ `${q.name}_${idx}` }
 											type={q.type}
 											onChange={this.handleChange}
-										/></div><div className="helper-text" >{q.options.hint}</div>
+										/><div className="helper-text" >{q.options.hint}</div>
                                          </div>;
 										
 								}	
@@ -214,7 +214,7 @@ class TextControl extends Component {
 
 						return <div >
 						     	<h5>{o.label}</h5>
-						       		<div>{autoitems}</div>
+						       		{autoitems}
 								</div>
 					}
 					
@@ -237,10 +237,10 @@ class TextControl extends Component {
 									   
 								if(q.type == 'checkbox'){
 									
-									return <div><div>
+									return <div>
 										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleChange} />
 										  <label htmlFor="test7">{q.label}</label>
-									   </div><div className="helper-text" >{q.options.hint}</div>
+									   <div className="helper-text" >{q.options.hint}</div>
                                          </div>;
 									
 								} else if (q.type == 'fieldset') {
@@ -257,7 +257,7 @@ class TextControl extends Component {
 										 
 										 requiredfields = value.map((r) => {
 											 
-											return  <div><div>	
+											return  <div>
 												<Input
 													s={12}
 													label={r.label}
@@ -265,7 +265,7 @@ class TextControl extends Component {
 													name={r.name}
 													type={r.type}
 													onChange={this.handleChange}
-												/><div className="helper-text" >{r.options.hint}</div></div>
+												/><div className="helper-text" >{r.options.hint}</div>
 												 </div>;
 
 
@@ -275,12 +275,12 @@ class TextControl extends Component {
 									});	
 									
 									
-                                	return  <div><div>	
-										  </div><legend><b>{q.label}</b></legend><div>{requiredifitems}</div>
-                                         </div>;
+                                	return  <div><legend><b>{q.label}</b></legend>
+												<div>{requiredifitems}</div>
+                                           </div>;
 										
 								}	else {
-                                	return  <div><div>	
+                                	return  <div>
 										<Input
 											s={12}
 											label={q.label}
@@ -288,7 +288,7 @@ class TextControl extends Component {
 											name={q.name}
 											type={q.type}
 											onChange={this.handleChange}
-										/><div className="helper-text" >{q.options.hint}</div></div>
+										/><div className="helper-text" >{q.options.hint}</div>
                                          </div>;
 										
 								}	
@@ -306,7 +306,7 @@ class TextControl extends Component {
 
 						return <div>
 						     	<h5>{o.label}</h5>
-						       		<div>{autoitems}</div>
+						       		{autoitems}
 								</div>
 					}
 					

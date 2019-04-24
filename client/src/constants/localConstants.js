@@ -42,7 +42,7 @@ export const localeConstants_en = {
         CUMULATIVE_RATIO_VALIDATION: "Cumulative Ratio should be equal to 1",
         RATIO_VALIDATION: "Ratio should not be more than 1",
         ZERO_VALIDATION: "Ratio should be greater than 0.0 and less than equal to 1.0",
-        SAVE_CUMULATIVE_RATIO_VALIDATION: "Add more Groups to make ratio equal to 1",
+        SAVE_CUMULATIVE_RATIO_VALIDATION: "Add more Groups to make cumulative ratio equal to 1",
         //Enrollment
         VALID_DATE: "Please enter a valid Date",
         DUPLICATE_MONTH: "Enrollment target for this Month and Year exists",

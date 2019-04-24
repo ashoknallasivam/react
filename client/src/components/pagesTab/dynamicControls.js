@@ -58,9 +58,10 @@ class dynamicControls extends React.Component {
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.handleControlSubmit = this.handleControlSubmit.bind(this);
 		this.handleChange = this.handleChange.bind(this);
-		this.handleControlChange = this.handleControlChange.bind(this);
 		this.handleCloseModal = this.handleCloseModal.bind(this);
 		this.handleOpenModal = this.handleOpenModal.bind(this);
+		this.handleSchema = this.handleSchema.bind(this);
+		
 		//this.removeClick = this.removeClick.bind(this);
 	}
 
@@ -118,107 +119,38 @@ class dynamicControls extends React.Component {
 	handleChange(e) {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
+    	value != '' ? this.setState({ type: value }) : ''
+ 	}
 
-		value != '' ? this.setState({ type: value }) : ''
+    handleSchema(idx,schema){
+		//console.log(schema);
 		
-		
-		
-       
-	}
-
-
-	createControlSchema(idx) {
-
-
 		const newControls = this.state.values.map((key, sidx) => {
 			if (idx !== sidx) return key;
-            
-			if(this.state.name !== undefined)
-			{
-				var name = this.state.name;
-			}
-			if(this.state.type !== undefined)
-			{
-				var type = this.state.type;
-			}
-			if(this.state.label !== undefined)
-			{
-				var label = this.state.label;
-			}
-			if(this.state.hint !== undefined)
-			{
-				var hint = this.state.hint;
-			}
-			if(this.state.autocomplete !== undefined)
-			{
-				if(this.state.autocomplete == 'on')
-				{
-					var autocomplete = true;
-				}else{
-					var autocomplete = false;
-				}
-			}
-			if(this.state.label_0 !== undefined)
-			{
-				
-				var items = [{ label: this.state.label_0 },{ label: this.state.label_1 }]
-			}
-			
-			
+            			
 			return { ...key, 
-			name,
-			type, 
-			label, 
-			options: { 
-				hint, 
-				autocomplete, 
-				items,
-				validation: { required: this.state.required, minLength:this.state.minLength, maxLength:this.state.maxLength , 
-							   requiredIf : { property: this.state.property, value:this.state.value }  
-						}
-				} 
+			...schema
 			};
 
 		});
 		
+	   
 		
-        this.setState({
-			
-			key: this.state.key,
-			collection: this.state.collection,
-			title: this.state.title,
-			subtitle: this.state.subtitle,
-			
+	   this.setState({ values: newControls }, () => console.log(this.state.values));
 
-		});
-
-			
-		this.setState({ values: newControls }, () => console.log(this.state.values));
-
+		
+	}	
+	
+	createTest() {
+		
+		console.log(this.state.values)
 	}
-
-	handleControlChange = idx => evt => {
-		
-		const { name, value } = evt.target;
-
-		this.setState({ [name]: value }, () => {
-			this.createControlSchema(idx); // Call back function as SetState is Asynch
-		})
-		
-		
-		
-	};
-   
-		createTest() {
-			
-			//console.log(this.state.values)
-		}
 		
 	addClick() {
 		
 			var initialState =  {  
+			type: this.state.type,
 			name: this.state.name, 
-			type: this.state.type, 
 			label: this.state.label, 
 			options: { 
 				hint: this.state.hint, 
@@ -293,162 +225,78 @@ class dynamicControls extends React.Component {
 
 	}
 
+    controlType = (idx,data,type) => {
+		switch(type) {
+
+			case 'action-toolbar':
+			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'address':
+			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'array':
+			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'button':
+			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 
+			case 'checkbox':
+			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'checkbox-group':
+			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'date':
+			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'email':
+			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'fieldset':
+			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'heading':
+			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'layout-editor':
+			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'number':
+			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'panel':
+			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'password':
+			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'phone':
+			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'radio':
+			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'select':
+			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'slider':
+			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'slide-toggle':
+			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'ssn':
+			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'states':
+			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'static':
+			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'static-panel':
+			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'text':
+			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'textarea':
+			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'text-mask':
+			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'time':
+			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'zip':
+			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			default:
+			  return 'No Controls';
+		}
+	}
 
 	renderExistingControl = (idx,data) => {
-		
 		const { type } = data;
-		
-		switch(type) {
-
-			case 'action-toolbar':
-			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'address':
-			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'array':
-			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'button':
-			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 
-			case 'checkbox':
-			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'checkbox-group':
-			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'date':
-			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'email':
-			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'fieldset':
-			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'heading':
-			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'layout-editor':
-			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'number':
-			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'panel':
-			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'password':
-			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'phone':
-			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'radio':
-			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'select':
-			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'slider':
-			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'slide-toggle':
-			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'ssn':
-			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'states':
-			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'static':
-			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'static-panel':
-			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'text':
-			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'textarea':
-			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'text-mask':
-			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'time':
-			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'zip':
-			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			default:
-			  return 'No Controls';
-		}
-				
-		if (data.type == 'text') {
-			
-        return ( <TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} /> );
-		
-		}
-		
-		if (data.type == 'static') {
-			
-        return ( <StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} /> );
-		
-		}
-		
-		
+		return this.controlType(idx,data,type);
 	}
 	
-	
 	renderNewControl = (idx,data) => {
-		
-		
-		
-	
 		const { type } = this.state.values[idx];
-		
-		
-		switch(type) {
-
-			case 'action-toolbar':
-			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'address':
-			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'array':
-			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'button':
-			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 
-			case 'checkbox':
-			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'checkbox-group':
-			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'date':
-			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'email':
-			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'fieldset':
-			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'heading':
-			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'layout-editor':
-			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'number':
-			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'panel':
-			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'password':
-			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'phone':
-			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'radio':
-			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'select':
-			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'slider':
-			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'slide-toggle':
-			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'ssn':
-			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'states':
-			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'static':
-			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'static-panel':
-			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'text':
-			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'textarea':
-			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'text-mask':
-			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />); 			
-			case 'time':
-			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			case 'zip':
-			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleControlChange(idx)} />);
-			default:
-			  return 'No Controls';
-		}
-				
-		
-		
-		
+	    return this.controlType(idx,data,type);
 	}
 
 	createUI() {
@@ -504,19 +352,19 @@ class dynamicControls extends React.Component {
 					
 						 <Row>
 						 <label className="required-field"></label>
-						 <Input s={10} id="key" label="Key" name="key" type="text" value={key} validate onChange={this.handleControlChange('')} required />
+						 <Input s={10} id="key" label="Key" name="key" type="text" value={key} validate onChange={this.handleChange} required />
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={10} label="Collection" id="collection" name="collection" type="text" value={collection} validate onChange={this.handleControlChange('')} required/>
+							<Input s={10} label="Collection" id="collection" name="collection" type="text" value={collection} validate onChange={this.handleChange} required/>
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={10} label="Title" id="title" name="title" type="text" value={title} validate onChange={this.handleControlChange('')} required/>
+							<Input s={10} label="Title" id="title" name="title" type="text" value={title} validate onChange={this.handleChange} required/>
 						 </Row>
 						 <Row>
 						 <label className="required-field"></label>
-							<Input s={10} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleControlChange('')} required />
+							<Input s={10} label="Sub Title" id="subtitle" name="subtitle" type="text" value={subtitle} validate onChange={this.handleChange} required />
 						 </Row>
 						 <Row>
 						 

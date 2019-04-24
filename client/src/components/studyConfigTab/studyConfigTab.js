@@ -200,13 +200,9 @@ class StudyConfigTab extends Component {
                     this.cancelStudyConfigModal();
                     this.clearModal();
                 }
-                else {
-                    this.setState({ cumulativeRatioError: true });
-                }
+                else this.setState({ cumulativeRatioError: true });
             }
-            else {
-                this.setState({ checkZeroError: true })
-            }
+            else this.setState({ checkZeroError: true });
         }
         else this.setState({ mandatoryValidation: true });
     }

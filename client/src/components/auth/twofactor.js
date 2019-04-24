@@ -102,7 +102,7 @@ class Twofactor extends Component {
 
             <Row >
               <Col className="input-field right mr-2 ">
-                <button className="btn" type="submit" name="action">Verify</button>
+                <button className="btn btn_primary otherButtonAddDetUpt" type="submit" name="action">Verify</button>
 
               </Col>
             </Row>

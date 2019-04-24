@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react';
 import { Row, Input, Button, Modal, Col } from 'react-materialize';
 import { TEST_MESSAGE } from '../../actions/types';
 import uuid from 'uuid';
-import CopyRoleModel from '../base/copyRoleModal'
+import CopyRoleModel from '../base/copyRoleModal';
+import objectUtil from '../../utils/objectUtil';
 
 class RolesTab extends Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class RolesTab extends Component {
             orgRoles: [],
             selectedDropdownRole: '',
             applicationMode: '',
-            selectedRole: [],
+            selectedRole: {},
             selectedMenu: [],
             selectedResource: [],
             roleStatus: false,
@@ -24,19 +25,20 @@ class RolesTab extends Component {
             RoleNameAlreadyExist: '',
             newRole: 1,
             DeleteModal: false,
-            copyRoleModel:false,
+            copyRoleModel: false,
             roleDefaultValue: '',
             disabledSelectRole: false,
             noRoleDisplay: true,
             SaveSuccessfullModal: false,
-            functions: {
-                intake: true,
-                caseManagement: true,
-                serviceTracking: true,
-                caseAssignmentView: true,
-                caseAssignmentEdit: true,
-                userManagement: true
-            }
+            functions: {}
+            // functions: {
+            //     intake: true,
+            //     caseManagement: true,
+            //     serviceTracking: true,
+            //     caseAssignmentView: true,
+            //     caseAssignmentEdit: true,
+            //     userManagement: true
+            // }
         };
         this.rolesData = {};
         this.menuData = {};
@@ -52,7 +54,7 @@ class RolesTab extends Component {
     }
     showAddRoles = () => {
         this.setState({
-            selectedRole: [],
+            selectedRole: {},
             selectedMenu: [],
             selectedResource: [],
             roleName: '',
@@ -90,6 +92,8 @@ class RolesTab extends Component {
         return roleBody;
     }//this is required because ds of the received role is different than ds of created role
     handleRoleDropdown = (e) => {
+        this.selectAllMenu = false;
+        this.selectAllResource = false;
         this.setState({
             selectedDropdownRole: e.target.value,
             roleStatus: true,
@@ -173,19 +177,74 @@ class RolesTab extends Component {
         }
     }
     handleRoleInput = (e) => {
-
-        this.changedRoles = false;
+        //this.changedRoles = false;
         if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Attribute") {
             this.rolesData[e.target.name] = e.target.checked ? 1 : 0;
+            this.setState({ selectedRole: { ...this.state.selectedRole, ...this.rolesData } });
         } else if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Resource") {
             this.resourceData[e.target.value] = e.target.checked ? 1 : 0;
+            let selectedResource = [];
+            Object.keys(this.resourceData).map(item => {
+                if (this.resourceData[item] == 1)
+                    selectedResource.push(item);
+            })
+            this.setState({ selectedResource: [...this.state.selectedResource, ...selectedResource] });
         } else if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Menu") {
             this.menuData[e.target.value] = e.target.checked ? 1 : 0;
+            let selectedMenu = [];
+            Object.keys(this.menuData).map(item => {
+                if (this.menuData[item] == 1)
+                    selectedMenu.push(item);
+            })
+            this.setState({ selectedMenu: [...this.state.selectedMenu, ...selectedMenu] });
         }
         else {
             this.rolesData[e.target.name] = e.target.value;
         }
-
+    }
+    handleSelectAllMenu = (e) => {
+        let selectedMenu = [];
+        let menuData = {};
+        this.state.menuList.map(item => {
+            this.menuMappedToFunction.map(id => {
+                if (item.id == id) {
+                    selectedMenu.push(item.id);
+                    menuData[item.id] = 1;
+                }
+            })
+        })
+        if (e.target.checked == true) {
+            this.selectAllMenu = true;
+            this.setState({ selectedMenu });
+            this.menuData = menuData;
+        }
+        else {
+            this.selectAllMenu = false;
+            this.setState({ selectedMenu: [] });
+            this.menuData = {};
+        }
+    }
+    handleSelectAllResource = (e) => {
+        let selectedResource = [];
+        let resourceData = {};
+        this.state.resourceList.map(item => {
+            this.resourceMappedToFunction.map(id => {
+                if (item.id == id) {
+                    selectedResource.push(item.id);
+                    resourceData[item.id] = 1;
+                }
+            })
+        })
+        if (e.target.checked == true) {
+            this.selectAllResource = true;
+            this.setState({ selectedResource });
+            this.resourceData = resourceData;
+        }
+        else {
+            this.selectAllResource = false;
+            this.setState({ selectedResource: [] });
+            this.resourceData = {};
+        }
     }
     successfullModel = () => {
         this.setState({
@@ -230,7 +289,7 @@ class RolesTab extends Component {
                 resources: [],
                 "statusFlag": "new",
             }
-            if(this.state.selectedMenu == ""){
+            if (this.state.selectedMenu == "") {
                 Object.keys(this.menuData).map(r => {
                     if (this.menuData[r] == 1) {
                         let finalMenu = {};
@@ -239,19 +298,19 @@ class RolesTab extends Component {
                         finalMenu.statusFlag = "new"
                         role.menus.push(finalMenu);
                     }
-                })    
+                })
             }
-            else{
-                this.state.selectedMenu.map(item =>{
+            else {
+                this.state.selectedMenu.map(item => {
                     let finalMenu = {};
                     finalMenu.menuId = item;
                     finalMenu.roleId = role.id;
                     finalMenu.statusFlag = "new"
                     role.menus.push(finalMenu);
                 })
-                
+
             }
-            if(this.state.selectedResource == ""){
+            if (this.state.selectedResource == "") {
                 Object.keys(this.resourceData).map(r => {
                     if (this.resourceData[r] == 1) {
                         let finalResource = {};
@@ -262,13 +321,13 @@ class RolesTab extends Component {
                     }
                 })
             }
-            else{
-                this.state.selectedResource.map(item=>{
+            else {
+                this.state.selectedResource.map(item => {
                     let finalResource = {};
-                        finalResource.resourceId = item;
-                        finalResource.roleId = role.id;
-                        finalResource.statusFlag = "new"
-                        role.resources.push(finalResource);
+                    finalResource.resourceId = item;
+                    finalResource.roleId = role.id;
+                    finalResource.statusFlag = "new"
+                    role.resources.push(finalResource);
 
                 })
             }
@@ -410,7 +469,7 @@ class RolesTab extends Component {
                                     test.statusFlag = menuFlagData.statusFlag;
                                 }
                             })
-                            
+
                             role.menus.push(test);
                         }
                     })
@@ -563,6 +622,20 @@ class RolesTab extends Component {
                 })
             }
         }
+        if (!objectUtil.isEmpty(this.props.orgRoles.functions)) {
+            this.setState({ functions: this.props.orgRoles.functions.functionsList });
+        }
+        else {
+            let functions = {
+                intake: true,
+                caseManagement: true,
+                serviceTracking: true,
+                caseAssignmentView: true,
+                caseAssignmentEdit: true,
+                userManagement: true
+            }
+            this.setState({ functions });
+        }
     }
     componentWillReceiveProps(props) {
         this.setState({
@@ -593,6 +666,20 @@ class RolesTab extends Component {
                 })
             }
         }
+        if (!objectUtil.isEmpty(props.orgRoles.functions)) {
+            this.setState({ functions: props.orgRoles.functions.functionsList });
+        }
+        else {
+            let functions = {
+                intake: true,
+                caseManagement: true,
+                serviceTracking: true,
+                caseAssignmentView: true,
+                caseAssignmentEdit: true,
+                userManagement: true
+            }
+            this.setState({ functions });
+        }
     }
     componentWillUnmount() {
         //  alert("unmouting ")
@@ -605,58 +692,53 @@ class RolesTab extends Component {
             functions
         })
     }
-    _copyRoleModel =( )=>{
+    _copyRoleModel = () => {
         this.setState({
-            copyRoleModel : true
+            copyRoleModel: true
         })
-        
     }
+    copyRole = (data) => {
+        let selectedRole = {
+            ...data,
+            id: uuid.v4(),
+            name: data.name + '_Copy',
+            isAssignable: data.isAssignable.data !== undefined ? data.isAssignable.data[0] : data.isAssignable,
+            isAutoAccess: data.isAutoAccess.data !== undefined ? data.isAutoAccess.data[0] : data.isAutoAccess,
+            isAutoAssignOnIntake: data.isAutoAssignOnIntake.data !== undefined ? data.isAutoAssignOnIntake.data[0] : data.isAutoAssignOnIntake,
+            statusFlag: "new"
 
-    copyRole =(data)=>{
-  
-    let selectedRole ={
-        ...data,
-        id: uuid.v4(),
-        name : data.name+'_Copy' ,
-        isAssignable: data.isAssignable.data !== undefined ? data.isAssignable.data[0] : data.isAssignable,
-        isAutoAccess: data.isAutoAccess.data !== undefined ? data.isAutoAccess.data[0] : data.isAutoAccess,
-        isAutoAssignOnIntake: data.isAutoAssignOnIntake.data !== undefined ? data.isAutoAssignOnIntake.data[0] : data.isAutoAssignOnIntake,
-        statusFlag:"new"
+        }
+        let selectedMenu = data.menus;
+        let selectedResource = data.resources;
+        let filteredMenu = [];
 
-    }
-    let selectedMenu = data.menus;
-    let selectedResource = data.resources;
-    let filteredMenu = [];
+        data.menus.map((item) => {
+            if (item.statusFlag == undefined || item.statusFlag == "new") {
+                filteredMenu = [...filteredMenu, item.menuId]
+            }
+        })
 
-            data.menus.map((item) => {
-                if (item.statusFlag == undefined || item.statusFlag == "new") {
-                    filteredMenu = [...filteredMenu, item.menuId]
-                }
+        let filteredResource = [];
 
-            })
-   
-    let filteredResource = [];
-  
-            data.resources.map((item) => {
-                if (item.statusFlag == undefined || item.statusFlag == "new") {
-                    filteredResource = [...filteredResource, item.resourceId]
-                }
-            })
-        
-    
-    this.setState({
-        selectedRole,
-        selectedMenu : filteredMenu,
-        selectedResource: filteredResource,
-        roleStatus : true
+        data.resources.map((item) => {
+            if (item.statusFlag == undefined || item.statusFlag == "new") {
+                filteredResource = [...filteredResource, item.resourceId]
+            }
+        })
 
-    })
+        this.setState({
+            selectedRole,
+            selectedMenu: filteredMenu,
+            selectedResource: filteredResource,
+            roleStatus: true
+        })
     }
     render() {
+        //console.log(this.state.functions, this.props.orgRoles.functions.functionsList)
         this.menuMappedToFunction = [1];
         this.resourceMappedToFunction = [10, 2];
         this.functions.map(data => {
-            if (this.state.functions[data.name] == true) {
+            if (this.state.functions && this.state.functions[data.name] == true) {
                 this.menuMappedToFunction = this.menuMappedToFunction.concat(data.itemEnabledMenu);
                 this.resourceMappedToFunction = this.resourceMappedToFunction.concat(data.itemEnabledResource);
             }
@@ -697,21 +779,20 @@ class RolesTab extends Component {
                             : <Fragment> {this.state.noRoleDisplay && <p className='col s3 mt-2 pl-2'>No role to display </p>}</Fragment>}
                         {this.props.applicationMode == 'VIEW' ? null :
                             <div className='col s12 m3 l3 xl3 mt-2'>
-                                <Col className=' col s12 m6 l6 xl6'>
+                                <Col className=' col s12 m4 l4 xl4'>
                                     <Button className='orgIcon innerRolesButton' onClick={this.showAddRoles} >
                                         <i className="material-icons" title='Add Role'>
                                             add_circle
                                         </i>
                                     </Button>
                                 </Col>
-                                <Col className='s12 col m6 l6 xl6' >
-                                    <Button className='orgIcon innerRolesButton pl-0' style={{ float: 'left' }} onClick={this._copyRoleModel} >
-                                        <i className="material-icons" title='Copy Role'>
-                                            file_copy
-                                        </i>
+                                <Col className='s12 col m8 l8 xl8' >
+                                    <Button className="btn btn_primary otherButtonAddDetUpt copyrole" onClick={this._copyRoleModel}>
+                                        <i className="material-icons" title="Copy Role">file_copy</i>
+                                        <span>Copy Role </span>
                                     </Button>
                                 </Col>
-                                <CopyRoleModel open={this.state.copyRoleModel} CancelconfirmationModal={this.CancelconfirmationModal} copyRole={this.copyRole}  />
+                                <CopyRoleModel open={this.state.copyRoleModel} CancelconfirmationModal={this.CancelconfirmationModal} copyRole={this.copyRole} />
                             </div>
                         }
                     </div>
@@ -737,7 +818,7 @@ class RolesTab extends Component {
                                     {
                                         this.functions.map(data => {
                                             return <Input type='checkbox' className='filled-in' name={data.name}
-                                                checked={this.state.functions[data.name]}
+                                                checked={this.state.functions && this.state.functions[data.name]}
                                                 label={data.path}
                                                 onChange={this._handleFunctions} disabled={this.props.applicationMode == 'VIEW' ? true : false} />
                                         })
@@ -747,11 +828,26 @@ class RolesTab extends Component {
                                     <h5>Menu Access</h5>
                                     <table className="role-details">
                                         <tbody>
+                                            <tr>
+                                                <td>
+                                                    <Input
+                                                        type='checkbox'
+                                                        roleType="Menu"
+                                                        className={'filled-in'}
+                                                        name="Select All"
+                                                        onChange={this.handleSelectAllMenu}
+                                                        label="Select All"
+                                                        disabled={this.props.applicationMode == 'VIEW' ? true : false}
+                                                        checked={this.selectAllMenu}
+                                                    />
+                                                </td>
+                                            </tr>
                                             {this.state.menuList.map((iteratedValue, index) => {
 
                                                 return <tr>
                                                     {(iteratedValue.name) !== "" ?
                                                         <td>
+
                                                             <Input
                                                                 type='checkbox'
                                                                 roleType="Menu"
@@ -775,6 +871,20 @@ class RolesTab extends Component {
                                     <h5>Resource Access</h5>
                                     <table className="role-details">
                                         <tbody>
+                                            <tr>
+                                                <td>
+                                                    <Input
+                                                        type='checkbox'
+                                                        roleType="Resource"
+                                                        className={'filled-in'}
+                                                        name="Select All"
+                                                        onChange={this.handleSelectAllResource}
+                                                        label="Select All"
+                                                        disabled={this.props.applicationMode == 'VIEW' ? true : false}
+                                                        checked={this.selectAllResource}
+                                                    />
+                                                </td>
+                                            </tr>
                                             {this.state.resourceList.map(iteratedValue => {
                                                 return <tr>
                                                     <td>
@@ -836,7 +946,7 @@ class RolesTab extends Component {
                                             className="show btn_secondary otherButtonAddDetUpt ml-1 deleteBtn" onClick={this.confirmationModal}>Delete</Button>}
                                         {(this.props.applicationMode !== 'VIEW') && <Button type='button'
                                             className="show btn_secondary otherButtonAddDetUpt ml-1" onClick={this.CancelRole}>Cancel</Button>}
-                                        
+
                                     </div>
                                 }
                             </form>
@@ -865,7 +975,7 @@ class RolesTab extends Component {
                         <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>OK</Button>
                     </div>
                 </Modal>
-                
+
             </Row>
         )
     }

@@ -49,6 +49,13 @@ class CreateProject extends Component {
   }
   componentDidMount() {
     this.props.actions.fetchUserInfo();
+    this.props.actions.fetchAllTenants().then((response)=>{
+      if(response.status !== 200){
+        //  console.log(response)
+         alert(response)
+      }
+     this.props.actions.fetchSavedTenants()
+   });
 
 
     // checking for the id of clicked card and fetching data
@@ -92,7 +99,6 @@ class CreateProject extends Component {
     // create mode if preivously selected card value is null
     else {
       // if the project had already data create mode and no id
-      console.log('in create')
       this.setState({
         applicationMode: "CREATE",
         id: uuid.v4(),
@@ -106,7 +112,6 @@ class CreateProject extends Component {
     })
   }
   componentWillReceiveProps(props) {
-    console.log('in will props')
     if (props.location.state !== undefined) {
       let currentProject = props.projectList[props.location.state.id];
       this.setState({

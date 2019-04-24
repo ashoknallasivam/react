@@ -1,6 +1,7 @@
 import Header from "./header";
 import {connect } from 'react-redux';
 import {bindActionCreators} from 'redux';
+import {fetchSavedTenants} from '../../../actions/index';
 
 const mapStateToProps=(state)=>{
     return{
@@ -11,7 +12,7 @@ const mapStateToProps=(state)=>{
 const mapDispatchToProps =(dispatch) =>{
     return{
         actions:bindActionCreators({
-                
+            fetchSavedTenants
             },dispatch
         ) 
     };

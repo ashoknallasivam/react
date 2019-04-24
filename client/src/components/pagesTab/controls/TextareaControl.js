@@ -14,37 +14,114 @@ class TextareaControl extends Component {
 
 		
 	  this.handleChange = this.handleChange.bind(this);
-	  
+
     }
 
     componentDidMount() {
-     
-	  this.setState({
-		data:this.props.data
+      this.setState({
+			mode:this.props.mode,
+			index:this.props.index,
+			data:this.props.data
 	  });
+	  
     }
    
     componentWillReceiveProps(nextProps) {
-	  
-	 this.setState({
-		data:nextProps.data
+	   this.setState({
+			mode:nextProps.mode,
+			index:nextProps.index,
+			data:nextProps.data
 	  });
 	}
 	
-	
-	
 	handleChange(e) {
-		const { onChange } = this.props;
-		//const { name, value } = e.target;
-		//this.setState({ [name]: value }, () => console.log(name, value));
-		onChange(e);
+		
+		const { name, value } = e.target;
+		this.setState({ [name]: value }, () => {
+			this.createSchema(); // Call back function as SetState is Asynch
+		})
+		
+		//console.log(initialState);
+		//console.log(this.state.data);
+		
     }
 	
+	createSchema(){
+		const { onChange } = this.props;
+		const { index } = this.state;
+		if(this.state.name !== undefined)
+		{
+			var name = this.state.name
+		}
+		if(this.state.label !== undefined)
+		{
+			var label = this.state.label
+		}
+		if(this.state.hint !== undefined)
+		{
+			var hint = this.state.hint;
+		}
+		if(this.state.autocomplete !== undefined)
+		{
+			if(this.state.autocomplete == 'on')
+			{
+				var autocomplete = true;
+			}else{
+				var autocomplete = false;
+			}
+		}
+		if(this.state['required'+index] !== undefined)
+		{
+			if(this.state['required'+index] == 'on')
+			{
+				var required = true;
+			}else{
+				var required = false;
+			}
+		}				
+		if(this.state.label_0 !== undefined)
+		{
+			var items = [{ label: this.state.label_0 },{ label: this.state.label_1 }]
+		}
+		if(this.state.minLength !== undefined)
+		{
+			var minLength = this.state.minLength;
+		}
+		if(this.state.maxLength !== undefined)
+		{
+			var maxLength = this.state.maxLength;
+		}
+		if(this.state.property !== undefined)
+		{
+			var property = this.state.property;
+		}
+		if(this.state.value !== undefined)
+		{
+			var value = this.state.value;
+		}
+		if(this.state.property !== undefined || this.state.value !== undefined )
+		{
+			var requiredIf = { property, value }
+		}
 		
-
+		var initialState =  {  
+			type:this.state.data.type,
+			name, 
+			label, 
+			options: { 
+				hint, 
+				autocomplete, 
+				items,
+				validation: { required, minLength, maxLength , 
+							  requiredIf
+						}
+				}  
+		}
+		onChange(index,initialState);
+	}	
 
   render() {
-       
+        const { index } = this.state;
 
 		return (
 			<Collapsible accordion={false}>
@@ -67,7 +144,7 @@ class TextareaControl extends Component {
 					  <div>	
 					   <Input
 							s={12}
-							label="Name"
+							label="Name *"
 							id="name"
 							name="name"
 							type="text"
@@ -79,7 +156,7 @@ class TextareaControl extends Component {
 					<div>	
 					   <Input
 							s={12}
-							label="Label"
+							label="Label *"
 							id="label"
 							name="label"
 							type="text"
@@ -92,7 +169,7 @@ class TextareaControl extends Component {
 					
 					<div>
 						<Collapsible accordion={false}>
-							<CollapsibleItem header='options' icon="keyboard_arrow_down">
+							<CollapsibleItem header='Options' icon="keyboard_arrow_down">
 								<div>	
 								   <Input
 										s={12}
@@ -118,7 +195,7 @@ class TextareaControl extends Component {
 								<div><h5>Validation</h5></div>
 								<div>
 									<div>
-										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} />
+										<input s={12} type="checkbox" id="required" name={"required" + index} onChange={this.handleChange} value={this.state['required'+index]} />
 										<label htmlFor="required">Required?</label>
 									</div>
 							    </div>
