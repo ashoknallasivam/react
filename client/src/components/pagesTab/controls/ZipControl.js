@@ -21,6 +21,8 @@ class ZipControl extends Component {
     componentDidMount() {
       this.setState({
 			mode:this.props.mode,
+			type:this.props.type,
+			data:this.props.data
 			
 	  });
 	  
@@ -29,6 +31,8 @@ class ZipControl extends Component {
     componentWillReceiveProps(nextProps) {
 	   this.setState({
 			mode:nextProps.mode,
+			type:nextProps.type,
+			data:nextProps.data
 			
 	  });
 	}
@@ -60,7 +64,7 @@ class ZipControl extends Component {
 		{
 			var label = this.state.label
 		}
-		if(this.state.hint !== undefined)
+		if(this.state.hint != undefined)
 		{
 			var hint = this.state.hint;
 		}
@@ -108,7 +112,7 @@ class ZipControl extends Component {
 		}
 		
 		var initialState =  {  
-			type:this.state.data.type,
+			type:this.state.type,
 			name, 
 			label, 
 			options: { 
@@ -120,12 +124,13 @@ class ZipControl extends Component {
 						}
 				}  
 		}
-		console.log(initialState)
+		//console.log(initialState)
 		alert('submitted');
+		onChange(initialState);
 		this.props.close();
 	}
   render() {
-        //const { index } = this.state;
+        const { data } = this.state;
         
 		return (
 			<Fragment>
@@ -295,7 +300,7 @@ class ZipControl extends Component {
 			</div>
 			<div>
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
-								<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
+				  <Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 								
 			</div>
 			
