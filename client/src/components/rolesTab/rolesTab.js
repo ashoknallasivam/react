@@ -583,7 +583,8 @@ class RolesTab extends Component {
             roles: restListRole,
             orgRoles: restListRole,
             roleDefaultValue: true,
-            disabledSelectRole: false
+            disabledSelectRole: false,
+            isEditMode: false
         })
         this.rolesData = {};
         this.menuData = {};
@@ -639,7 +640,7 @@ class RolesTab extends Component {
     }
     componentWillReceiveProps(props) {
         this.setState({
-            roleStatus: false,
+            roleStatus: false, isEditMode: false
         })
         let role = [];
         if ((props.selectedLocation.id == "" && props.orgRoles.roles && props.orgRoles.roles.length > 0) ||
@@ -734,7 +735,6 @@ class RolesTab extends Component {
         })
     }
     render() {
-        //console.log(this.state.functions, this.props.orgRoles.functions.functionsList)
         this.menuMappedToFunction = [1];
         this.resourceMappedToFunction = [10, 2];
         this.functions.map(data => {
@@ -778,18 +778,26 @@ class RolesTab extends Component {
                             </Fragment>
                             : <Fragment> {this.state.noRoleDisplay && <p className='col s3 mt-2 pl-2'>No role to display </p>}</Fragment>}
                         {this.props.applicationMode == 'VIEW' ? null :
-                            <div className='col s12 m3 l3 xl3 mt-2'>
-                                <Col className=' col s12 m4 l4 xl4'>
+                            <div className='col s12 m3 l3 xl3 mt-2 ml-3'>
+                                <Col className=' col s2'>
                                     <Button className='orgIcon innerRolesButton' onClick={this.showAddRoles} >
                                         <i className="material-icons" title='Add Role'>
                                             add_circle
                                         </i>
                                     </Button>
                                 </Col>
-                                <Col className='s12 col m8 l8 xl8' >
+                                <Col className='col s2'>
+                                    {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button className="pr-0 orgIcon innerRolesButton"
+                                        onClick={this.confirmationModal}>
+                                        <i className="material-icons" title='Delete Role'>
+                                            delete
+                                        </i>
+                                    </Button>}
+                                </Col>
+                                <Col className='col s8 pl-10'>
                                     <Button className="btn btn_primary otherButtonAddDetUpt copyrole" onClick={this._copyRoleModel}>
                                         <i className="material-icons" title="Copy Role">file_copy</i>
-                                        <span>Copy Role </span>
+                                        <span>Copy Role</span>
                                     </Button>
                                 </Col>
                                 <CopyRoleModel open={this.state.copyRoleModel} CancelconfirmationModal={this.CancelconfirmationModal} copyRole={this.copyRole} />
@@ -942,22 +950,18 @@ class RolesTab extends Component {
                                             className="btn_secondary otherButtonAddDetUpt" >Save</Button>}
                                         {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button type='button'
                                             className="show btn_secondary otherButtonAddDetUpt" onClick={this.UpdateRole} style={{ float: 'right' }}>Save</Button>}
-                                        {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button type='button'
-                                            className="show btn_secondary otherButtonAddDetUpt ml-1 deleteBtn" onClick={this.confirmationModal}>Delete</Button>}
                                         {(this.props.applicationMode !== 'VIEW') && <Button type='button'
-                                            className="show btn_secondary otherButtonAddDetUpt ml-1" onClick={this.CancelRole}>Cancel</Button>}
-
+                                            className="show right btn_secondary otherButtonAddDetUpt ml-1 mr-2" onClick={this.CancelRole}>Cancel</Button>}
                                     </div>
                                 }
                             </form>
                         </div>}
                 </div>
                 <Modal
-                    header='Please Confirm '
+                    header='Rapter Configurator'
                     id='DeleteRoleModal'
                     modalOptions={{ dismissible: false }}
-                    open={this.state.DeleteModal}
-                >
+                    open={this.state.DeleteModal} >
                     <p>Are you sure you want to delete it?</p>
 
                     <div className="col s12 m12 l12 xl12">

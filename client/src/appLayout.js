@@ -6,8 +6,8 @@ class App extends Component {
     render() {
         return (
             <Fragment>
-                <Header /> 
-                <div id="main">
+                <Header/> 
+                <div id="main" style={{width:"99%"}}>
                     <div className="wrapper">
                         <section id="content">
                             <div className="container cards-container">

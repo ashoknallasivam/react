@@ -35,6 +35,8 @@ class Signin extends Component {
   handleChange(e) {
     const { name, value } = e.target;
     this.setState({ [name]: value });
+    if(e.target.name == "environment"){
+    localStorage.setItem("env", e.target.value);}
   }
 
   handleSubmit(e) {
@@ -97,7 +99,7 @@ class Signin extends Component {
                   <select  name='environment' id='environment' className="col s10" label='Environment' onChange={this.handleChange} required>
                     <option value=''>Select Environment</option>
                     {env.map(itemval => {
-                      return <option value={itemval.value}>{itemval.label}</option>
+                      return <option id={itemval.value} value={itemval.label}>{itemval.label}</option>
                     })}
                   </select>
                 {/* </Col> */}

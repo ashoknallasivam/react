@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal,Collapsible,CollapsibleItem  } from 'react-materialize';
+import PagesTab from './pageTitles';
 import ActionControl from './controls/ActionControl'; 
 import AddressControl from './controls/AddressControl'; 
 import ArrayControl from './controls/ArrayControl'; 
@@ -38,6 +39,7 @@ class dynamicControls extends React.Component {
 		super(props);
 
 		this.state = {
+			id:0,
 			submitted: false,
 			key: this.props.pageJson.key,
 			collection: this.props.pageJson.collection,
@@ -52,7 +54,8 @@ class dynamicControls extends React.Component {
 			pages: this.props.pages,
 			selectedPage: this.props.selectedPage,
 			mode: this.props.mode,
-            isModalOpen: false
+            isModalOpen: false,
+			isModalAttrOpen: false
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -61,6 +64,7 @@ class dynamicControls extends React.Component {
 		this.handleCloseModal = this.handleCloseModal.bind(this);
 		this.handleOpenModal = this.handleOpenModal.bind(this);
 		this.handleSchema = this.handleSchema.bind(this);
+		this.handleTypeChange = this.handleTypeChange.bind(this);
 		
 		//this.removeClick = this.removeClick.bind(this);
 	}
@@ -121,6 +125,9 @@ class dynamicControls extends React.Component {
 		this.setState({ [name]: value });
     	value != '' ? this.setState({ type: value }) : ''
  	}
+	
+	
+	
 
     handleSchema(idx,schema){
 		//console.log(schema);
@@ -141,10 +148,7 @@ class dynamicControls extends React.Component {
 		
 	}	
 	
-	createTest() {
-		
-		console.log(this.state.values)
-	}
+	
 		
 	addClick() {
 		
@@ -163,12 +167,14 @@ class dynamicControls extends React.Component {
 		
 
 		this.setState(prevState => ({ values: [...prevState.values, initialState ] }),() => {
-			this.createTest(); // Call back function as SetState is Asynch
+			//this.createTest(); // Call back function as SetState is Asynch
 		})
 
 		this.setState({ isModalOpen: false })
 
 	}
+	
+	
 
 	removeClick(i) {
 		let values = [...this.state.values];
@@ -202,6 +208,19 @@ class dynamicControls extends React.Component {
 	
       this.setState({ isModalOpen: true })
     }
+
+
+	handleAttrCloseModal = () => {
+	  
+      this.setState({ isModalAttrOpen: false })
+    }
+	
+	handleAttrOpenModal = () => {
+	
+      this.setState({ isModalAttrOpen: true })
+    }
+
+
 
 	handleSubmit(e) {
 
@@ -283,6 +302,8 @@ class dynamicControls extends React.Component {
 			case 'time':
 			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
 			case 'zip':
+			
+			  //return (<div>{type}</div>);
 			  return (<ZipControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
 			default:
 			  return 'No Controls';
@@ -298,6 +319,87 @@ class dynamicControls extends React.Component {
 		const { type } = this.state.values[idx];
 	    return this.controlType(idx,data,type);
 	}
+	
+	handleTypeChange(e) {
+		
+		const { name, value } = e.target;
+		this.setState({ [name]: value }, () => {
+			return this.addControl(); // Call back function as SetState is Asynch
+		})
+
+    }
+	
+	addControl() {
+		
+		const {type} = this.state;
+		
+		switch(type) {
+
+			case 'action-toolbar':
+			  return (<ActionControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'address':
+			  return (<AddressControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'array':
+			  return (<ArrayControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'button':
+			  return (<ButtonControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 
+			case 'checkbox':
+			  return (<CheckboxControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'checkbox-group':
+			  return (<CheckgroupControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'date':
+			  return (<DateControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'email':
+			  return (<EmailControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'fieldset':
+			  return (<FieldsetControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'heading':
+			  return (<HeadingControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'layout-editor':
+			  return (<LayoutControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'number':
+			  return (<NumberControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'panel':
+			  return (<PanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'password':
+			  return (<PasswordControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'phone':
+			  return (<PhoneControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'radio':
+			  return (<RadioControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'select':
+			  return (<SelectControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'slider':
+			  return (<SliderControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'slide-toggle':
+			  return (<SlidertoogleControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'ssn':
+			  return (<SsnControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'states':
+			  return (<StatesControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'static':
+			  return (<StaticControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'static-panel':
+			  return (<StaticpanelControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'text':
+			  return (<TextControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'textarea':
+			  return (<TextareaControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'text-mask':
+			  return (<TextmaskControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />); 			
+			case 'time':
+			  return (<TimeControl index={idx} data={data} mode={this.state.editor} onChange={this.handleSchema} />);
+			case 'zip':
+			  return (<ZipControl mode={this.state.editor} onChange={this.handleSchema}  close={this.handleCloseModal}/>);
+			default:
+			  return 'No Controls';
+		}	
+
+		//this.setState({ isModalOpen: false })
+
+	}
+	
+	
 
 	createUI() {
 		var renderfields ='';
@@ -307,14 +409,19 @@ class dynamicControls extends React.Component {
 										 
 			return  <div key={i}>
 					<Row>
-						<Col s={11}>
+						<Col s={12}>
 							{ this.renderNewControl(i,el)}
 						</Col>
-						<Col s={1} >
-						<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+						{/*<Col s={2} >
+							<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
 								<i className="material-icons" title='Delete'>delete</i>
 						</Button> 
 						</Col>
+						<Col s={2} >
+						<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.handleAttrOpenModal}>
+								<i className="material-icons" title='Update'>edit</i>
+						</Button>
+							</Col>*/}
 					</Row>
 					</div>;
 		});
@@ -368,7 +475,7 @@ class dynamicControls extends React.Component {
 						 </Row>
 						 <Row>
 						 
-							{existingControls} {this.createUI()}
+							{existingControls} {/*{this.createUI()}*/}
 						 </Row>
 						 
 						 <Row >
@@ -387,26 +494,31 @@ class dynamicControls extends React.Component {
 				    </form>
 					</Col>
 				   </Row>
-						<Modal className="modalpage" open={this.state.isModalOpen} modalOptions={{ dismissible: false }}>
+						<Modal className="modal modal-fixed-footer" open={this.state.isModalOpen} modalOptions={{ dismissible: false }}>
+							
 							<form onSubmit={this.handleControlSubmit} >
-							 <div className='row' >
-							 <div >
-							  <label>Add an Element</label>
-								<select defaultValue="" name='type' id='type' onChange={this.handleChange} required>
+							 
+							 <div className="modal-content">
+							  <h5>Add an Element</h5>
+							   <select defaultValue="" name='type' id='type' onChange={this.handleTypeChange} required s={6}>
 								  <option value="" disabled >Choose your option</option>
 								  	{elementType.map(itemval => {
 									  return <option value={itemval.value}>{itemval.label}</option>
 									})}
-								  </select>
-								</div>
-							</div>
-							 <div className='row' >
-							    <Button type="submit" className="btn_secondary otherButtonAddDetUpt mr-2" >Submit</Button>
-								<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.handleCloseModal} >Cancel</Button>
-								
-                             </div>
+								</select>
+								{this.addControl()}
+							  </div>
 							</form>
 						</Modal>
+						
+						
+						
+					
+						
+						
+						
+						
+						
 			</div>
 		);
 

@@ -301,7 +301,7 @@ class StudyConfigTab extends Component {
                             <p className="pl-2">{localConstant.commonConstants.NO_DATA}</p> :
                             <div>
                                 <Modal
-                                    header='Please Confirm '
+                                    header={localConstant.commonConstants.RAPTER_CONFIGURATOR}
                                     id='DeleteStudyConfig' modalOptions={{ dismissible: false }}
                                     open={this.state.deleteModal} >
                                     <p>{localConstant.warningMessages.DELETE_CONFIRMATION}</p>
@@ -394,10 +394,10 @@ class StudyConfigTab extends Component {
                                     <div className="pl-2">
                                         {this.state._id != "" ? <Button onClick={this.deleteStudyConfigModal}
                                             className="btn_secondary otherButtonAddDetUpt ml-2 mb-1 deleteBtn">{localConstant.commonConstants.DELETE}</Button> : null}
-                                        <Button onClick={this.studyConfigCancelHandler} className="btn_secondary otherButtonAddDetUpt ml-2 mb-1"
-                                            disabled={this.state.buttonDisable}>{localConstant.commonConstants.CANCEL}</Button>
                                         <Button onClick={this.studyConfigSaveHandler} className="btn_secondary right otherButtonAddDetUpt ml-2 mb-1 mr-2"
                                             disabled={this.state.buttonDisable}>{localConstant.commonConstants.SAVE}</Button>
+                                        <Button onClick={this.studyConfigCancelHandler} className="btn_secondary right otherButtonAddDetUpt ml-2 mb-1"
+                                            disabled={this.state.buttonDisable}>{localConstant.commonConstants.CANCEL}</Button>
                                     </div>
                                     : null}
                             </div>}

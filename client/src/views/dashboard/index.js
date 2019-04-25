@@ -17,7 +17,7 @@ const mapDispatchToProps=(dispatch)=>{
             {
                 fetchAllTenants,
                 fetchSavedTenants,
-                
+                fetchUserInfo
             },
             dispatch
         )

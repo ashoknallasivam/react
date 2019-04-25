@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from "react";
-import { Input, Button, Modal,Row, Col, Preloader } from "react-materialize";
+import { Input, Button, Modal, Row, Col, Preloader } from "react-materialize";
 import uuid from "uuid";
 
 class CopyRoleModal extends Component {
@@ -16,18 +16,18 @@ class CopyRoleModal extends Component {
     };
   }
   componentWillMount() {
-  //   this.props.actions.fetchAllTenants().then(response => {
-  //     if (response.status !== 200) {
-  //       //  console.log(response)
-  //       alert(response);
-  //     }
-  //     this.setState({
-  //       preloader: false
-  //     });
-  //     this.props.actions.fetchSavedTenants();
-  //   });
+    //   this.props.actions.fetchAllTenants().then(response => {
+    //     if (response.status !== 200) {
+    //       //  console.log(response)
+    //       alert(response);
+    //     }
+    //     this.setState({
+    //       preloader: false
+    //     });
+    //     this.props.actions.fetchSavedTenants();
+    //   });
   }
-  componentWillReceiveProps(props) {}
+  componentWillReceiveProps(props) { }
 
   _input = e => {
     this.setState({
@@ -51,7 +51,6 @@ class CopyRoleModal extends Component {
           // orgRole = data.roles
         }
       );
-      // console.log(data.roles)
       this.setState({
         [e.target.name]: org,
         allRole: org.roles
@@ -68,7 +67,6 @@ class CopyRoleModal extends Component {
           // locRole = data.roles
         }
       );
-      // console.log(locRole)
       this.setState({
         [e.target.name]: org,
         allRole: org.roles
@@ -90,7 +88,6 @@ class CopyRoleModal extends Component {
           );
       });
     }
-    console.log(this.state.allRole);
   };
 
   _copyRole = () => {
@@ -103,13 +100,13 @@ class CopyRoleModal extends Component {
     this.props.CancelconfirmationModal();
   };
 
-  _handleClose = () => {};
+  _handleClose = () => { };
 
   render() {
     return (
       <Modal
         open={this.props.open}
-        header={"copy role"}
+        header={"Copy Role"}
         handleModalClose={this.props.handleModalClose}
         modalOptions={{ dismissible: false }}
       >
@@ -129,6 +126,7 @@ class CopyRoleModal extends Component {
         </Col>
 
         <Col s={12}>
+        <label className="pl-1">Project Name</label>
           <select
             className="col  mt-1 ml-1 pl-0 Dropdown"
             name="selectedTenant"
@@ -144,42 +142,48 @@ class CopyRoleModal extends Component {
         </Col>
 
         <Row>
-          <Col s={6}> 
-          {this.state.selectedTenant && (
-            <select
-              className="col mt-1 ml-1 pl-0 Dropdown"
-              name="organization"
-              onChange={this._input}
-              value={this.state.organization.id}
-            >
-              <option value="">Select organization</option>
-              {this.props.projectList[this.state.selectedTenant].orgsList.map(
-                (data, index) => {
-                  if (data.ttoId == null)
-                    return <option value={data.id}> {data.name}</option>;
-                }
-              )}
-            </select>
-          )}
+          <Col s={6}>
+            {this.state.selectedTenant && (
+              <div className="pt-2">
+              <label className="pl-1">Organization</label>
+              <select
+                className="col mt-1 ml-1 pl-0 Dropdown"
+                name="organization"
+                onChange={this._input}
+                value={this.state.organization.id}
+              >
+                <option value="">Select an organization</option>
+                {this.props.projectList[this.state.selectedTenant].orgsList.map(
+                  (data, index) => {
+                    if (data.ttoId == null)
+                      return <option value={data.id}> {data.name}</option>;
+                  }
+                )}
+              </select>
+              </div>
+            )}
           </Col>
 
-          <Col s={6}> 
-          {Object.keys(this.state.organization).length > 0 && (
-            <select
-              className="col  mt-1 ml-1 pl-0 Dropdown"
-              name="location"
-              onChange={this._input}
-              value={this.state.location.id}
-            >
-              <option value="">Select location</option>
-              {this.props.projectList[this.state.selectedTenant].orgsList.map(
-                (data, index) => {
-                  if (data.ttoId == this.state.organization.id)
-                    return <option value={data.id}> {data.name}</option>;
-                }
-              )}
-            </select>
-          )}
+          <Col s={6}>
+            {Object.keys(this.state.organization).length > 0 && (
+              <div className="pt-2">
+              <label className="pl-1">Location</label>
+              <select
+                className="col  mt-1 ml-1 pl-0 Dropdown"
+                name="location"
+                onChange={this._input}
+                value={this.state.location.id}
+              >
+                <option value="">Select a location</option>
+                {this.props.projectList[this.state.selectedTenant].orgsList.map(
+                  (data, index) => {
+                    if (data.ttoId == this.state.organization.id)
+                      return <option value={data.id}> {data.name}</option>;
+                  }
+                )}
+              </select>
+              </div>
+            )}
           </Col>
         </Row>
         <Row>
@@ -203,13 +207,13 @@ class CopyRoleModal extends Component {
             className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
             onClick={this._copyRole}
           >
-            Copy role
+            Copy
           </Button>
           <Button
             className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
             onClick={this.props.CancelconfirmationModal}
           >
-            close
+            Close
           </Button>
         </div>
       </Modal>

@@ -1,10 +1,13 @@
 import { AUTH_USER,AUTH_TOKEN,UNAUTH_USER,AUTH_ERROR,TOKEN_ERROR,FETCH_MESSAGE } from '../actions/types';
 
 export default function(state = {}, action) {
+  //const environment = action.payload
 	
   switch (action.type) {
     case AUTH_USER:
-      return { ...state, error: '', authenticated: true, tokenverified: false };
+      return { ...state, error: '', authenticated: true, tokenverified: false,
+      //environment: action.payload 
+    };
     case AUTH_TOKEN:
       return { ...state, error: '', authenticated: true, tokenverified: true };	  
     case UNAUTH_USER:

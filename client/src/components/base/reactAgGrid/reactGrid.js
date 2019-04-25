@@ -17,6 +17,7 @@ class ReactGrid extends Component {
     }
     componentDidMount() {
         this.props.onRef && this.props.onRef(this);
+        
     }
     onGridReady = (params) => {
         this.gridApi = params.api;
@@ -35,7 +36,7 @@ class ReactGrid extends Component {
     render() {
         return (
             <Fragment>
-                <div className="ag-theme-balham pl-4 pr-2 pb-2 pt-2 mb-1" style={{ "height": "30vh" }} >
+                <div className= {this.props.enroll==="Enroll" && this.props.applicationMode==="VIEW" ?"ag-theme-balham enrollViewGrid pl-4 pr-2 pb-2 pt-2 mb-1 ": "ag-theme-balham pl-4 pr-2 pb-2 pt-2 mb-1"} style={{ "height": "30vh" }} >
                     <AgGridReact
                         columnDefs={this.props.gridColData.columnDefs}
                         defaultColDef={this.props.gridColData.defaultColDef}

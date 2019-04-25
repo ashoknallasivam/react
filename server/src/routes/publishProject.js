@@ -17,6 +17,19 @@ let pageBiz = require('../biz/pageBiz');
 let boundsbiz = require('../biz/boundsBiz');
 let validateBiz = require('../biz/importValidationBiz');
 let fs = require('fs');
+let multer = require('multer')
+
+
+
+const storage = multer.diskStorage({
+    destination: './file',
+    filename(req, file, cb) {
+        console.log(file)
+        cb(null, file.originalname);
+    },
+});
+
+const upload = multer({ storage }).single('file');
 
 // publish bounds.
 router.post('/publish', (req, res) => {
@@ -40,7 +53,7 @@ router.post('/publish', (req, res) => {
     }
 
     // read the flag then call appropriate operation.
-    if (inpParam.statusFlag === "new"  && inpParam.projectStatus == "publish") {
+    if (inpParam.statusFlag === "new" && inpParam.projectStatus == "publish") {
         // publish request body.
         let tenantInputObj = {
             "name": inpParam.name
@@ -59,21 +72,21 @@ router.post('/publish', (req, res) => {
                         // calling create organization in loop through.
                         publishOrgStatus.orgs.push(publishProjectOrganization(requestOptions, oneOrganization));//will 
                     })
-                   
+
                     // single response to the client.finall response.
                     let tenantResult = []
                     publishOrgStatus.orgs.map(item => {
                         item.then(response => {
-                            if(response !== "success") {
-                                tenantResult.push({"failed": response});                        
-                            }else{
-                                tenantResult.push("success");                        
+                            if (response !== "success") {
+                                tenantResult.push({ "failed": response });
+                            } else {
+                                tenantResult.push("success");
                             }
                         })
                     })
 
-                    tenantResult.map(item=> {
-                        if(typeof item === "object"){
+                    tenantResult.map(item => {
+                        if (typeof item === "object") {
                             tenantBiz.deleteTenant(requestOptions, publishedTenantId).then(response => {
                                 if (response.status === 200) {
                                     res.status(500).send("Tenant creation failed");
@@ -84,9 +97,9 @@ router.post('/publish', (req, res) => {
                             return item.failed
                         }
                     })
-                    let resultValue= {
-                        id:publishedTenantId,
-                        messages : "Successfully created. "
+                    let resultValue = {
+                        id: publishedTenantId,
+                        messages: "Successfully created. "
                     }
                     // fs.readdir('savedProjects', function (err, items) {
                     //     if (err) {
@@ -106,9 +119,9 @@ router.post('/publish', (req, res) => {
                     res.status(200).send(resultValue);
 
                 } else {
-                    let resultValue= {
-                        id:response.data.insertId,
-                        messages : "Successfully created."
+                    let resultValue = {
+                        id: response.data.insertId,
+                        messages: "Successfully created."
                     }
                     // if organization list empty then return with tenant success.
                     res.status(200).send(resultValue);
@@ -140,47 +153,47 @@ router.post('/publish', (req, res) => {
                     // single response to the client.finall response.
                     let tenantResult = [];
                     let final = Promise.all(publishOrgStatus.orgs);
-                    final.then(function(results) {
+                    final.then(function (results) {
                         results.map(item => {
-                            if(item !== "success") {
-                                tenantResult.push({"failed": response});                        
-                            }else{
-                                tenantResult.push("success");                        
+                            if (item !== "success") {
+                                tenantResult.push({ "failed": response });
+                            } else {
+                                tenantResult.push("success");
                             }
                         })
                     })
 
-                    tenantResult.map(item=> {
-                        if(typeof item === "object"){
+                    tenantResult.map(item => {
+                        if (typeof item === "object") {
                             res.status(500).send(item.failed);
-                            return 
+                            return
                         }
                     })
-                    let resultValue= {
-                        id:inpParam.id,
-                        messages : "Successfully updated. "
+                    let resultValue = {
+                        id: inpParam.id,
+                        messages: "Successfully updated. "
                     }
                     res.status(200).send(resultValue);
-                    
+
                 } else {
                     // if organization list empty then return with tenant success.
-                    let resultValue= {
-                        id:inpParam.id,
-                        messages : "Successfully updated."
+                    let resultValue = {
+                        id: inpParam.id,
+                        messages: "Successfully updated."
                     }
                     res.status(200).send(resultValue);
-                    
+
                 }
             } else {
                 res.status(500).send(response);
                 logging.applogger.error(response);
             }
-        }).catch(error =>{
+        }).catch(error => {
             res.status(500).send(error);
             logging.applogger.error(error);
         })
-    } else if(inpParam.projectStatus == "publish"){
-       
+    } else if (inpParam.projectStatus == "publish") {
+
         let publishOrgStatus = {};
         publishOrgStatus.orgs = [];
         if ((inpParam.orgsList !== undefined) && (inpParam.orgsList.length !== 0)) {
@@ -192,67 +205,137 @@ router.post('/publish', (req, res) => {
             // single response to the client.finall response.
             let tenantResult = [];
             let final = Promise.all(publishOrgStatus.orgs);
-            final.then(function(results) {
+            final.then(function (results) {
                 results.map(item => {
-                    if(item !== "success") {
-                        tenantResult.push({"failed": response});                        
-                    }else{
-                        tenantResult.push("success");                        
+                    if (item !== "success") {
+                        tenantResult.push({ "failed": response });
+                    } else {
+                        tenantResult.push("success");
                     }
                 })
             })
 
-            tenantResult.map(item=> {
-                if(typeof item === "object"){
+            tenantResult.map(item => {
+                if (typeof item === "object") {
                     res.status(500).send(item.failed);
                     return;
                 }
             })
-            let resultValue= {
-                id:inpParam.id,
-                messages : "Successfully updated. "
+            let resultValue = {
+                id: inpParam.id,
+                messages: "Successfully updated. "
             }
             res.status(200).send(resultValue);
         }
 
-    } else if(inpParam.projectStatus == "save"){
+    } else if (inpParam.projectStatus == "save") {
         fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
             if (err) {
                 logging.applogger.error(err);
                 res.send(err);
-            }else{
-        res.status(200).send({savedProjectId: inpParam.id});
+            } else {
+                res.status(200).send({ savedProjectId: inpParam.id });
                 // fs.unlinkSync('AllProjects.json', function (err) {
                 //     if (err) throw err;
-            // })
+                // })
             }
-            
+
         });
     }
 
 });
 
 
-router.post('/validate', (req, res) => {
-    console.log(req.body);
-    let inpParam = req.body;
-    if(validateBiz.validateForImport(inpParam)){
-        fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
-            if (err) {
-                logging.applogger.error(err);
-                res.send(err);
-            }else{
-        res.status(200).send({savedProjectId: inpParam.id});
-                // fs.unlinkSync('AllProjects.json', function (err) {
-                //     if (err) throw err;
-            // })
-            }
-            
-        });
+router.post('/upload', (req, res) => {
+    let token = req.token
+    if (token === undefined || token === "" || token === null) {
+        res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
+        return;
     }
-    res.send(validateBiz.validateForImport(req.body));
+    upload(req, res, function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(500).json(err)
+        } else if (err) {
+            return res.status(500).json(err)
+        }
+        return res.status(200).send(req.filename)
+    });
 })
 
+router.get('/validate', (req, res) => {
+    let token = req.token
+    if (token === undefined || token === "" || token === null) {
+        res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
+        return;
+    }
+    fs.readdir('file', function (err, items) {
+        if (err) {
+            logging.applogger.error(err);
+            res.send(err);
+        } else {
+            let parsedData;
+            fs.readFile('file/' + req.query.fileName, (err, data) => {
+                if (err) {
+                    logging.applogger.error(err);
+                    res.send(err);
+                } else {
+                    parsedData = JSON.parse(data);
+                    let orgsListTemp = parsedData.orgsList;
+                    orgsListTemp.map((item, i) => {
+                        orgsListTemp[i].statusFlag = "new";
+                        orgsListTemp[i].userId = req.query.userId
+                        //raconfig
+                        for (let key in orgsListTemp[i].raConfig) {
+                            orgsListTemp[i].raConfig[key].statusFlag = "new"
+                        }
+                        //enrollmentTargets
+                        for (let key in orgsListTemp[i].enrollmentTargets) {
+                            orgsListTemp[i].enrollmentTargets[key].statusFlag = "new"
+                        }
+                        //pages
+                        for (let key in orgsListTemp[i].pages) {
+                            orgsListTemp[i].pages[key].statusFlag = "new"
+                        }
+                        //roles
+                        for (let key in orgsListTemp[i].roles) {
+                            orgsListTemp[i].roles[key].statusFlag = "new";
+                            //menu
+                            for (let index in orgsListTemp[i].roles[key].menus) {
+                                orgsListTemp[i].roles[key].menus[index].statusFlag = "new";
+                            }
+                            //resource
+                            for (let index in orgsListTemp[i].roles[key].resources) {
+                                orgsListTemp[i].roles[key].resources[index].statusFlag = "new";
+                            }
+                        }
+                    });
+                    parsedData.projectStatus = "save"
+                    parsedData.statusFlag = "new",
+                    parsedData.userId = req.query.userId,
+                    parsedData.orgsList = orgsListTemp;
+                    parsedData.orgs = validateBiz.list_to_tree(orgsListTemp);
+                    if (validateBiz.validateForImport(parsedData)) {
+                        fs.writeFile('savedProjects/' + parsedData.id + '.json', JSON.stringify(parsedData), 'utf8', function (err) {
+                            if (err) {
+                                logging.applogger.error(err);
+                                res.send(err);
+                            } else {
+                                res.status(200).send({ savedProjectId: parsedData.id });
+                                // fs.unlinkSync('AllProjects.json', function (err) {
+                                //     if (err) throw err;
+                                // })
+                            }
+
+                        });
+                    }else{
+                        logging.applogger.error('validation failed');
+                        res.status(500).send('Please check the uploaded project structure');
+                    }
+                }
+            })
+        }
+    });
+})
 module.exports = router;
 
 // // publish organization list for particular project.
@@ -287,11 +370,11 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
                 //         //     if (err) throw err;
                 //     // })
                 //     }
-                    
+
                 // });
                 publishOrgStatus.org = response.status;
-                let orgUserBody = {"ttoId" : globalTto, "ltoId":  inputObj.ttoId == null? null: response.data.insertId, userId: oneOrganization.userId}
-                if(inputObj.level !== 0){   
+                let orgUserBody = { "ttoId": globalTto, "ltoId": inputObj.ttoId == null ? null : response.data.insertId, userId: oneOrganization.userId }
+                if (inputObj.level !== 0) {
                     organizationBiz.createOrganizationUser(requestOptions, orgUserBody);
                 }
                 if (oneOrganization.roles !== undefined && oneOrganization.roles.length !== 0) {
@@ -421,19 +504,19 @@ function publishProjectOrganization(requestOptions, oneOrganization) {
         }
     }
 
-    
+
     let finalPromise = axios.all(orgPromises);
     return finalPromise.then(function (results) {
         let orgResults = [];
         allOrgStatus.map(item => {
             if (item.org !== 200 && item.roles !== "success" && item.raConfigStatus !== "success" && item.enrollmentTargetStatus !== "success" && item.pagesStatus !== "success") {
-                orgResults.push({"failed": item.org? item.org: item.roles? item.roles: item.raConfigStatus? item.raConfigStatus: item.enrollmentTargetStatus? item.enrollmentTargetStatus: item.pagesStatus}) 
+                orgResults.push({ "failed": item.org ? item.org : item.roles ? item.roles : item.raConfigStatus ? item.raConfigStatus : item.enrollmentTargetStatus ? item.enrollmentTargetStatus : item.pagesStatus })
             } else {
                 orgResults.push("success");
             }
         })
-        orgResults.map(item=> {
-            if(typeof item === "object"){
+        orgResults.map(item => {
+            if (typeof item === "object") {
                 return item.failed
             }
         })
@@ -464,16 +547,16 @@ function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId, u
                     let publishRoleStatus = {};
                     if (response.status === 200) {
                         publishRoleStatus.role = response.status;
-                        let userRoleBody = {"roleId": response.data.insertId, "userId": userId};
-                         let boundsBody = { "tenantId": tenantId, "ttoId": globalTto, "ltoId": orgId }
-                         boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
-                             if (response.status === 200) {
-                                 let newHeaders = requestOptions;
-                                 newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"];
-                                 roleBiz.createUserRole(newHeaders, userRoleBody).then(response => {
-                                 });
-                             }
-                         })
+                        let userRoleBody = { "roleId": response.data.insertId, "userId": userId };
+                        let boundsBody = { "tenantId": tenantId, "ttoId": globalTto, "ltoId": orgId }
+                        boundsbiz.createBounds(requestOptions, boundsBody).then(response => {
+                            if (response.status === 200) {
+                                let newHeaders = requestOptions;
+                                newHeaders.headers['x-rapter-bounds'] = response.data["x-rapter-bounds"];
+                                roleBiz.createUserRole(newHeaders, userRoleBody).then(response => {
+                                });
+                            }
+                        })
 
                         if (oneRole.menus.length !== 0) {
                             publishRoleStatus.menuStatus = publishMenuRoleAccessList(requestOptions, oneRole.menus, tenantId, globalTto, orgId, response.data.insertId);//this will return either success or failed
@@ -540,13 +623,13 @@ function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId, u
             let roleResults = [];
             allRolesStatus.map(item => {
                 if (item.role !== 200 && item.menu !== "success" && item.resource !== "success") {
-                    roleResults.push({"failed": item.role? item.role: item.menu? item.menu: item.resource}) 
+                    roleResults.push({ "failed": item.role ? item.role : item.menu ? item.menu : item.resource })
                 } else {
                     roleResults.push("success");
                 }
             })
-            roleResults.map(item=> {
-                if(typeof item === "object"){
+            roleResults.map(item => {
+                if (typeof item === "object") {
                     return item.failed
                 }
             })
@@ -589,21 +672,21 @@ function publishMenuRoleAccessList(requestOptions, menuRoleAccessList, tenantId,
                     let menuRoleAccessResults = []
                     results.map(item => {
                         if (item.status !== 200) {
-                            menuRoleAccessResults.push({'failed':item.messages});
+                            menuRoleAccessResults.push({ 'failed': item.messages });
 
                         } else {
                             menuRoleAccessResults.push('success')
                         }
                     })
-                    menuRoleAccessResults.map(item=> {
-                        if(typeof item === "object"){
+                    menuRoleAccessResults.map(item => {
+                        if (typeof item === "object") {
                             return item.failed
                         }
                     })
                     return "success";
                 })
             }
-        }else{
+        } else {
             logging.applogger.error(response);
             return response.messages;
         }
@@ -644,21 +727,21 @@ function publishResourceRoleAccessList(requestOptions, resourceRoleAccessList, t
                     let resourceRoleAccessResults = []
                     results.map(item => {
                         if (item.status !== 200) {
-                            resourceRoleAccessResults.push({'failed':item.messages});
+                            resourceRoleAccessResults.push({ 'failed': item.messages });
 
                         } else {
                             resourceRoleAccessResults.push('success')
                         }
                     })
-                    resourceRoleAccessResults.map(item=> {
-                        if(typeof item === "object"){
+                    resourceRoleAccessResults.map(item => {
+                        if (typeof item === "object") {
                             return item.failed
                         }
                     })
                     return "success";
                 })
             }
-        }else{
+        } else {
             logging.applogger.error(response);
             return response.messages;
         }
@@ -704,13 +787,13 @@ function publishRaConfigList(requestOptions, raConfigList, ltoId, tenantId) {
             let raConfigResults = [];
             results.map(item => {
                 if (item.status !== 200) {
-                    raConfigResults.push({'failed':item.messages});
+                    raConfigResults.push({ 'failed': item.messages });
                 } else {
                     raConfigResults.push("success");
                 }
             })
-            raConfigResults.map(item=> {
-                if(typeof item === "object"){
+            raConfigResults.map(item => {
+                if (typeof item === "object") {
                     return item.failed
                 }
             })
@@ -757,13 +840,13 @@ function publishEnrollementTargetList(requestOptions, enrollmentTargetList, orgI
             let enrollmentResults = [];
             results.map(item => {
                 if (item.status !== 200) {
-                    enrollmentResults.push({'failed':item.messages});
+                    enrollmentResults.push({ 'failed': item.messages });
                 } else {
                     enrollmentResults.push("success");
                 }
             })
-            enrollmentResults.map(item=> {
-                if(typeof item === "object"){
+            enrollmentResults.map(item => {
+                if (typeof item === "object") {
                     return item.failed
                 }
             })
@@ -819,21 +902,21 @@ function publishProjectPageList(requestOptions, pageList, tenantId, globalTto, l
                     let pageResults = []
                     results.map(item => {
                         if (item.status !== 200) {
-                            pageResults.push({'failed':item.messages})
+                            pageResults.push({ 'failed': item.messages })
 
                         } else {
                             pageResults.push('success')
                         }
                     })
-                    pageResults.map(item=> {
-                        if(typeof item === "object"){
+                    pageResults.map(item => {
+                        if (typeof item === "object") {
                             return item.failed
                         }
                     })
                     return "success";
                 })
             }
-        }else{
+        } else {
             logging.applogger.error(response);
             return response.messages;
         }

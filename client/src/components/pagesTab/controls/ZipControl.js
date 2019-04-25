@@ -13,15 +13,15 @@ class ZipControl extends Component {
 		};
 
 		
-	  this.handleChange = this.handleChange.bind(this);
+		this.handleChange = this.handleChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this)
 
     }
 
     componentDidMount() {
       this.setState({
 			mode:this.props.mode,
-			index:this.props.index,
-			data:this.props.data
+			
 	  });
 	  
     }
@@ -29,8 +29,7 @@ class ZipControl extends Component {
     componentWillReceiveProps(nextProps) {
 	   this.setState({
 			mode:nextProps.mode,
-			index:nextProps.index,
-			data:nextProps.data
+			
 	  });
 	}
 	
@@ -47,8 +46,12 @@ class ZipControl extends Component {
     }
 	
 	createSchema(){
+		
+		//onChange(index,initialState);
+	}	
+	handleSubmit(){
 		const { onChange } = this.props;
-		const { index } = this.state;
+		
 		if(this.state.name !== undefined)
 		{
 			var name = this.state.name
@@ -70,9 +73,9 @@ class ZipControl extends Component {
 				var autocomplete = false;
 			}
 		}
-		if(this.state['required'+index] !== undefined)
+		if(this.state.required !== undefined)
 		{
-			if(this.state['required'+index] == 'on')
+			if(this.state.required == 'on')
 			{
 				var required = true;
 			}else{
@@ -117,15 +120,17 @@ class ZipControl extends Component {
 						}
 				}  
 		}
-		onChange(index,initialState);
-	}	
-
+		console.log(initialState)
+		alert('submitted');
+		this.props.close();
+	}
   render() {
-        const { index } = this.state;
+        //const { index } = this.state;
         
 		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header="Zip" icon="keyboard_arrow_down">
+			<Fragment>
+			<div>
+				
 					<div>
 						<h5><b>Zip Configuration</b></h5>
 					</div>
@@ -168,8 +173,8 @@ class ZipControl extends Component {
 					</div>
 					
 					<div>
-						<Collapsible accordion={false}>
-							<CollapsibleItem header='Options' icon="keyboard_arrow_down">
+						<div>
+							<h5>Options</h5>
 								<div>	
 								   <Input
 										s={12}
@@ -207,7 +212,7 @@ class ZipControl extends Component {
 								<div><h5>Validation</h5></div>
 								<div>
 									<div>
-										<input s={12} type="checkbox" id="required" name={"required" + index} onChange={this.handleChange} value={this.state['required'+index]} />
+										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} value={this.state.required} />
 										<label htmlFor="required">Required?</label>
 									</div>
 							    </div>
@@ -283,12 +288,19 @@ class ZipControl extends Component {
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
                                 </div>
-							</CollapsibleItem>
-						</Collapsible>
+							</div>
+						
     				</div>
-					
-				</CollapsibleItem>
-			</Collapsible>
+				
+			</div>
+			<div>
+				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
+								<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
+								
+			</div>
+			
+			</Fragment>
+			
 			);
 	 
   }	 

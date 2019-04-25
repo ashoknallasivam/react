@@ -75,18 +75,20 @@ class HeadingControl extends Component {
 					<div>
 						<Collapsible accordion={false}>
 							<CollapsibleItem header='Options' icon="keyboard_arrow_down">
-								<div>
+								<div style={{height:"80px"}}>
+								<label htmlFor="required">Level *</label>
 									<Input
 										s={12}
-										label="Level"
+										//label="Level"
 										id="Level"
 										name="level"
 										type="range"
-										min= "1"
+										min= {1}
 										max= "6"
+										step= "1"
 										value={this.state.hint}
 									onChange={this.handleChange}
-									/><div className="helper-text" >Give user a hint</div>
+									/>
 								</div>
 							</CollapsibleItem>
 						</Collapsible>

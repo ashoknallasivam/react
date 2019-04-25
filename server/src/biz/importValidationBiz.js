@@ -31,7 +31,7 @@ function validateProjectLevel(id, name, statusFlag, projectStatus, userId) {//wo
     }else{
         projectLevelStatus.statusFlag = false;
     }
-    if(typeof projectStatus ==="string" && (projectStatus === "publish" || projectStatus === "")){
+    if(typeof projectStatus ==="string" && (projectStatus === "save" || projectStatus === "")){
         projectLevelStatus.projectStatus = true;
     }else{
         projectLevelStatus.projectStatus = false;
@@ -410,3 +410,24 @@ function validateRaAconfigGroupsSchema(groups) {//verified this function is work
         return true;
     }
 }
+
+exports.list_to_tree = (list) => {
+    var map = {},
+      node,
+      roots = [],
+      i;
+    for (i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i; // initialize the map
+      list[i].children = []; // initialize the children
+    }
+    for (i = 0; i < list.length; i += 1) {
+      node = list[i];
+      if (node.parentId !== null) {
+        // if you have dangling branches check that map[node.parentId] exists
+        list[map[node.parentId]].children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    return roots;
+  }

@@ -16,9 +16,12 @@ class Header extends Component {
         super(props);
         this.state = {
             isdropDownOpen: false,
-            selectedFile: null
+            selectedFile: null,
         };
     }
+    // componentDidMount =() =>{
+    //   //this.environment = localStorage.getItem("env")   
+    // }
     toggleProfileDropDown = () => {
         this.setState({ isdropDownOpen: !this.state.isdropDownOpen });
     }
@@ -34,25 +37,32 @@ class Header extends Component {
         this.setState({selectedFile: file});
         let form = new FormData();
         form.append('file', file);
+        debugger;
+        form.append('id', 23423);
         let uploadHeader = authHeaderFinal();
         uploadHeader['Content-type'] = 'multipart/form-data';
         axios.post(`${BACKEND_URL}/upload`, form, {headers: uploadHeader}).then(response => {
             if(response.status === 200){
-                axios.get(`${BACKEND_URL}/validate`, {headers: uploadHeader}). then(response => {
+                axios.get(`${BACKEND_URL}/validate?userId=${this.props.userId}&fileName=${file.name}`, {headers: uploadHeader}). then(response => {
                     if (response.status === 200) {
                          this.props.actions.fetchSavedTenants()
-                    }
-
+                    }else{
+                        alert(response);
+                    };
                 })
+            }else{
+                alert(response);
             };
         })
     }
     render() {
+        const env = localStorage.getItem("env")   
         var homeLink = '';
         var createLink = '';
         var importButton = '';
         var profileButton = '';
         var userMenu = '';
+        //var env= this.props.environment;
 
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} className="pl-2" name="VIEW">{"Home"}</Link>;
@@ -60,15 +70,12 @@ class Header extends Component {
             importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
             <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
             </Button>;
-            profileButton = <ul className="right hide-on-med-and-down">
-                <li>
+            profileButton =                  
                 <Link to="/signout" className="grey-text text-lighten-5" onClick={this.toggleProfileDropDown} >
-                            
-							{<i className="material-icons" title='Log out' >exit_to_app</i>}
+                <i className="material-icons" title='Log out' style={{position: "absolute",top: "0",left: "97%"}} >exit_to_app</i>
                 </Link>
-                </li>
-            </ul>;
-            userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen} toggleProfileDropDown={this.toggleProfileDropDown} />
+                
+            // userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen} toggleProfileDropDown={this.toggleProfileDropDown} />
         }
 
         return (
@@ -83,7 +90,11 @@ class Header extends Component {
                                     </a>
                                     {homeLink}{createLink}{importButton}
                                 </span>
-                                {profileButton} {userMenu}
+                                {this.props.authStatus? 
+                                    <label className="white-text" style = {{float: "right",marginRight: "62px" }} title ={"Environment"}>{env}</label> :null
+                                }
+                                {profileButton} 
+                               
                             </Col>
                         </nav>
                     </Col>
@@ -94,7 +105,7 @@ class Header extends Component {
 }
 
 function mapStateToProps(state) {
-    return { errorMessage: state.auth.error, authStatus: state.auth.authenticated, tokenStatus: state.auth.tokenverified };
+    return { errorMessage: state.auth.error, authStatus: state.auth.authenticated, tokenStatus: state.auth.tokenverified, environment: state.auth.environment };
 }
 
 export default connect(mapStateToProps)(Header);

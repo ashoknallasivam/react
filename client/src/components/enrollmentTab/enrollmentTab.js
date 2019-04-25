@@ -225,7 +225,7 @@ class EnrollmentTab extends Component {
                             <p className="pl-2">{localConstant.commonConstants.NO_DATA}</p> :
                             <div>
                                 <Modal
-                                    header='Please Confirm '
+                                    header='Rapter Configurator'
                                     id='DeleteEnrollmentModal'
                                     open={this.state.deleteModal}
                                     modalOptions={{ dismissible: false }}
@@ -290,7 +290,9 @@ class EnrollmentTab extends Component {
                                         <Button className="mt-5 btn_secondary otherButtonAddDetUpt" onClick={this._showEnrollment} >{localConstant.Enrollment_Target.ADD_ENROLLMENT}</Button>
                                     </div> : null}
                                 <br /><br />
-                                <ReactGrid
+                                <ReactGrid 
+                                    enroll = {"Enroll"}
+                                    applicationMode = {this.props.applicationMode}
                                     gridColData={this.props.applicationMode == "VIEW" ? HeaderData.enrollmentTargetHeaderView : HeaderData.enrollmentTargetHeaderCreate}
                                     gridRowData={this.state.enrollmentTargets && this.state.enrollmentTargets.filter(item => {
                                         if (item.hasOwnProperty("statusFlag")) {

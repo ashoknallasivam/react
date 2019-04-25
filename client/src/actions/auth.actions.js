@@ -7,8 +7,10 @@ export function login(username, password, environment) {
 		 authService
 			.login(username, password, environment)
 			.then(
-				data => { 
-					dispatch({ type: AUTH_USER });
+				data => {
+					dispatch({ type: AUTH_USER, 
+						//payload:environment 
+					});
 					// alert(JSON.stringify(data));
 				},
 				error => {

@@ -4,7 +4,7 @@ export const HeaderData = {
             {
                 "headerName": "Month",
                 "field": "month",
-                "width": 500,
+                "width": 400,
                 "valueGetter": (params) => {   
                     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN","JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];                 
                     let date = new Date(params.data.month)
@@ -16,7 +16,7 @@ export const HeaderData = {
             {
                 "headerName": "Target",
                 "field": "target",
-                "width": 480
+                "width": 400
             },
         ],
         "rowSelection": "single",

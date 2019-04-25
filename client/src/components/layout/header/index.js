@@ -5,7 +5,8 @@ import {fetchSavedTenants} from '../../../actions/index';
 
 const mapStateToProps=(state)=>{
     return{
-        authentication: state.auth.authenticated
+        authentication: state.auth.authenticated,
+        userId : state.projectList.userId
     }
 }
 

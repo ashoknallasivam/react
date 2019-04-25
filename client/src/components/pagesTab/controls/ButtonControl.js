@@ -9,10 +9,11 @@ class ButtonControl extends Component {
 		super(props);
 
 		this.state = {
-			
-		};
-
-		
+					type: "button",
+					name: "",
+					label: "",
+					disabled: ''
+				}
 	  this.handleChange = this.handleChange.bind(this);
 	  
     }
@@ -30,10 +31,12 @@ class ButtonControl extends Component {
 	
 	
 	handleChange(e) {
-		const { onChange } = this.props;
-		const { name, value } = e.target;
-		//this.setState({ [name]: value }, () => console.log(name, value));
-		onChange(e);
+		// const { onChange } = this.props;
+		// const { name, value } = e.target;
+		e.preventDefault;
+		this.setState({  [e.target.name]: e.target.value })
+
+		// onChange(e);
     }
 	
 		
@@ -43,9 +46,7 @@ class ButtonControl extends Component {
 
 		
 		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header="Button" icon="keyboard_arrow_down">
-				
+			<Fragment>
 				 <div>
 					<Input
 						s={12}
@@ -83,11 +84,6 @@ class ButtonControl extends Component {
 					/><div className="helper-text" >The text the user sees</div>
 					
 				</div>
-				
-
-			
-				<Collapsible accordion={false}>
-					<CollapsibleItem header="Options"  icon="keyboard_arrow_down">
 					<Row>
 					<Col>
 					<div>
@@ -99,7 +95,7 @@ class ButtonControl extends Component {
 													id="yes"
 													name="disabled"
 													type="radio"
-													value={this.state.disabled}
+													value="true"
 													onChange={this.handleChange}
 												/>
 												<Input
@@ -109,18 +105,14 @@ class ButtonControl extends Component {
 													id="no"
 													name="disabled"
 													type="radio"
-													value={this.state.disabled}
+													value="false"
 													onChange={this.handleChange}
 												/>
 											</div>
 											</Col>
 					</Row>
-					</CollapsibleItem >		
-					</Collapsible>
+					</Fragment>
 					
-					</CollapsibleItem>
-					
-			</Collapsible>
 			);
 	 
   }	 

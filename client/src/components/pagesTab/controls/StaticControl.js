@@ -33,6 +33,25 @@ class StaticControl extends Component {
 						<Input s={12} label="Element type" id="type" name="type" type="text" value="static" disabled required />
 					</div>
 					<label class="pl-3" >Label * </label>
+					<div className="helper-text" >What the user sees</div>
+					<div>
+						<Collapsible accordion={false}>
+							<CollapsibleItem header='options' icon="keyboard_arrow_down">
+								<fieldset><legend><b>Show If?</b></legend>
+									<div>
+										<Input s={12} className="mb-0" label="Property name" id="property" name="property" type="text"
+											value="" autoComplete='off' onChange={this.handleChange} />
+										<div className="helper-text" >Property name of field dependency.</div>
+									</div>
+									<div>
+										<Input s={12} className="mb-0" label="Property value" id="value" name="value" type="text"
+											value="" onChange={this.handleChange} />
+										<div className="helper-text" >Value of dependent field.</div>
+									</div>
+								</fieldset>
+							</CollapsibleItem>
+						</Collapsible>
+					</div>
 				</CollapsibleItem>
 			</Collapsible>
 		);

@@ -78,7 +78,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     div h4 {
         font-size: 20px;
         text-align: center;
-        text-transform: uppercase;
+        // text-transform: uppercase;
     }
 }
 #SaveSuccessfullModal{
@@ -669,7 +669,14 @@ body {
         color: black;
     }
     
-    
+    .ag-body-horizontal-scroll-viewport {
+         overflow-x: hidden !important; 
+    }
+    .enrollViewGrid {
+        overflow: hidden;
+        width: 80% ;
+        margin: auto;
+    }
     
     .btn.btn_primary.otherButtonAddDetUpt.copyrole i.material-icons {
         vertical-align: top;
@@ -678,4 +685,8 @@ body {
 
     .d-flex{
         display: flex;
+    }
+    .pointer{
+        cursor: pointer;
+        vertical-align: middle;
     }
