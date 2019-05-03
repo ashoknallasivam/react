@@ -80,14 +80,16 @@ export const fetchSingleTenant = id => (dispatch, getState) => {
           headers: authHeaderFinal()
         })
         .then(response => {
-          console.log(response)
+          console.log(response);
           if (response.status === 200) {
-            let newData = {
-              ...response.data,
-              isFetched: true
-            };
-            dispatch(actions.GetSingleTenantSuccess(newData));
-            return response;
+              let newData = {
+                ...response.data,
+                isFetched: true
+              };
+              dispatch(actions.GetSingleTenantSuccess(newData));
+              return response;
+          
+            
           } else {
             return response;
           }
@@ -103,6 +105,9 @@ export const fetchSingleTenant = id => (dispatch, getState) => {
 export const publishProject = tenantId => (dispatch, getState) => {
   let state = getState();
   let newProject = state.projectList.Projects[tenantId];
+  let newOrgs = rolesStructureCheck(newProject.orgsList);
+  newProject.orgsList = newOrgs;
+
   //Creating structure of data to be stored
   let saveProject = {
     id: newProject.id,
@@ -124,12 +129,29 @@ export const publishProject = tenantId => (dispatch, getState) => {
       }
     })
     .catch(error => {
-     dispatch(actions.PublishProjectError(error))
+     dispatch(actions.PublishProjectError(error));
      return error.response;
     });
 };
 
-// list to tree conversion function and todo orgsList need pass
+function rolesStructureCheck(orgsList) {// for imported and cloned project role structure conversion
+  let newOrgList = [];
+    orgsList.map(orgs => {
+      let roleList = [];
+      orgs.roles.map(role => {
+        role.isAssignable.type === "Buffer" ? role.isAssignable = role.isAssignable.data[0] : null;
+        role.isAutoAccess.type === "Buffer" ? role.isAutoAccess = role.isAutoAccess.data[0]: null;
+        role.isAutoAssignOnIntake.type === "Buffer" ? role.isAutoAssignOnIntake = role.isAutoAssignOnIntake.data[0]: null;
+        roleList.push(role);
+      });
+      let modifiedOrg = orgs;
+      modifiedOrg.roles = roleList;
+      newOrgList.push(modifiedOrg);
+    });
+  return newOrgList;
+}
+
+// listing to tree conversion function and todo orgsList need pass
 function list_to_tree(list) {
   var map = {},
     node,
@@ -171,7 +193,7 @@ export const saveProject = id => (dispatch, getState) => {
       }
     })
     .catch(error =>{
-      console.log(error)
+      console.log(error);
       return error.message
 		// dispatch(actions.SaveProjectError(error.message));
 	})
@@ -258,7 +280,7 @@ export const exportProject = id => (dispatch, getState) => {
         let exprtProj = {
           ...response.data,
           statusFlag: "new"
-        }
+        };
 
         const url = window.URL.createObjectURL(
           new Blob([JSON.stringify(exprtProj)])
@@ -304,7 +326,7 @@ export const deleteSavedProject = id => (dispatch, getState) => {
     })
     .catch(error => {
       // console.log(response)
-     dispatch(actions.DeleteSavedProjectError(error))
+     dispatch(actions.DeleteSavedProjectError(error));
      return error.response;
     });
   }
@@ -318,7 +340,7 @@ export const fetchSingleSavedTenant = id => (dispatch, getState) => {
       .then(response => {
         // console.log(response)
         if (response.status == 200) {
-          dispatch(actions.GetSingleTenantSuccess(response.data))
+          dispatch(actions.GetSingleTenantSuccess(response.data));
           return response;
         } else {
           // console.log(response)

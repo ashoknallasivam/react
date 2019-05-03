@@ -71,7 +71,7 @@ const onSuccess = function (response) {
 
     console.debug('Request Successful!', response);
     return response;
-  }
+  };
 
 const onError = function (error) {
     console.debug('Request Failed:', error.config);
@@ -90,7 +90,7 @@ const onError = function (error) {
     }
 
     return Promise.reject(error.response || error.message);
-}
+};
 
 
 

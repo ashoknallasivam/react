@@ -45,7 +45,7 @@ const onSuccess = function (response) {
 
     console.debug('Request Successful!', response);
     return response.data;
-  }
+  };
 
 const onError = function (error) {
 
@@ -65,7 +65,7 @@ const onError = function (error) {
     }
 
     return Promise.reject(error.response || error.message);
-}
+};
 
 
 

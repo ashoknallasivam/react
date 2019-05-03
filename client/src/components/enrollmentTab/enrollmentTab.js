@@ -9,7 +9,7 @@ import uuid from 'uuid';
 const localConstant = objectUtil.getlocalizeData();
 class EnrollmentTab extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
 
             openModal: false,
@@ -19,7 +19,7 @@ class EnrollmentTab extends Component {
             id: '',
             isMandatoryValidation: false,
             buttonDisable: true,
-        }
+        };
         this.editedRowData = {};
         this.updatedData = {};
         this.previousId = 0;
@@ -52,19 +52,19 @@ class EnrollmentTab extends Component {
         });
         this.setState({ openModal: true, isModal: "", id:data.id,isMandatoryValidation: false });
         this.editedRowData = data;
-    }
+    };
     _deleteRowHandler = () => {
         this.setState({ deleteModal: !this.state.deleteModal })
-    }
+    };
     _isFirstday = (date) => {
-        const day = date.getDate()
+        const day = date.getDate();
         return day === 1
-    }
+    };
     _enrollmentDateHandler = (data) => {
         if (this.isValidDate(data) && data != null) {
             this.setState({isMandatoryValidation: false,buttonDisable: false });
-            this.month = data // for showing in UI
-            this.formatedMonth = data //for sending in backend
+            this.month = data; // for showing in UI
+            this.formatedMonth = data; //for sending in backend
             this.setState({
                 startDate: new Date(this.month)
             });
@@ -79,7 +79,7 @@ class EnrollmentTab extends Component {
               });
               if (isDuplicate.includes(true) )  {
                 window.Materialize.toast(localConstant.warningMessages.DUPLICATE_MONTH, 2000);
-                    this.setState({ startDate: null })
+                    this.setState({ startDate: null });
                     this.updatedData.month = ""
           }
           else{
@@ -104,7 +104,7 @@ class EnrollmentTab extends Component {
                 this.setState({ startDate: null })
             }
         }
-    }
+    };
     _inputHandlerChange = (e) => {
         const value = e.target[e.target.type === "checkbox" ? "checked" : "value"];
         this.updatedData[e.target.name] = value;
@@ -113,17 +113,17 @@ class EnrollmentTab extends Component {
             this.setState({buttonDisable: false });
         }
         this.setState({isMandatoryValidation: false });
-    }
+    };
     _cancelEnrollmentTarget = () => {
         this.setState({ openModal: false,id:'',buttonDisable: true ,deleteModal: false});
         this.updatedData = {};
         this.editedRowData = {};
-    }
+    };
     _showEnrollment = () => {
-        this.setState({ startDate: null })
+        this.setState({ startDate: null });
         this.editedRowData.target = "";
         this.setState({ openModal: true, isModal: "Add",isMandatoryValidation: false });
-    }
+    };
     _addEnrollmentTarget = (e) => {
         e.preventDefault();
         this.previousId = uuid.v4();
@@ -133,16 +133,16 @@ class EnrollmentTab extends Component {
                         this.updatedData["id"] = this.previousId;
                         this.updatedData["orgId"] = this.props.selectedLocation.id;
                         this.updatedData["statusFlag"] = "new";
-                        this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] ,buttonDisable: true})
+                        this.setState({ enrollmentTargets: [...this.state.enrollmentTargets, this.updatedData] ,buttonDisable: true});
                         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, this.updatedData);
-                        this.props.SaveEnrollment(this.updatedData)
+                        this.props.SaveEnrollment(this.updatedData);
                         this._cancelEnrollmentTarget();
             }
         }
         else {
             this.setState({isMandatoryValidation: true});
         }
-    }
+    };
     _updateEnrollmentTarget = () => {
         if (this.editedRowData.hasOwnProperty("statusFlag") && this.editedRowData["statusFlag"] == "new") {
             this.updatedData["statusFlag"] = "new";
@@ -167,7 +167,7 @@ class EnrollmentTab extends Component {
                         this.props.SaveEnrollment(combinedData);
                         this.gridChildren.refreshCells(true);
                         this._cancelEnrollmentTarget();
-                        this.setState({ startDate: null,buttonDisable: true })
+                        this.setState({ startDate: null,buttonDisable: true });
                         this.editedRowData.target = "";
                    // }
                 //})
@@ -176,7 +176,7 @@ class EnrollmentTab extends Component {
                 this.setState({isMandatoryValidation: true});
             }
         //}
-    }
+    };
     _deleteEnrollmentTarget = () => {
         let selectedData = this.gridChildren.getSelectedRows();
         this.gridChildren.removeSelectedRows(selectedData);
@@ -191,7 +191,7 @@ class EnrollmentTab extends Component {
         else selectedData.statusFlag = "ignore";
         this.props.actions.SaveEnrollment(this.props.selectedLocation.tenantId, selectedData);
         this.props.SaveEnrollment(selectedData)
-    }
+    };
     isValidDate(date) {
         const datePattern = /(^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$)/;
         var date = new Date(date),
@@ -215,7 +215,7 @@ class EnrollmentTab extends Component {
             return false;
         }
         return true;
-    }
+    };
     render() {
         return (
             <Fragment>

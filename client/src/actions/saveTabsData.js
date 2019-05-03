@@ -52,7 +52,7 @@ const actions = {
 
 
 
-}
+};
 
 export const SaveStudyConfig = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
@@ -62,14 +62,14 @@ export const SaveStudyConfig = (tenantId, data) => (dispatch, getState) => {
         if (data.stratum[0].value == item.id) {
             index = i;
         }
-    })
+    });
     if (index !== '') {
         newProject.orgsList[index].raConfig = [data];
     }
 
     dispatch(actions.SaveEnrollment(newProject));
 
-}
+};
 
 export const SaveEnrollment = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
@@ -80,12 +80,12 @@ export const SaveEnrollment = (tenantId, data) => (dispatch, getState) => {
         if (data.orgId == item.id) {
             index = i;
         }
-    })
+    });
     newProject.orgsList[index].enrollmentTargets.map((item, i) => {
         if (data.id == item.id) {
             enrollIndex = i;
         }
-    })
+    });
     if (enrollIndex !== '') {
         newProject.orgsList[index].enrollmentTargets[enrollIndex] = data;
     }
@@ -93,7 +93,7 @@ export const SaveEnrollment = (tenantId, data) => (dispatch, getState) => {
         newProject.orgsList[index].enrollmentTargets = [...newProject.orgsList[index].enrollmentTargets, data]
     }
     dispatch(actions.SaveEnrollment(newProject));
-}
+};
 export const SavePages = (tenantId, data) => (dispatch, getState) => {
 	
     //console.log('IntialData:', data);
@@ -108,7 +108,7 @@ export const SavePages = (tenantId, data) => (dispatch, getState) => {
             index = i;
 			
         }
-    })
+    });
 	//console.log('Index:', index);
 	//console.log('PageIndex:', newProject.orgsList)
 	//console.log('dataId:',data._id)
@@ -120,7 +120,7 @@ export const SavePages = (tenantId, data) => (dispatch, getState) => {
         }else if(data._id == item._id) {
             pageIndex = i;
         }
-    })
+    });
 	//console.log('PageIndex:', pageIndex);
     if (pageIndex !== '') {
         //console.log('in Edit')
@@ -138,7 +138,7 @@ export const SavePages = (tenantId, data) => (dispatch, getState) => {
     dispatch(actions.SaveEnrollment(newProject));
 
 
-}
+};
 export const SaveRoles = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
     let newProject = state.projectList.Projects[tenantId];
@@ -148,12 +148,12 @@ export const SaveRoles = (tenantId, data) => (dispatch, getState) => {
         if (data.orgId == item.id) {
             index = i;
         }
-    })
+    });
     newProject.orgsList[index].roles.map((item, i) => {
         if (data.id == item.id) {
             roleIndex = i;
         }
-    })
+    });
     if (roleIndex !== '') {
         newProject.orgsList[index].roles[roleIndex] = data;
     }
@@ -164,7 +164,7 @@ export const SaveRoles = (tenantId, data) => (dispatch, getState) => {
     dispatch(actions.SaveEnrollment(newProject));
 
 
-}
+};
 export const SaveTenant = (tenantId, data) => (dispatch, getState) => {
     // let state = getState();
 
@@ -191,20 +191,20 @@ export const SaveTenant = (tenantId, data) => (dispatch, getState) => {
         if (data.id == item) {
             index = data.id;
         }
-    })
+    });
     if (index !== '') {
         let newProject = Projects[index];
         newProject = {
             ...newProject,
             ...data
-        }
+        };
         dispatch(actions.SaveTenant(newProject));
     }
     else {
         dispatch(actions.SaveTenant(data));
     }
 
-}
+};
 
 export const SaveOrganization = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
@@ -214,7 +214,7 @@ export const SaveOrganization = (tenantId, data) => (dispatch, getState) => {
         if (item.id == data.id) {
             index = i;
         }
-    })
+    });
     let neworgsList = newProject.orgsList;
     if(index !== ''){
         newProject.orgs= {
@@ -222,28 +222,28 @@ export const SaveOrganization = (tenantId, data) => (dispatch, getState) => {
             [data.id] : {...data} }
       
     }else{
-        newProject.orgs= {...newProject.orgs, [data.id] : data}
+        newProject.orgs= {...newProject.orgs, [data.id] : data};
         newProject.orgsList = [...newProject.orgsList, data]
     }
     dispatch(actions.SaveOrganization(newProject));
-}
+};
 
 export const SaveLocation = (tenantId, data) => (dispatch, getState) => {
     let state = getState();
     let index = '';
-    let newProject = state.projectList.Projects[tenantId]
+    let newProject = state.projectList.Projects[tenantId];
     newProject.orgsList.map((item, i) => {
         if (item.id == data.id) {
             index = i;
         }
-    })
+    });
 
     if (newProject.orgsList[index]) {
-        let editloc = newProject.orgsList
+        let editloc = newProject.orgsList;
         editloc[index] = {
             ...editloc[index],
             ...data
-        }
+        };
         newProject = {
             ...newProject,
         }
@@ -257,7 +257,7 @@ export const SaveLocation = (tenantId, data) => (dispatch, getState) => {
 
     dispatch(actions.SaveLocation(newProject));
 
-}
+};
 
 
 export const SaveFunctions = (tenantId,id, data) => (dispatch, getState) => {
@@ -268,14 +268,14 @@ export const SaveFunctions = (tenantId,id, data) => (dispatch, getState) => {
         ttoId :  id,
         functionsList:data
     };
-    newProject.orgs[id].functions= functionsData
+    newProject.orgs[id].functions= functionsData;
     newProject.orgsList.map((data, index)=>{
         if(data.id == id){
             data.functions= functionsData
         }
-    } )
+    } );
     dispatch(actions.SaveEnrollment(newProject));
-}
+};
 
 
 

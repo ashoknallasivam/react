@@ -11,7 +11,7 @@ const mapStateToProps=(state)=>{
         userId : state.projectList.userId,
         error : state.projectList.error
     }
-}
+};
 const mapDispatchToProps = (dispatch) => {
     return{
         actions:bindActionCreators(
@@ -31,5 +31,5 @@ const mapDispatchToProps = (dispatch) => {
             }, dispatch
         )
     }
-}
+};
 export default connect(mapStateToProps, mapDispatchToProps)(CreateProject);

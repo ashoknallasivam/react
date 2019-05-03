@@ -29,7 +29,7 @@ class FormModal extends Component {
       if(e.target.name === "parenOfLoc"){ 
         let data =  this.props.orgsList.filter(item =>{
           return   (item.id == e.target.value) ? item : null ;
-          })
+          });
           this.setState({
             parenOfLoc : data[0]
         })
@@ -55,7 +55,7 @@ class FormModal extends Component {
 // this.setState({
 //   locList
 // })
-    }
+    };
 
     _handleClose = () =>{
         this.setState({
@@ -64,9 +64,9 @@ class FormModal extends Component {
           parenOfLoc:{
             value:''
           },
-        })
+        });
         this.props.handleModalClose(this.props.name)
-    }
+    };
     _handleOrg = () => {
         let newOrg = {};
         if (this.state.orgName !== '') {
@@ -88,11 +88,11 @@ class FormModal extends Component {
             }
           });
           if (isDuplicate.includes(true) )  {
-                window.Materialize.toast('Already Exist', 5000)
+                window.Materialize.toast('Organization already exists', 5000)
           } 
           else {
-            let allOrganisations ={...this.props.allOrganisations, ...{[newOrg.id]: {...newOrg}}}
-            let orgsList =[...this.state.orgsList,{...newOrg}]
+            let allOrganisations ={...this.props.allOrganisations, ...{[newOrg.id]: {...newOrg}}};
+            let orgsList =[...this.state.orgsList,{...newOrg}];
             this.setState({ 
               orgName:'',
               newOrg : this.state.newOrg+1 ,
@@ -101,17 +101,17 @@ class FormModal extends Component {
               },
          });
          let allLocations = {};
-         let newLoc = {id:""}
-         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
-         this.props.setValues('selectedOrganisation', newOrg)
-         this.props.setValues('selectedLocation', newLoc)
-         this.props.setValues('allOrganisations',allOrganisations)
-         this.props.setValues('allLocations',allLocations)
-         this.props.setValues('orgsList', orgsList)
+         let newLoc = {id:""};
+         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg);
+         this.props.setValues('selectedOrganisation', newOrg);
+         this.props.setValues('selectedLocation', newLoc);
+         this.props.setValues('allOrganisations',allOrganisations);
+         this.props.setValues('allLocations',allLocations);
+         this.props.setValues('orgsList', orgsList);
          this.props.handleModalClose(this.props.name)
           }
         }
-      }
+      };
       _handleLoc = () => {
         
         let newLoc = {};
@@ -135,12 +135,12 @@ class FormModal extends Component {
             });
 
             if (isDuplicatte.includes(true)) {
-                window.Materialize.toast('Already Exist', 5000)
+                window.Materialize.toast('Location already exists', 5000);
                 return false;
             } else if(this.state.parenOfLoc.value !== '') {
               let locParentName = '';
-              let allLocations ={...this.props.allLocations, ...{[newLoc.id]: {...newLoc}}}
-              let orgsList =[...this.props.orgsList,{...newLoc}]
+              let allLocations ={...this.props.allLocations, ...{[newLoc.id]: {...newLoc}}};
+              let orgsList =[...this.props.orgsList,{...newLoc}];
               Object.keys(allLocations).map(item=>{
                 orgsList.map(parent=>{
                   if(parent.id == allLocations[item].parentId)
@@ -148,7 +148,7 @@ class FormModal extends Component {
                     locParentName = parent.name
                   }
                 })
-              }) 
+              });
               this.setState({ 
                 locName:'',
                 parenOfLoc:{
@@ -156,18 +156,18 @@ class FormModal extends Component {
                 }
            });
            
-           this.props.actions.SaveLocation(newLoc.tenantId, newLoc)
-           this.props.setValues('allLocations',allLocations)
-           this.props.setValues('selectedLocation',newLoc)
-           this.props.setValues('locParentName',locParentName)
-           this.props.setValues('orgsList',orgsList)
+           this.props.actions.SaveLocation(newLoc.tenantId, newLoc);
+           this.props.setValues('allLocations',allLocations);
+           this.props.setValues('selectedLocation',newLoc);
+           this.props.setValues('locParentName',locParentName);
+           this.props.setValues('orgsList',orgsList);
            this.props.handleModalClose(this.props.name)
             }
             else{
               window.Materialize.toast('select parent for the location', 5000)
             }
         }
-    }
+    };
  render(){
   this.locList=[];
   if(this.props.selectedOrganisation !== undefined){

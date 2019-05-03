@@ -9,7 +9,8 @@ class HeadingControl extends Component {
 		super(props);
 
 		this.state = {
-
+			label: '',
+			level: ''
 		};
 
 
@@ -18,34 +19,64 @@ class HeadingControl extends Component {
 	}
 
 	componentDidMount() {
-
+		this.setState({
+			mode:this.props.mode,
+			type:this.props.type,
+			data:this.props.data,
+			
+		});
+		if (Object.keys(this.props.data).length > 0){
+			this.setState({
+					
+					label : this.props.data.label,
+					level : this.props.data.level
+			})	
+		}
 
 	}
 
 	componentWillReceiveProps(nextProps) {
-
+		this.setState({
+			mode:nextProps.mode,
+			type:nextProps.type,
+			data:nextProps.data,
+		});
 
 	}
 
 
 
 	handleChange(e) {
-		const { onChange } = this.props;
 		const { name, value } = e.target;
-		//this.setState({ [name]: value }, () => console.log(name, value));
-		onChange(e);
+		this.setState({ [name]: value })
 	}
 
-
+	handleSubmit= () =>{
+		const { onChange } = this.props;
+		if(this.state.label !== undefined)
+		{
+			var label = this.state.label
+		}
+		if(this.state.level !== undefined)
+		{
+			var level = this.state.level
+		}
+		var initialState =  {  
+			type:"heading",
+			label, 
+			level,
+		};
+		onChange(initialState,this.props.index);
+		this.props.close();
+	}
 
 
 	render() {
 
 
 		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header="Heading" icon="keyboard_arrow_down">
-					<div>
+			<Fragment>
+				<div>
 						<h5><b>Heading Configuration</b></h5>
 					</div>
 					<div>
@@ -55,7 +86,7 @@ class HeadingControl extends Component {
 							id="type"
 							name="type"
 							type="text"
-							value="password"
+							value="heading"
 							disabled
 							required
 						/>
@@ -67,34 +98,35 @@ class HeadingControl extends Component {
 							id="label"
 							name="label"
 							type="text"
+							className= "labelText mb-1"
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
 						/><div className="helper-text" >What the user sees</div>
 					</div>
 					<div>
-						<Collapsible accordion={false}>
-							<CollapsibleItem header='Options' icon="keyboard_arrow_down">
-								<div style={{height:"80px"}}>
-								<label htmlFor="required">Level *</label>
-									<Input
-										s={12}
-										//label="Level"
-										id="Level"
-										name="level"
-										type="range"
-										min= {1}
-										max= "6"
-										step= "1"
-										value={this.state.hint}
-									onChange={this.handleChange}
-									/>
-								</div>
-							</CollapsibleItem>
-						</Collapsible>
+						<div style={{height:"80px"}}>
+						<label className="innerDynamicLabel" htmlFor="required">Level *</label>
+							<Input
+								s={12}
+								//label="Level"
+								id="Level"
+								name="level"
+								type="range"
+								min= "1"
+								max= "6"
+								step= "1"
+								value={this.state.level}
+							onChange={this.handleChange}
+							/>
+						</div>
 					</div>
-				</CollapsibleItem>
-			</Collapsible>
+					<div className="right valign-wrapper mt-2">
+						<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
+						<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
+										
+					</div>
+			</Fragment>
 		);
 
 	}

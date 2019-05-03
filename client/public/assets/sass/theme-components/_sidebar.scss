@@ -68,7 +68,7 @@ nav {
 	}
 	.side-nav {
 		width: $sidenav-collapsed-width;
-		.user-options, .nav-text, .collapsible-body span, span.badge, .collapsible-header:after,{
+		.user-options, .nav-text, .collapsible-body span, span.badge, .collapsible-header:after{
 			display: none;
 		}
 		.nav-text{

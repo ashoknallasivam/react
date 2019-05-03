@@ -8,7 +8,7 @@ import uuid from 'uuid';
 
 class StudyConfigTab extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             openModal: false,
             _id: "",
@@ -24,7 +24,7 @@ class StudyConfigTab extends Component {
             mandatoryValidation: false,
             saveSuccessfullModal: false,
             cumulativeRatioError: false
-        }
+        };
         this.updatedData = {};
         this.editedRowData = {};
         this.groupIndex = 0;
@@ -71,16 +71,16 @@ class StudyConfigTab extends Component {
     // Input handler for Description and Blocksize
     studyConfigChangeHandler = (e) => {
         this.setState({ [e.target.name]: e.target.value });
-    }
+    };
     // For disabling the buttons (Save and Cancel)
     buttonDisable = () => {
         this.setState({ buttonDisable: false });
-    }
+    };
     // Input handler for Groups
     inputHandlerChange = (e) => {
         this.updatedData[e.target.name] = e.target.value;
         this.setState({ mandatoryValidation: false });
-    }
+    };
     // Input handler for Ratio - Groups
     ratioInputHandler = (e) => {
         if (parseFloat(e.target.value) <= 1.00 && parseFloat(e.target.value) >= 0.00) {
@@ -104,7 +104,7 @@ class StudyConfigTab extends Component {
             }
         }
         this.updatedData.ratio = e.target.value;
-    }
+    };
     // Clearing all Study Config fields
     clearStudyConfig = () => {
         this.setState({
@@ -113,33 +113,33 @@ class StudyConfigTab extends Component {
             blockSize: "",
             groups: []
         });
-    }
+    };
     // Clearing fields of Groups Modal
     clearModal = () => {
         this.editedRowData.assignment = "";
         this.editedRowData.description = "";
         this.editedRowData.ratio = "";
         this.editedRowData.sequenceLimit = "";
-    }
+    };
     // Add Groups - Modal open
     addStudyConfigModal = () => {
         this.clearModal();
         this.setState({ openModal: true, groupStatus: "add", errorStatus: false, mandatoryValidation: false, checkZeroError: false, cumulativeRatioError: false });
-    }
+    };
     // Edit Groups - Modal open
     editStudyConfigModal = (data) => {
         this.setState({ openModal: true, groupStatus: "", errorStatus: false, mandatoryValidation: false, checkZeroError: false, cumulativeRatioError: false });
         this.editedRowData = data;
         this.groupIndex = this.state.groups.findIndex(item => item == this.editedRowData);
-    }
+    };
     // Delete StudyConfig - Modal open
     deleteStudyConfigModal = () => {
         this.setState({ deleteModal: true, deleteStatus: "raConfig" });
-    }
+    };
     // Delete group - Modal open
     deleteGroupsModal = () => {
         this.setState({ deleteModal: true, deleteStatus: "" });
-    }
+    };
     // Add Groups - Ok Button
     submitStudyConfigGroups = () => {
         let sum = 0;
@@ -174,7 +174,7 @@ class StudyConfigTab extends Component {
             }
         }
         else this.setState({ mandatoryValidation: true });
-    }
+    };
     // Edit Groups - Ok Button
     editStudyConfigGroups = () => {
         let newGroups = [];
@@ -205,20 +205,20 @@ class StudyConfigTab extends Component {
             else this.setState({ checkZeroError: true });
         }
         else this.setState({ mandatoryValidation: true });
-    }
+    };
     // Modal close
     cancelStudyConfigModal = () => {
         this.setState({ openModal: false, deleteModal: false, saveSuccessfullModal: false });
         this.editedRowData = {};
         this.updatedData = {};
-    }
+    };
     // Groups - Delete
     deleteStudyConfigGroups = () => {
         const selectedData = this.gridChild.getSelectedRows();
         this.gridChild.removeSelectedRows(selectedData);
         const rowsToDisplay = this.gridChild.gridApi.clientSideRowModel.rowsToDisplay.map(row => row.data);
         this.setState({ groups: rowsToDisplay, deleteModal: false, buttonDisable: false });
-    }
+    };
     // StudyConfig Save
     studyConfigSaveHandler = () => {
         if (!objectUtil.isEmpty(this.state.description) && this.state.blockSize != "" && !objectUtil.isEmpty(this.state.groups)) {
@@ -260,7 +260,7 @@ class StudyConfigTab extends Component {
             else window.Materialize.toast(localConstant.warningMessages.SAVE_CUMULATIVE_RATIO_VALIDATION, 2000);
         }
         else window.Materialize.toast(localConstant.warningMessages.MANDATORY_VALIDATION, 2000);
-    }
+    };
     // StudyConfig Cancel
     studyConfigCancelHandler = () => {
         if (this.state._id != "") {
@@ -274,7 +274,7 @@ class StudyConfigTab extends Component {
             this.clearStudyConfig();
         }
         this.setState({ buttonDisable: true });
-    }
+    };
     // StudyConfig Delete
     studyConfigDeleteHandler = () => {
         let StudyConfig = {};
@@ -287,12 +287,12 @@ class StudyConfigTab extends Component {
         this.setState({ buttonDisable: true });
         this.cancelStudyConfigModal();
         this.clearStudyConfig();
-    }
+    };
     render() {
         let sum = 0;
         this.state.groups.map(item => {
             sum = sum + parseFloat(item.ratio)
-        })
+        });
         return (
             <Fragment>
                 {this.props.StudyConfig ?
@@ -367,7 +367,7 @@ class StudyConfigTab extends Component {
                                 </Modal>
                                 <div className="row pl-2 pr-2 pt-1">
                                     <label className="danger-txt left ml-2 mt-3">*</label>
-                                    <Col className="pl-0" s={5} ><Input className="pt-1" s={5} label={localConstant.study_Config.DESCRIPTION} s={12}
+                                    <Col className="pl-0" s={5} ><Input className="pt-1" label={localConstant.study_Config.DESCRIPTION} s={12}
                                         name="description" onBlur={this.studyConfigChangeHandler} key={this.state.description}
                                         defaultValue={this.state.description} autoComplete='off' onChange={this.buttonDisable}
                                         readOnly={this.props.applicationMode == "VIEW" ? true : false} /></Col>

@@ -56,7 +56,7 @@ class BaseServiceApi {
     processServiceCall(request) {
         return new Promise((resolve, reject) => {
             //const url = this.getBaseURL();
-            const url = request.url
+            const url = request.url;
             // console.log(url);
             const method = request.method;
             const payload = request.payload;

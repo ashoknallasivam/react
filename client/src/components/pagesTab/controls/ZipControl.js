@@ -9,51 +9,53 @@ class ZipControl extends Component {
 		super(props);
 
 		this.state = {
-			data:[]
+			data:[],
+			name:'',
+			label:'',
+			
 		};
-
-		
-		this.handleChange = this.handleChange.bind(this);
-		this.handleSubmit = this.handleSubmit.bind(this)
-
     }
 
     componentDidMount() {
+			// alert('did')
       this.setState({
 			mode:this.props.mode,
 			type:this.props.type,
-			data:this.props.data
+			data:this.props.data,
 			
-	  });
-	  
+		});
+		if (Object.keys(this.props.data).length > 0 ){
+			this.setState({
+					name 					: this.props.data.name  ,
+					label 				: this.props.data.label,
+					hint					:	this.props.data.options ? this.props.data.options.hint : '',
+					defaultValue	:	this.props.data.options ? this.props.data.options.defaultValue:'',
+					required			:	this.props.data.options.validation? this.props.data.options.validation.required:'',
+					minLength			:	this.props.data.options.validation? this.props.data.options.validation.minLength : '',
+					maxLength			:	this.props.data.options.validation? this.props.data.options.validation.maxLength : '',
+					pattern				:	this.props.data.pattern,
+					patternValMsg	:	this.props.data.patternValMsg,
+					property			:	this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.property :'',
+					value					:	this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.value :''
+			})	
+		}
     }
    
-    componentWillReceiveProps(nextProps) {
-	   this.setState({
-			mode:nextProps.mode,
-			type:nextProps.type,
-			data:nextProps.data
-			
-	  });
-	}
-	
-	handleChange(e) {
+ 
+	handleChange = (e) => {
 		
 		const { name, value } = e.target;
 		this.setState({ [name]: value }, () => {
-			this.createSchema(); // Call back function as SetState is Asynch
 		})
-		
-		//console.log(initialState);
-		//console.log(this.state.data);
-		
+		if([name] == 'required'){
+			this.setState({
+				[name] : e.target.checked
+			})
+		}
     }
 	
-	createSchema(){
+	handleSubmit = () =>{
 		
-		//onChange(index,initialState);
-	}	
-	handleSubmit(){
 		const { onChange } = this.props;
 		
 		if(this.state.name !== undefined)
@@ -68,14 +70,9 @@ class ZipControl extends Component {
 		{
 			var hint = this.state.hint;
 		}
-		if(this.state.autocomplete !== undefined)
+		if(this.state.defaultValue !== undefined)
 		{
-			if(this.state.autocomplete == 'on')
-			{
-				var autocomplete = true;
-			}else{
-				var autocomplete = false;
-			}
+		 var defaultValue = this.state.defaultValue
 		}
 		if(this.state.required !== undefined)
 		{
@@ -112,26 +109,30 @@ class ZipControl extends Component {
 		}
 		
 		var initialState =  {  
-			type:this.state.type,
+			type:'zip',
 			name, 
 			label, 
 			options: { 
 				hint, 
-				autocomplete, 
-				items,
-				validation: { required, minLength, maxLength , 
-							  requiredIf
+				defaultValue,
+				validation: { 
+					required, 
+					minLength, 
+					maxLength , 
+					requiredIf
 						}
 				}  
-		}
+		};
 		//console.log(initialState)
 		alert('submitted');
-		onChange(initialState);
+		onChange(initialState,this.props.index);
+
 		this.props.close();
 	}
   render() {
-        const { data } = this.state;
-        
+		// if(this.props.data){
+		    // alert(this.props.data.name)}
+				const { data } = this.state;
 		return (
 			<Fragment>
 			<div>
@@ -149,6 +150,7 @@ class ZipControl extends Component {
 							value="zip"
 							disabled
 							required
+							className= "labelText"
 						/>
 					 </div>	
 					  <div>	
@@ -161,6 +163,7 @@ class ZipControl extends Component {
 							value={this.state.name}
 							required
 							onChange={this.handleChange}
+							className= "labelText"
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>	
@@ -173,6 +176,7 @@ class ZipControl extends Component {
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
+							className= "labelText"
 						/><div className="helper-text" >The text the user sees</div>
 						
 					</div>
@@ -189,6 +193,8 @@ class ZipControl extends Component {
 										type="text"
 										value={this.state.hint}
 										onChange={this.handleChange}
+										disabled
+										className= "labelText"
 									/><div className="helper-text" >Give user a hint</div>
 								</div>
 								<div>	
@@ -200,6 +206,7 @@ class ZipControl extends Component {
 										type="text"
 										value={this.state.defaultValue}
 										onChange={this.handleChange}
+										className= "labelText"
 									/><div className="helper-text" >Provide a default value</div>
 								</div>
 								<div>	
@@ -212,12 +219,14 @@ class ZipControl extends Component {
 										value={this.state.inputMask}
 										onChange={this.handleChange}
 										disabled
+										className= "labelText"
 									/><div className="helper-text" >Enter the input mask.</div>
 								</div>
-								<div><h5>Validation</h5></div>
+								<fieldset>
+								<legend><b>Validation</b></legend>
 								<div>
 									<div>
-										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} value={this.state.required} />
+										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} checked={this.state.required} />
 										<label htmlFor="required">Required?</label>
 									</div>
 							    </div>
@@ -232,6 +241,7 @@ class ZipControl extends Component {
 											type="number"
 											value={this.state.minLength}
 											onChange={this.handleChange}
+											className= "labelText"
 										/><div className="helper-text" >The minimum characters that must be entered</div>
 									</div>
 									<div>
@@ -243,6 +253,7 @@ class ZipControl extends Component {
 											type="number"
 											value={this.state.maxLength}
 											onChange={this.handleChange}
+											className= "labelText"
 										/><div className="helper-text" >The maximum characters that must be entered</div>
 									</div>
 									<div>	
@@ -267,8 +278,10 @@ class ZipControl extends Component {
 											value={this.state.patternValMsg}
 											onChange={this.handleChange}
 											disabled
+											className= "labelText"
 										/><div className="helper-text" >Error message for text not matching pattern.</div>
 									</div>
+									<fieldset>
 									<legend><b>Required If?</b></legend>
 									<div>
 										<Input
@@ -279,6 +292,7 @@ class ZipControl extends Component {
 											type="text"
 											value={this.state.property}
 											onChange={this.handleChange}
+											className= "labelText"
 										/><div className="helper-text" >Property name of field dependency.</div>
 									</div>
 									<div>
@@ -290,15 +304,18 @@ class ZipControl extends Component {
 											type="text"
 											value={this.state.value}
 											onChange={this.handleChange}
+											className= "labelText"
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
+									</fieldset>
                                 </div>
+								 </fieldset>
 							</div>
 						
     				</div>
 				
 			</div>
-			<div>
+			<div className="right valign-wrapper">
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 								

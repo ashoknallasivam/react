@@ -52,4 +52,4 @@ export const localeConstants_en = {
         DELETE_CONFIRMATION: "Are you sure you want to delete ?",
         SAVING_DATA: "Saved Successfully"
     } 
-}
+};

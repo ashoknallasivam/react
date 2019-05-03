@@ -67,4 +67,4 @@ export const HeaderData = {
         "rowSelection": "single",
         "defaultColDef": { "resizable": true }
     }
-}
+};

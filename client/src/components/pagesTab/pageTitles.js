@@ -4,7 +4,7 @@ import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal,Collapsible,Collapsible
 
 class PagesTitles extends Component { 
 constructor(props){
-    super(props)
+    super(props);
     this.state ={
         key:'',
         collection:'',
@@ -18,7 +18,7 @@ _handleChange = (e)=>{
         [e.target.name] : e.target.value
     })
 
-}
+};
 componentDidMount(){
     this.setState({
         key:this.props.pageJson.key,

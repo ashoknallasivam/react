@@ -69,7 +69,7 @@ class Signin extends Component {
   }
 
   render() {
-    const customStyles = { input: styles => { return { ...styles, height: '1.7em' }; } }
+    const customStyles = { input: styles => { return { ...styles, height: '1.7em' }; } };
     const { loggingIn } = this.props;
     const { username, password, submitted, environment } = this.state;
     if (this.state.submitted == true && this.props.errorMessage == null) {

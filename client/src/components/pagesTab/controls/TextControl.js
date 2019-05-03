@@ -1,343 +1,392 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal,Collapsible,CollapsibleItem } from 'react-materialize';
-import inputJson from './json/text.json';
+import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
+
+
 
 class TextControl extends Component {
 
-  constructor(props) {
+	constructor(props) {
 		super(props);
 
 		this.state = {
-			inputJson: inputJson,
-			selected:this.props.selected,
-			data:[]
+			data: [],
+			name: '',
+			label: '',
+			name: "",
+			items: [{ label: "" }]
 		};
 
-		
-	  this.handleChange = this.handleChange.bind(this);
-	  this.handleSubmit = this.handleSubmit.bind(this);  
-    }
 
-    componentDidMount() {
-      this.setState({
-			inputJson: inputJson,
-			selected:this.props.selected,
-			index:this.props.index,
-			data:this.props.data
-	  });
-	  //console.log(inputJson);
+		this.handleChange = this.handleChange.bind(this);
+		this.handleSubmit = this.handleSubmit.bind(this);
+
+
+	}
+
+	componentDidMount() {
+		 //alert('did')
+		this.setState({
+			mode: this.props.mode,
+			type: this.props.type,
+			data: this.props.data,
+
+		});
+		if (Object.keys(this.props.data).length > 0) {
+			this.setState({
+					name 				: 	this.props.data.name  ,
+					label 				: 	this.props.data.label,
+					hint				:	this.props.data.options ? this.props.data.options.hint : '',
+					defaultValue	    :	this.props.data.options ? this.props.data.options.defaultValue:'',
+					autocomplete		:	this.props.data.options ? this.props.data.options.autocomplete:'',
+					items				:	this.props.data.options.items ? this.props.data.options.items :'',
+					required			:	this.props.data.options.validation? this.props.data.options.validation.required:'',
+					minLength			:	this.props.data.options.validation? this.props.data.options.validation.minLength : '',
+					maxLength			:	this.props.data.options.validation? this.props.data.options.validation.maxLength : '',
+					pattern				:	this.props.data.pattern,
+					patternValMsg		:	this.props.data.patternValMsg,
+					property			:	this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.property :'',
+					value				:	this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.value :''
+					
+			})	
+		}
+		
     }
    
     componentWillReceiveProps(nextProps) {
+			// alert('will')
 	   this.setState({
-			inputJson: inputJson,
-			selected:nextProps.selected,
-			index:nextProps.index,
-			data:nextProps.data
-	  });
-	  //console.log(inputJson);
-	}
-	
-	
-	
-	handleChange(e) {
-		const { onChange } = this.props;
-		const { name, value } = e.target;
-		//this.setState({ [name]: value }, () => console.log(name, value));
-		onChange(e);
-    }
-	
-		
-	handleSubmit(e) {
-	   
-		e.preventDefault();
-		
-		//console.log('Send this in a POST request:', formPayload);
-		//this.props.sendInput(this.state);  
-		//console.log(this.props.pageJson);
-		console.log(this.state);
-		
-		if (this.state) {
-			
-			this.props.sendInput(this.state);
-			
-		}
-		
-	 }	
-
-
-
-	renderForm = () => {
-		
-
-		
-	}
-
-
-  render() {
-        const { data } = this.state;
-  			
-		var model = this.state.inputJson.layout;
-		var input = '';
-		var formUI = model.map((m) => {
-            
-			var name = m.name;
-			var type = m.type;
-			var label = m.label;
-			var value = data[name];
-			var options = data[options];
-			
-			if (type == "heading") {
-				return (
-					<div>
-						<h5><b>{label}</b></h5>
-					</div>
-				);
-			}
-
-			if (type == "text") {
-
-				if (name == 'type') {
-					return <div >
-						<Input
-							s={12}
-							label={label}
-							id={name}
-							name={name}
-							type={type}
-							value={value}
-							disabled
-						/>
-					</div>
-						;
-				} else {
-					return <div >
-
-						<Input
-							s={12}
-							label={label}
-							id={name}
-							name={name}
-							type={type}
-							value={value}
-							onChange={this.handleChange}
-						/>
-					</div>;
-				}
-
-			}
-
-
-
-			if (type == "panel") {
-
-				var arr3 = Object.values(m.options.fields);
-
-				input = arr3.map((o) => {
-					
-					if (o.type == 'text') {
-						return <div>
-						
-						  	<Input
-								s={12}
-								label={o.label}
-								id={o.name}
-								name={o.name}
-								type={o.type}
-								defaultValue=''
-								onChange={this.handleChange}
-							/><div className="helper-text" >{o.options.hint}</div></div>
-					}
-					
-					if (o.type == 'checkbox') {
-					   return <div>
-					    	  <input s={12} type={o.type} id="test6" name={o.name} onChange={this.handleChange}/>
-							  <label htmlFor="test6">{o.label}</label>
-         				   </div>;
-					} 
-
-
-					if (o.type == 'array') {
-						var autoitems ='';
-
-                        const autoitems = Object.entries(o.options).map(([key,value])=>{
-
-                          if(key == 'hint')	
-                          {
-							  return (
-							      <div>{value.toString()}</div>
-							  );
-						  } 
-
-						  if(key == 'fields')	
-                          {
-							  
-                             var autofileds = '';
-                             var required = '';
-                             autofileds = value.map((q,idx) => {
-                                
-                                const validation =q.options.validation.required.toString() ;
-
-                                required =  validation == true ? required : '';
-                                //console.log(idx);
- 
-									   
-								if(q.type == 'checkbox'){
-									
-									return <div>
-										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleChange}/>
-										  <label htmlFor="test7">{q.label}</label>
-									   <div className="helper-text" >{q.options.hint}</div>
-                                         </div>;
-									
-								} else {
-                                	return  <div>	
-										<Input
-											s={12}
-											label={q.label}
-											id={q.name}
-											name={ `${q.name}_${idx}` }
-											type={q.type}
-											onChange={this.handleChange}
-										/><div className="helper-text" >{q.options.hint}</div>
-                                         </div>;
-										
-								}	
-
-                             });
-
-                              return <div>{autofileds}</div>
-								
-						  } 
-
-						})	
-
-						return <div >
-						     	<h5>{o.label}</h5>
-						       		{autoitems}
-								</div>
-					}
-					
-					if (o.type == 'fieldset' && o.name == 'validation') {
-						var autoitems ='';
-
-                        const autoitems = Object.entries(o.options).map(([key,value])=>{
-
-                          
-
-						  if(key == 'fields')	
-                          {
-							  
-                             var autofileds = '';
-                             var required = '';
-                             autofileds = value.map((q) => {
-                                
-                               
- 
-									   
-								if(q.type == 'checkbox'){
-									
-									return <div>
-										  <input s={12} type={q.type} id="test7" name={q.name} onChange={this.handleChange} />
-										  <label htmlFor="test7">{q.label}</label>
-									   <div className="helper-text" >{q.options.hint}</div>
-                                         </div>;
-									
-								} else if (q.type == 'fieldset') {
-									
-									var requiredifitems ='';
-
-									const requiredifitems = Object.entries(q.options).map(([key,value])=>{
-										
-									  if(key == 'fields')	
-									  {
-										  
-										  
-										 var requiredfields = '';
-										 
-										 requiredfields = value.map((r) => {
-											 
-											return  <div>
-												<Input
-													s={12}
-													label={r.label}
-													id={r.name}
-													name={r.name}
-													type={r.type}
-													onChange={this.handleChange}
-												/><div className="helper-text" >{r.options.hint}</div>
-												 </div>;
-
-
-										 })	;
-                                         return <div>{requiredfields}</div>
-									  }
-									});	
-									
-									
-                                	return  <div><legend><b>{q.label}</b></legend>
-												<div>{requiredifitems}</div>
-                                           </div>;
-										
-								}	else {
-                                	return  <div>
-										<Input
-											s={12}
-											label={q.label}
-											id={q.name}
-											name={q.name}
-											type={q.type}
-											onChange={this.handleChange}
-										/><div className="helper-text" >{q.options.hint}</div>
-                                         </div>;
-										
-								}	
-
-                             });
-
-                              return <div>{autofileds}</div>
-								
-						  } 
-
-
-
-						})	
-
-
-						return <div>
-						     	<h5>{o.label}</h5>
-						       		{autoitems}
-								</div>
-					}
-					
-				});
-
-				input = <div>{input}</div>;
-
-
-			}
-			return (
-				<Collapsible accordion={false}>
-					<CollapsibleItem header={label} icon="keyboard_arrow_down">
-						{input} 
-					</CollapsibleItem>
-				</Collapsible>
-			);
-
-
-
+			mode:nextProps.mode,
+			type:nextProps.type,
+			data:nextProps.data,
 		});
 		
-		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header='Text' icon="keyboard_arrow_down">
-					{formUI}
-				</CollapsibleItem>
-			</Collapsible>
-			);
-	 
-  }	 
+
+	}
+
+	handleChange(e) {
+
+		const { name, value } = e.target;
+		this.setState({ [name]: value }, () => {
+			this.createSchema(); // Call back function as SetState is Asynch
+		})
+
 	
+		
+    }
+	
+	createSchema(){
+		
+		//onChange(index,initialState);
+	}
+	handleSubmit() {
+
+		const { onChange } = this.props;
+
+		if (this.state.name !== undefined) {
+			var name = this.state.name
+		}
+		if (this.state.label !== undefined) {
+			var label = this.state.label
+		}
+		if (this.state.hint != undefined) {
+			var hint = this.state.hint;
+		}
+		if (this.state.defaultValue != undefined) {
+			var defaultValue = this.state.defaultValue;
+		}
+		if (this.state.autocomplete !== undefined) {
+			if (this.state.autocomplete == 'on') {
+				var autocomplete = true;
+			} else {
+				var autocomplete = false;
+			}
+		}
+		if (this.state.required !== undefined) {
+			if (this.state.required == 'on') {
+				var required = true;
+			} else {
+				var required = false;
+			}
+		}				
+		if(this.state.items !== undefined)
+		{
+			//var items = [{ label: this.state.label_0 },{ label: this.state.label_1 }]
+			var items = this.state.items;
+			
+		}
+		if (this.state.minLength !== undefined) {
+			var minLength = this.state.minLength;
+		}
+		if (this.state.maxLength !== undefined) {
+			var maxLength = this.state.maxLength;
+		}
+		if (this.state.property !== undefined) {
+			var property = this.state.property;
+		}
+		if (this.state.value !== undefined) {
+			var value = this.state.value;
+		}
+		if (this.state.property !== undefined || this.state.value !== undefined) {
+			var requiredIf = { property, value }
+		}
+		
+		var initialState =  {  
+			type:this.state.type,
+			name, 
+			label, 
+			options: { 
+				hint, 
+				defaultValue,
+				autocomplete, 
+				items,
+				validation: {
+					required,
+					minLength,
+					maxLength,
+					requiredIf
+					}
+				}  
+		};
+		//console.log(initialState)
+		alert('submitted');
+		onChange(initialState, this.props.index);
+
+		this.props.close();
+	}
+	
+  handleItemLabelChange = idx => evt => {
+    const newItems = this.state.items.map((item, sidx) => {
+      if (idx !== sidx) return item;
+      return { ...item, label: evt.target.value };
+    });
+
+    
+	this.setState({ items: newItems }, () => {
+			this.handleSave(); // Call back function as SetState is Asynch
+		})
+  };
+
+  handleSave = () => {
+	  //console.log("Items",this.state.items)
+  }	
+  
+  handleAddItem = () => {
+    this.setState({
+      items: this.state.items.concat([{ label: "" }])
+    });
+  };
+
+  handleRemoveItem = idx => () => {
+    this.setState({
+      items: this.state.items.filter((s, sidx) => idx !== sidx)
+    });
+  };
+  
+  render() {
+	  
+	  const { data } = this.state;
+	  
+	  var requiredfields = '';
+	  //{data.items.map(itemval => {
+     //          return  <div>
+		//										<div className="helper-text" >{itemval.label}</div>
+		//										 </div>
+              
+          //     })}
+
+
+		
+		return (
+			<Fragment>
+				<div>
+
+					<div>
+						<h5><b>Text Configuration</b></h5>
+					</div>
+					<div>
+						<Input
+							s={12}
+							label="Element type"
+							id="type"
+							name="type"
+							type="text"
+							value="text"
+							disabled
+							required
+							className="labelText"
+						/>
+					</div>
+					<div>
+						<Input
+							s={12}
+							label="Name *"
+							id="name"
+							name="name"
+							type="text"
+							value={this.state.name}
+							required
+							onChange={this.handleChange}
+							className="labelText mb-1"
+						/><div className="helper-text" >A unique element name</div>
+					</div>
+					<div>
+						<Input
+							s={12}
+							label="Label *"
+							id="label"
+							name="label"
+							type="text"
+							value={this.state.label}
+							required
+							onChange={this.handleChange}
+							className="labelText mb-1"
+						/><div className="helper-text" >The text the user sees</div>
+
+					</div>
+
+					<div>
+						<div>
+							<h5>Options</h5>
+								<div>	
+								   <Input
+										s={12}
+										label="Hint"
+										id="hint"
+										name="hint"
+										type="text"
+										value={this.state.hint}
+										onChange={this.handleChange}
+										className= "labelText mb-1"
+									/><div className="helper-text" >Give user a hint</div>
+								</div>
+								<div>	
+								   <Input
+										s={12}
+										label="Default value"
+										id="defaultValue"
+										name="defaultValue"
+										type="text"
+										value={this.state.defaultValue}
+										onChange={this.handleChange}
+										className= "labelText mb-1"
+									/><div className="helper-text" >Provide a default value</div>
+								</div>
+								<div className="pl-2">
+									<input s={12} type="checkbox" id="autocomplete" name="autocomplete" onChange={this.handleChange} value={this.state.autocomplete} />
+									<label htmlFor="autocomplete">Autocomplete?</label>
+								</div>
+								<div className="pl-2">
+									<h6>Autocomplete items</h6>
+								</div>
+								<div className="helper-text" >Enter items</div>
+								{this.state.items.map((item, idx) => (
+									<div className="shareholder pl-2">
+										<div class="valign-wrapper">
+											<input
+												type="text"
+												placeholder={`Label #${idx + 1}`}
+												value={item.label}
+												className='col s12 m8 l8 xl8 labelText mb-1'
+												onChange={this.handleItemLabelChange(idx)}
+											/>
+											<button type='button' className='btn btn btn_primary otherButtonAddDetUpt iconButton col s12 m4 l4 xl4 mt-1' name="deleteOrg" 
+											onClick={this.handleRemoveItem(idx)}
+											>
+												<i className="material-icons" title='Delete Item'>delete</i><span>Delete Item</span>
+											</button>
+											
+										</div>
+										<div className="helper-text pl-0" >Enter value</div>
+									</div>
+								))}
+								<div>
+									<Col s={12} m={6} l={4} xl={12} >
+										<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton col s12 m4 l4 xl4 right' 
+										name="addOrg" onClick={this.handleAddItem} style={{textAlign:"right"}}>
+											<i className="material-icons" title='Add Items'>add_circle</i><span>Add Items</span>
+										</Button>
+									</Col>
+								</div>	
+							  <fieldset>
+								<legend><b>Validation</b></legend>
+								<div>
+									<div>
+										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} value={this.state.required} />
+										<label htmlFor="required">Required?</label>
+									</div>
+								</div>
+
+								<div>
+									<div>
+										<Input
+											s={12}
+											label="Minimum length"
+											id="minLength"
+											name="minLength"
+											type="number"
+											value={this.state.minLength}
+											onChange={this.handleChange}
+											className="labelText mb-1"
+										/><div className="helper-text" >The minimum characters that must be entered</div>
+									</div>
+									<div>
+										<Input
+											s={12}
+											label="Maximum length"
+											id="maxLength"
+											name="maxLength"
+											type="number"
+											value={this.state.maxLength}
+											onChange={this.handleChange}
+											className="labelText mb-1"
+										/><div className="helper-text" >The maximum characters that must be entered</div>
+									</div>
+									<fieldset>
+										<legend><b>Required If?</b></legend>
+										<div>
+											<Input
+												s={12}
+												label="Property name"
+												id="property"
+												name="property"
+												type="text"
+												value={this.state.property}
+												onChange={this.handleChange}
+												className="labelText mb-1"
+											/><div className="helper-text" >Property name of field dependency.</div>
+										</div>
+										<div>
+											<Input
+												s={12}
+												label="Property value"
+												id="value"
+												name="value"
+												type="text"
+												value={this.state.value}
+												onChange={this.handleChange}
+												className="labelText mb-1"
+											/><div className="helper-text" >Value of dependent field.</div>
+										</div>
+									</fieldset>
+								</div>
+							</fieldset>
+						</div>
+
+					</div>
+
+				</div>
+				<div className="right valign-wrapper mt-2">
+					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
+					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
+
+				</div>
+
+			</Fragment>
+
+		);
+
+	}
+
 
 }
 export default TextControl;

@@ -11,7 +11,7 @@ const actions = {
         };
     }
 
-}
+};
 
 
 export const routeTo = (id) => (dispatch, getState) => {
@@ -25,4 +25,4 @@ export const routeTo = (id) => (dispatch, getState) => {
 //         history.push(location);
     
 // }
-}
+};

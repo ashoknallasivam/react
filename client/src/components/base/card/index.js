@@ -7,7 +7,7 @@ const mapStateToProps = (state) => {
     return{
         projectList: state.projectList.Projects
     }
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
     return{
@@ -19,6 +19,6 @@ const mapDispatchToProps = (dispatch) => {
             }, dispatch
         )
     }
-}
+};
 
 export default connect(mapStateToProps,mapDispatchToProps)(CustomCard);

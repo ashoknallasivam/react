@@ -51,7 +51,7 @@ class PagesTab extends Component {
 					
 			this.setState({ pages: nextProps.pages }, () => {
 				this.updatePageIndex(); // Call back function as SetState is Asynch
-			})
+			});
 			
 			this.setState({
 					tenantId: nextProps.tenantId,
@@ -89,7 +89,7 @@ class PagesTab extends Component {
 			  layout: [
 				
 			  ]
-			}
+			};
 
 		this.setState({
 
@@ -109,12 +109,12 @@ class PagesTab extends Component {
 
 		//console.log(dynamicJSON);
 
-		let recipesCopy = JSON.parse(JSON.stringify(this.state.pageJson))
-		recipesCopy.layout = dynamicJSON
-		recipesCopy.key = key
-		recipesCopy.collection = collection
-		recipesCopy.title = title
-		recipesCopy.subtitle = subtitle
+		let recipesCopy = JSON.parse(JSON.stringify(this.state.pageJson));
+		recipesCopy.layout = dynamicJSON;
+		recipesCopy.key = key;
+		recipesCopy.collection = collection;
+		recipesCopy.title = title;
+		recipesCopy.subtitle = subtitle;
 
         this.setState({ pageJson: recipesCopy  }, () => {
 			this.handleSave(); // Call back function as SetState is Asynch
@@ -178,7 +178,7 @@ class PagesTab extends Component {
 
 			//let newJson = {'_id': uuid.v4(),'statusFlag':'new','location':this.state.selectedLocation.id, ...this.state.pageJson};
 			let newJson = { '_id': this.state.pageId, 'statusFlag': this.state.statusFlag, 'location': this.state.selectedLocation.id, ...this.state.pageJson };
-			this.props.actions.SavePages(this.state.tenantId, newJson)
+			this.props.actions.SavePages(this.state.tenantId, newJson);
 			this.props.SavePages(newJson)
 			//console.log(newJson);		
 		}
@@ -200,7 +200,7 @@ class PagesTab extends Component {
 
 			//let newJson = {'_id': uuid.v4(),'statusFlag':'new','location':this.state.selectedLocation.id, ...this.state.pageJson};
 			let newJson = { '_id': this.state.pageId, 'statusFlag': this.state.statusFlag, 'location': this.state.selectedLocation.id, ...this.state.pageJson };
-			this.props.actions.SavePages(this.state.tenantId, newJson)
+			this.props.actions.SavePages(this.state.tenantId, newJson);
 			this.props.SavePages(newJson)
 			//console.log(newJson);		
 		}
@@ -228,20 +228,19 @@ class PagesTab extends Component {
 
     			
 		if (this.state.editor == 'Edit' || this.state.editor == 'Add' ) {
-
 			dynamicForm = <DynamicControls 
 								sendData={this.getData} 
 								pageJson={pageJson} 
 								pages={this.props.pages} 
 								selectedPage={this.state.selectedPage} 
-								mode={this.state.editor} />
+								mode={this.state.editor} applicationMode={this.state.applicationMode} />;
 								
 			previewPage = <PagePreview 
 								sendData={this.getData} 
 								pageJson={pageJson} 
 								pages={this.props.pages} 
 								selectedPage={this.state.selectedPage} 
-								mode={this.state.editor} />					
+								mode={this.state.editor} />;
 			
             jEditor = <Tabs className='tab-demo z-depth-1'>
 					   <Tab title={<i className="orgIcon material-icons" title='JSON Schema' >code</i>} active>
@@ -262,10 +261,8 @@ class PagesTab extends Component {
 										</Col>
 									</Row>
 							</div></Tab>
-					 <Tab title={<i className="orgIcon material-icons" title='Preview' >launch</i>} >{previewPage}</Tab>
+							<Tab  disabled={true} title={<i className="orgIcon material-icons" title='Preview' >launch</i>} >{previewPage}</Tab>
 				   </Tabs>			
-								
-
 		}
 
 		const rowData = [];
@@ -314,16 +311,16 @@ class PagesTab extends Component {
 						<div className='col s12 m12 l12 xl12 mb-2' >
 							<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={12} >
 								<Row>
-									<Col s={11} className='z-depth-8 mr-0'>
+									<Col s={8} className='z-depth-8 mr-0'>
 										{dropDown}
 									</Col>
 									
 									{viewOnly == false ? (
-										<Col s={1} className='z-depth-8 mr-0'>
+										<Col s={4} className='z-depth-8 mr-0'>
 
-											<Button className='orgIcon col s12 m2 l2 xl2 mt-8' name="addOrg" onClick={this.CreatePage}>
+											<Button className='btn btn btn_primary otherButtonAddDetUpt iconButton mt-8' name="addOrg" onClick={this.CreatePage}>
 												<i className="material-icons" title='Add Page'>
-													add_circle</i>
+													add_circle</i><span>Add Pages</span>
 											</Button>
 										</Col>
 									) : ('')

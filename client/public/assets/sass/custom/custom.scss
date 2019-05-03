@@ -454,7 +454,10 @@ body {
         font-size: 18px !important;
         color: gray !important;
     }
-
+    .innerDynamicLabel{
+        font-size: 16px !important;
+        padding-left: 10px;
+    }
     .innerRolesButton {
         float: right;
     }
@@ -662,7 +665,7 @@ body {
     .deleteBtn:hover {
         background-color: #9c0707;
     }
-    .btn.btn_primary.otherButtonAddDetUpt.copyrole {
+    .btn.btn_primary.otherButtonAddDetUpt.iconButton {
         background: transparent !important;
         border: unset !important;
         box-shadow: unset !important;
@@ -678,7 +681,7 @@ body {
         margin: auto;
     }
     
-    .btn.btn_primary.otherButtonAddDetUpt.copyrole i.material-icons {
+    .btn.btn_primary.otherButtonAddDetUpt.iconButton i.material-icons {
         vertical-align: top;
         color: #004e92;
     }
@@ -690,3 +693,29 @@ body {
         cursor: pointer;
         vertical-align: middle;
     }
+    .modal_close{
+    border: none;
+    background: none;
+    z-index: 100000;
+    position: absolute;
+    right: 20px;
+    top: 20px;
+        
+    }
+    .modal.modal-fixed-footer.dynamicModal .modal-content {
+        position: unset !important; 
+    }
+    .modal-content.dataControl{
+        overflow-y: auto;
+        height: 400px;
+    }
+    .modal.modal-fixed-footer.dynamicModal .modal-footer{
+        height: 21px;
+    }
+    .modal.modal-fixed-footer.dynamicModal .modal-content h4{
+        margin-bottom: unset !important;
+    }
+    i.material-icons.prefix {
+        margin-top: 3%;
+    }
+    

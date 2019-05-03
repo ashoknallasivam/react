@@ -22,17 +22,17 @@ class ReactGrid extends Component {
     onGridReady = (params) => {
         this.gridApi = params.api;
         this.gridColumnApi = params.columnApi;
-    }
+    };
     getSelectedRows = () => {
         const selectedData = this.gridApi.getSelectedRows();
         return selectedData;
-    }
+    };
     refreshCells = (params) => {
         this.gridApi.refreshCells(params);
-    }
+    };
     removeSelectedRows = (data) => {
         this.gridApi.updateRowData({ remove: data });
-    }
+    };
     render() {
         return (
             <Fragment>

@@ -9,7 +9,19 @@ class TextareaControl extends Component {
 		super(props);
 
 		this.state = {
-			data:[]
+			data:[],
+			 name : "",
+		 label : "",
+		 defaultValues : "",
+		 minimumValue : "",
+		 maximumValue : "",
+		 required : false,
+		 property : "",
+		 PropertyValue : "",
+		 increments : "",
+		 thumbLabel : true,
+		 vertical : false,
+		 invert : false
 		};
 
 		
@@ -22,31 +34,31 @@ class TextareaControl extends Component {
 			mode:this.props.mode,
 			index:this.props.index,
 			data:this.props.data
-	  });
+		});
+		if (Object.keys(this.props.data).length > 0){
+			this.setState({
+				name : this.props.data.name  ,
+					label : this.props.data.label,
+	
+			})	
+		}
 	  
     }
    
-    componentWillReceiveProps(nextProps) {
-	   this.setState({
-			mode:nextProps.mode,
-			index:nextProps.index,
-			data:nextProps.data
-	  });
-	}
+   
 	
 	handleChange(e) {
-		
 		const { name, value } = e.target;
-		this.setState({ [name]: value }, () => {
-			this.createSchema(); // Call back function as SetState is Asynch
-		})
-		
-		//console.log(initialState);
-		//console.log(this.state.data);
+		this.setState({ [name]: value })
+		if([name] == 'required'){
+			this.setState({
+				[name] : e.target.checked
+			})
+		}
 		
     }
 	
-	createSchema(){
+		handleSubmit =() =>{
 		const { onChange } = this.props;
 		const { index } = this.state;
 		if(this.state.name !== undefined)
@@ -70,14 +82,9 @@ class TextareaControl extends Component {
 				var autocomplete = false;
 			}
 		}
-		if(this.state['required'+index] !== undefined)
+		if(this.state.required !== undefined)
 		{
-			if(this.state['required'+index] == 'on')
-			{
-				var required = true;
-			}else{
-				var required = false;
-			}
+				var required = this.state.required;
 		}				
 		if(this.state.label_0 !== undefined)
 		{
@@ -105,7 +112,7 @@ class TextareaControl extends Component {
 		}
 		
 		var initialState =  {  
-			type:this.state.data.type,
+			type:'textarea',
 			name, 
 			label, 
 			options: { 
@@ -116,16 +123,16 @@ class TextareaControl extends Component {
 							  requiredIf
 						}
 				}  
-		}
-		onChange(index,initialState);
-	}	
+		};
+		onChange(initialState,this.props.index);
+		this.props.close()
+	};
 
   render() {
         const { index } = this.state;
 
 		return (
-			<Collapsible accordion={false}>
-				<CollapsibleItem header="Textarea" icon="keyboard_arrow_down">
+			<Fragment>
 					<div>
 						<h5><b>Textarea Configuration</b></h5>
 					</div>
@@ -168,8 +175,7 @@ class TextareaControl extends Component {
 					</div>
 					
 					<div>
-						<Collapsible accordion={false}>
-							<CollapsibleItem header='Options' icon="keyboard_arrow_down">
+					
 								<div>	
 								   <Input
 										s={12}
@@ -192,14 +198,16 @@ class TextareaControl extends Component {
 										onChange={this.handleChange}
 									/><div className="helper-text" >Provide a default value</div>
 								</div>
-								<div><h5>Validation</h5></div>
+								<fieldset>
+								<legend><b>Validation</b></legend>
 								<div>
 									<div>
-										<input s={12} type="checkbox" id="required" name={"required" + index} onChange={this.handleChange} value={this.state['required'+index]} />
+										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} checked={this.state.required} />
 										<label htmlFor="required">Required?</label>
 									</div>
 							    </div>
 								<div>
+									<fieldset>
 									<legend><b>Required If?</b></legend>
 									<div>
 										<Input
@@ -223,13 +231,18 @@ class TextareaControl extends Component {
 											onChange={this.handleChange}
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
+                                </fieldset>
                                 </div>
-							</CollapsibleItem>
-						</Collapsible>
+							</fieldset>
+						
     				</div>
-					
-				</CollapsibleItem>
-			</Collapsible>
+						<div className="right valign-wrapper">
+				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
+				  <Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
+								
+			</div>
+			
+						</Fragment>
 			);
 	 
   }	 

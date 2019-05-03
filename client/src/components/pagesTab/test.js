@@ -9,7 +9,7 @@ class Todo extends React.Component {
     }
   }
 
-  onChange = e => this.setState({ value: e.target.value })
+  onChange = e => this.setState({ value: e.target.value });
 
   onEnter = e => {
     if(e.charCode !== 13) return;
@@ -27,7 +27,7 @@ class Todo extends React.Component {
   };
 
   render() {
-    const { value } = this.state
+    const { value } = this.state;
     return (
       <div>
         <div>

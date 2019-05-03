@@ -7,7 +7,7 @@ import objectUtil from '../../utils/objectUtil';
 
 class RolesTab extends Component {
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             roles: [],
             selectedLocation: '',
@@ -68,19 +68,21 @@ class RolesTab extends Component {
         this.rolesData = {};
         this.menuData = {};
         this.resourceData = {};
-    }
+        this.selectAllMenu = false;
+        this.selectAllResource = false;
+    };
     confirmationModal = () => {
         this.setState({
             DeleteModal: true
         })
-    }
+    };
     CancelconfirmationModal = () => {
         this.setState({
             DeleteModal: false,
             SaveSuccessfullModal: false,
             copyRoleModel: false
         })
-    }
+    };
     roleBodyCreate = (description, id, isAssignable, isAutoAccess, isAutoAssignOnIntake, name) => {
         let roleBody = {};
         roleBody.description = description;
@@ -90,7 +92,7 @@ class RolesTab extends Component {
         roleBody.isAutoAssignOnIntake = isAutoAssignOnIntake;
         roleBody.name = name;
         return roleBody;
-    }//this is required because ds of the received role is different than ds of created role
+    };//this is required because ds of the received role is different than ds of created role
     handleRoleDropdown = (e) => {
         this.selectAllMenu = false;
         this.selectAllResource = false;
@@ -104,7 +106,7 @@ class RolesTab extends Component {
         });
         const selectedValue = e.target.value;
         if (this.props.selectedLocation.id != "") {
-            let filteredRoles = this.state.roles.filter((role) => role.id == selectedValue);
+            let filteredRoles = this.props.roles.filter((role) => role.id == selectedValue);
             let filteredRolesData = filteredRoles[0];
 
             this.setState({ selectedRole: filteredRolesData });// in view the ds of roles is different please take
@@ -175,7 +177,7 @@ class RolesTab extends Component {
                 selectedResource: [prevState.selectedResource, ...filteredResource]
             }));
         }
-    }
+    };
     handleRoleInput = (e) => {
         //this.changedRoles = false;
         if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Attribute") {
@@ -184,24 +186,49 @@ class RolesTab extends Component {
         } else if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Resource") {
             this.resourceData[e.target.value] = e.target.checked ? 1 : 0;
             let selectedResource = [];
+            selectedResource = this.state.selectedResource;
             Object.keys(this.resourceData).map(item => {
-                if (this.resourceData[item] == 1)
-                    selectedResource.push(item);
-            })
-            this.setState({ selectedResource: [...this.state.selectedResource, ...selectedResource] });
-        } else if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Menu") {
+                if (this.resourceData[item] == 1) {
+                    let duplicate = selectedResource.map(data => {
+                        if (parseInt(data) == parseInt(item))
+                            return true;
+                    });
+                    if (!duplicate.includes(true))
+                        selectedResource.push(parseInt(item));
+                }
+                else {
+                    let index = selectedResource.indexOf(parseInt(e.target.value));
+                    if (index != -1)
+                        selectedResource.splice(index, 1);
+                }
+            });
+            this.setState({ selectedResource });
+        }
+        else if (e.target.type === "checkbox" && e.target.getAttribute("roleType") === "Menu") {
             this.menuData[e.target.value] = e.target.checked ? 1 : 0;
             let selectedMenu = [];
+            selectedMenu = this.state.selectedMenu;
             Object.keys(this.menuData).map(item => {
-                if (this.menuData[item] == 1)
-                    selectedMenu.push(item);
-            })
-            this.setState({ selectedMenu: [...this.state.selectedMenu, ...selectedMenu] });
+                if (this.menuData[item] == 1) {
+                    let duplicate = selectedMenu.map(data => {
+                        if (parseInt(data) == parseInt(item))
+                            return true;
+                    });
+                    if (!duplicate.includes(true))
+                        selectedMenu.push(parseInt(item));
+                }
+                else {
+                    let index = selectedMenu.indexOf(parseInt(e.target.value));
+                    if (index != -1)
+                        selectedMenu.splice(index, 1);
+                }
+            });
+            this.setState({ selectedMenu });
         }
         else {
             this.rolesData[e.target.name] = e.target.value;
         }
-    }
+    };
     handleSelectAllMenu = (e) => {
         let selectedMenu = [];
         let menuData = {};
@@ -212,7 +239,7 @@ class RolesTab extends Component {
                     menuData[item.id] = 1;
                 }
             })
-        })
+        });
         if (e.target.checked == true) {
             this.selectAllMenu = true;
             this.setState({ selectedMenu });
@@ -223,7 +250,7 @@ class RolesTab extends Component {
             this.setState({ selectedMenu: [] });
             this.menuData = {};
         }
-    }
+    };
     handleSelectAllResource = (e) => {
         let selectedResource = [];
         let resourceData = {};
@@ -234,7 +261,7 @@ class RolesTab extends Component {
                     resourceData[item.id] = 1;
                 }
             })
-        })
+        });
         if (e.target.checked == true) {
             this.selectAllResource = true;
             this.setState({ selectedResource });
@@ -245,12 +272,12 @@ class RolesTab extends Component {
             this.setState({ selectedResource: [] });
             this.resourceData = {};
         }
-    }
+    };
     successfullModel = () => {
         this.setState({
             SaveSuccessfullModal: true
         })
-    }
+    };
     //Roles
     AddRole = (e) => {
         e.preventDefault();
@@ -269,12 +296,12 @@ class RolesTab extends Component {
         if (isDuplicatte.includes(true)) {
             this.setState({
                 RoleNameAlreadyExist: true
-            })
+            });
             return false;
         } else {
             this.setState({
                 RoleNameAlreadyExist: false
-            })
+            });
 
             //this.rolesData.roleId = this.state.newRole;
             const role = {
@@ -288,14 +315,14 @@ class RolesTab extends Component {
                 menus: [],
                 resources: [],
                 "statusFlag": "new",
-            }
+            };
             if (this.state.selectedMenu == "") {
                 Object.keys(this.menuData).map(r => {
                     if (this.menuData[r] == 1) {
                         let finalMenu = {};
                         finalMenu.menuId = parseInt(r);
                         finalMenu.roleId = role.id;
-                        finalMenu.statusFlag = "new"
+                        finalMenu.statusFlag = "new";
                         role.menus.push(finalMenu);
                     }
                 })
@@ -305,7 +332,7 @@ class RolesTab extends Component {
                     let finalMenu = {};
                     finalMenu.menuId = item;
                     finalMenu.roleId = role.id;
-                    finalMenu.statusFlag = "new"
+                    finalMenu.statusFlag = "new";
                     role.menus.push(finalMenu);
                 })
 
@@ -316,7 +343,7 @@ class RolesTab extends Component {
                         let finalResource = {};
                         finalResource.resourceId = parseInt(r);
                         finalResource.roleId = role.id;
-                        finalResource.statusFlag = "new"
+                        finalResource.statusFlag = "new";
                         role.resources.push(finalResource);
                     }
                 })
@@ -326,15 +353,15 @@ class RolesTab extends Component {
                     let finalResource = {};
                     finalResource.resourceId = item;
                     finalResource.roleId = role.id;
-                    finalResource.statusFlag = "new"
+                    finalResource.statusFlag = "new";
                     role.resources.push(finalResource);
 
                 })
             }
-            this.props.SaveRoles(role)
-            this.props.SaveFunctions(this.state.functions)
-            this.props.actions.SaveRoles(this.props.orgRoles.tenantId, role)
-            this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions)
+            this.props.SaveRoles(role);
+            this.props.SaveFunctions(this.state.functions);
+            this.props.actions.SaveRoles(this.props.orgRoles.tenantId, role);
+            this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions);
 
             this.rolesData = {};
             this.menuData = {};
@@ -351,7 +378,7 @@ class RolesTab extends Component {
         });
         //window.Materialize.toast("Save successful", 2000);
         this.successfullModel();
-    }
+    };
     UpdateRole = () => {
         const isDuplicatte = (this.props.selectedLocation.id ? this.props.roles : this.props.orgRoles.roles).map((iteratedValue) => {
             if (this.rolesData.roleName) {
@@ -364,13 +391,13 @@ class RolesTab extends Component {
         if (isDuplicatte.includes(true)) {
             this.setState({
                 RoleNameAlreadyExist: true,
-            })
+            });
             return false;
         }
         else {
             this.setState({
                 RoleNameAlreadyExist: false
-            })
+            });
             let filteredMenu = [];
             let filteredMenuId = [];
             let menuFlag = [];
@@ -379,7 +406,7 @@ class RolesTab extends Component {
                     if (item.id == this.state.selectedDropdownRole) {
                         menuFlag = item.menus;
                         item.menus.map((data) => {
-                            filteredMenu = [...filteredMenu, data.menuId]
+                            filteredMenu = [...filteredMenu, data.menuId];
                             filteredMenuId = [...filteredMenuId, data.id]
                         })
                     }
@@ -389,7 +416,7 @@ class RolesTab extends Component {
                     if (item.id == this.state.selectedDropdownRole) {
                         menuFlag = item.menus;
                         item.menus.map((data) => {
-                            filteredMenu = [...filteredMenu, data.menuId]
+                            filteredMenu = [...filteredMenu, data.menuId];
                             filteredMenuId = [...filteredMenuId, data.id]
                         })
                     }
@@ -404,7 +431,7 @@ class RolesTab extends Component {
                     if (item.id == this.state.selectedDropdownRole) {
                         resourceFlag = item.resources;
                         item.resources.map((data) => {
-                            filteredResource = [...filteredResource, data.resourceId]
+                            filteredResource = [...filteredResource, data.resourceId];
                             filteredResourceId = [...filteredResourceId, data.id]
                         })
                     }
@@ -415,7 +442,7 @@ class RolesTab extends Component {
                     if (item.id == this.state.selectedDropdownRole) {
                         resourceFlag = item.resources;
                         item.resources.map((data) => {
-                            filteredResource = [...filteredResource, data.resourceId]
+                            filteredResource = [...filteredResource, data.resourceId];
                             filteredResourceId = [...filteredResourceId, data.id]
                         })
                     }
@@ -439,24 +466,24 @@ class RolesTab extends Component {
                         menus: [],
                         resources: [],
                         "statusFlag": (iteratedValue.statusFlag == "modified" || iteratedValue.statusFlag == undefined) ? "modified" : "new"
-                    }
-                    let finalMenu = {}//need to create an object that has only manipulated value i.e
+                    };
+                    let finalMenu = {};//need to create an object that has only manipulated value i.e
                     Object.keys(this.menuData).map(r => {
                         if (filteredMenu.indexOf(parseInt(r)) >= 0 && this.menuData[r] == 0) {
                             let finalMenu = {};
-                            finalMenu.id = filteredMenuId[filteredMenu.indexOf(parseInt(r))];;
+                            finalMenu.id = filteredMenuId[filteredMenu.indexOf(parseInt(r))];
                             finalMenu.menuId = parseInt(r);
                             finalMenu.roleId = this.state.selectedRole.id;
-                            finalMenu.statusFlag = "delete"
+                            finalMenu.statusFlag = "delete";
                             role.menus.push(finalMenu);
                         } else if (filteredMenu.indexOf(parseInt(r)) <= 0 && this.menuData[r] == 1) {
                             let finalMenu = {};
                             finalMenu.menuId = parseInt(r);
                             finalMenu.roleId = this.state.selectedRole.id;
-                            finalMenu.statusFlag = "new"
+                            finalMenu.statusFlag = "new";
                             role.menus.push(finalMenu);
                         }
-                    })
+                    });
                     this.menuData = {};
                     let menuTest = role.menus.map(item => item.menuId);
                     filteredMenu.map(item => {//item has previous values
@@ -468,28 +495,28 @@ class RolesTab extends Component {
                                 if (item == menuFlagData.menuId && menuFlagData.statusFlag != undefined) {
                                     test.statusFlag = menuFlagData.statusFlag;
                                 }
-                            })
+                            });
 
                             role.menus.push(test);
                         }
-                    })
-                    let finalResource = {}//need to create an object that has only manipulated value i.e 
+                    });
+                    let finalResource = {};//need to create an object that has only manipulated value i.e
                     Object.keys(this.resourceData).map(r => {
                         if (filteredResource.indexOf(parseInt(r)) >= 0 && this.resourceData[r] == 0) {
                             let finalResource = {};
                             finalResource.id = filteredResourceId[filteredResource.indexOf(parseInt(r))];
                             finalResource.resourceId = parseInt(r);
                             finalResource.roleId = this.state.selectedRole.id;
-                            finalResource.statusFlag = "delete"
+                            finalResource.statusFlag = "delete";
                             role.resources.push(finalResource);
                         } else if (filteredResource.indexOf(parseInt(r)) <= 0 && this.resourceData[r] == 1) {
                             let finalResource = {};
                             finalResource.resourceId = parseInt(r);
                             finalResource.roleId = this.state.selectedRole.id;
-                            finalResource.statusFlag = "new"
+                            finalResource.statusFlag = "new";
                             role.resources.push(finalResource);
                         }
-                    })
+                    });
                     this.resourceData = {};
 
                     let resourceTest = role.resources.map(item => item.resourceId);
@@ -502,29 +529,29 @@ class RolesTab extends Component {
                                 if (item == resourceFlagData.resourceId && resourceFlagData.statusFlag != undefined) {
                                     test.statusFlag = resourceFlagData.statusFlag;
                                 }
-                            })
+                            });
                             role.resources.push(test);
                         }
-                    })
+                    });
                     return iteratedValue = role;
                 } else {
                     return iteratedValue;
                 }
             });
 
-            let viewMenu = []
+            let viewMenu = [];
             role.menus.map((data) => {
                 if (data.statusFlag == "new" || data.statusFlag == undefined) {
                     viewMenu = [...viewMenu, data.menuId]
                 }
-            })
+            });
 
-            let viewResource = []
+            let viewResource = [];
             role.resources.map((data) => {
                 if (data.statusFlag == "new" || data.statusFlag == undefined) {
                     viewResource = [...viewResource, data.resourceId]
                 }
-            })
+            });
             this.setState({
                 selectedRole: role,
                 selectedMenu: viewMenu,
@@ -532,17 +559,17 @@ class RolesTab extends Component {
                 roleDefaultValue: true,
                 disabledSelectRole: false,
                 roleStatus: false
-            })
+            });
 
-            this.props.SaveRoles(role)
-            this.props.SaveFunctions(this.state.functions)
-            this.props.actions.SaveRoles(this.props.orgRoles.tenantId, role)
+            this.props.SaveRoles(role);
+            this.props.SaveFunctions(this.state.functions);
+            this.props.actions.SaveRoles(this.props.orgRoles.tenantId, role);
 
-            this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions)
+            this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions);
             //window.Materialize.toast("Save successful", 2000);
             this.successfullModel();
         }
-    }
+    };
     CancelRole = () => {
         this.setState({
             roleStatus: false,
@@ -552,12 +579,13 @@ class RolesTab extends Component {
             roleName: '',
             roleDescription: '',
             roleDefaultValue: true,
-            disabledSelectRole: false
-        })
+            disabledSelectRole: false,
+            isEditMode: false,
+        });
         this.rolesData = {};
         this.menuData = {};
         this.resourceData = {};
-    }
+    };
     DeleteRole = () => {
         let restListRole = this.props.selectedLocation.id ? this.props.roles.filter((role) => role.id != this.state.selectedRole.id)
             : this.props.orgRoles.roles.filter((role) => role.id != this.state.selectedRole.id);
@@ -567,10 +595,10 @@ class RolesTab extends Component {
 
         let filteredRolesData = filteredRoles[0];
         filteredRolesData.statusFlag = (filteredRolesData.statusFlag == "modified" || filteredRolesData.statusFlag == undefined) ? "delete" : "ignore";
-        this.props.SaveRoles(filteredRolesData)
-        this.props.SaveFunctions(this.state.functions)
-        this.props.actions.SaveRoles(this.props.orgRoles.tenantId, filteredRolesData)
-        this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions)
+        this.props.SaveRoles(filteredRolesData);
+        this.props.SaveFunctions(this.state.functions);
+        this.props.actions.SaveRoles(this.props.orgRoles.tenantId, filteredRolesData);
+        this.props.actions.SaveFunctions(this.props.orgRoles.tenantId, this.props.orgRoles.id, this.state.functions);
 
         this.setState({
             roleStatus: false,
@@ -585,11 +613,11 @@ class RolesTab extends Component {
             roleDefaultValue: true,
             disabledSelectRole: false,
             isEditMode: false
-        })
+        });
         this.rolesData = {};
         this.menuData = {};
         this.resourceData = {};
-    }
+    };
     componentDidMount() {
         this.props.actions.fetchMenuList().then(response => {
             this.setState({
@@ -612,9 +640,9 @@ class RolesTab extends Component {
                         isAssignable: item.isAssignable.data !== undefined ? item.isAssignable.data[0] : item.isAssignable,
                         isAutoAccess: item.isAutoAccess.data !== undefined ? item.isAutoAccess.data[0] : item.isAutoAccess,
                         isAutoAssignOnIntake: item.isAutoAssignOnIntake.data !== undefined ? item.isAutoAssignOnIntake.data[0] : item.isAutoAssignOnIntake,
-                    }
+                    };
                     role = [...role, item]
-                })
+                });
                 this.setState({
                     roles: role,
                     selectedLocation: this.props.selectedLocation,
@@ -634,14 +662,14 @@ class RolesTab extends Component {
                 caseAssignmentView: true,
                 caseAssignmentEdit: true,
                 userManagement: true
-            }
+            };
             this.setState({ functions });
         }
     }
     componentWillReceiveProps(props) {
         this.setState({
             roleStatus: false, isEditMode: false
-        })
+        });
         let role = [];
         if ((props.selectedLocation.id == "" && props.orgRoles.roles && props.orgRoles.roles.length > 0) ||
             (props.selectedLocation.id != "" && props.roles && props.roles.length > 0)) {
@@ -651,9 +679,9 @@ class RolesTab extends Component {
                     isAssignable: item.isAssignable.data !== undefined ? item.isAssignable.data[0] : item.isAssignable,
                     isAutoAccess: item.isAutoAccess.data !== undefined ? item.isAutoAccess.data[0] : item.isAutoAccess,
                     isAutoAssignOnIntake: item.isAutoAssignOnIntake.data !== undefined ? item.isAutoAssignOnIntake.data[0] : item.isAutoAssignOnIntake,
-                }
+                };
                 role = [...role, item]
-            })
+            });
             if (props.orgRoles.roles != undefined || props.roles != undefined) {
                 this.setState({
                     selectedLocation: props.selectedLocation,
@@ -678,7 +706,7 @@ class RolesTab extends Component {
                 caseAssignmentView: true,
                 caseAssignmentEdit: true,
                 userManagement: true
-            }
+            };
             this.setState({ functions });
         }
     }
@@ -688,16 +716,31 @@ class RolesTab extends Component {
     _handleFunctions = (e) => {
         this.checkedFunctions = e.target.name;
         let functions = this.state.functions;
-        functions[e.target.name] = !this.state.functions[e.target.name]
+        functions[e.target.name] = !this.state.functions[e.target.name];
         this.setState({
             functions
         })
-    }
+    };
     _copyRoleModel = () => {
         this.setState({
-            copyRoleModel: true
-        })
-    }
+            copyRoleModel: true,
+            selectedRole: {},
+            selectedMenu: [],
+            selectedResource: [],
+            roleName: '',
+            roleDescription: '',
+            roleStatus: true,
+            isEditMode: false,
+            roleDefaultValue: true,
+            disabledSelectRole: false,
+            noRoleDisplay: false
+        });
+        this.rolesData = {};
+        this.menuData = {};
+        this.resourceData = {};
+        this.selectAllMenu = false;
+        this.selectAllResource = false;
+    };
     copyRole = (data) => {
         let selectedRole = {
             ...data,
@@ -708,7 +751,7 @@ class RolesTab extends Component {
             isAutoAssignOnIntake: data.isAutoAssignOnIntake.data !== undefined ? data.isAutoAssignOnIntake.data[0] : data.isAutoAssignOnIntake,
             statusFlag: "new"
 
-        }
+        };
         let selectedMenu = data.menus;
         let selectedResource = data.resources;
         let filteredMenu = [];
@@ -717,7 +760,7 @@ class RolesTab extends Component {
             if (item.statusFlag == undefined || item.statusFlag == "new") {
                 filteredMenu = [...filteredMenu, item.menuId]
             }
-        })
+        });
 
         let filteredResource = [];
 
@@ -725,7 +768,7 @@ class RolesTab extends Component {
             if (item.statusFlag == undefined || item.statusFlag == "new") {
                 filteredResource = [...filteredResource, item.resourceId]
             }
-        })
+        });
 
         this.setState({
             selectedRole,
@@ -733,7 +776,7 @@ class RolesTab extends Component {
             selectedResource: filteredResource,
             roleStatus: true
         })
-    }
+    };
     render() {
         this.menuMappedToFunction = [1];
         this.resourceMappedToFunction = [10, 2];
@@ -754,7 +797,7 @@ class RolesTab extends Component {
                                         defaultValue={this.state.roleDefaultValue}>
                                         <option disabled={this.state.disabledSelectRole}>Select Role</option>
                                         {this.props.selectedLocation.id != "" ?
-                                            this.state.roles.map((iteratedValue, i) => {
+                                            this.props.roles.map((iteratedValue, i) => {
                                                 if (iteratedValue.statusFlag == "new" || iteratedValue.statusFlag == "modified" || iteratedValue.statusFlag == undefined) {
 
                                                     return <option id={i} value={iteratedValue.id}>{iteratedValue.name}</option>
@@ -795,7 +838,7 @@ class RolesTab extends Component {
                                     </Button>}
                                 </Col>
                                 <Col className='col s8 pl-10'>
-                                    <Button className="btn btn_primary otherButtonAddDetUpt copyrole" onClick={this._copyRoleModel}>
+                                    <Button className="btn btn_primary otherButtonAddDetUpt iconButton" onClick={this._copyRoleModel}>
                                         <i className="material-icons" title="Copy Role">file_copy</i>
                                         <span>Copy Role</span>
                                     </Button>
@@ -822,7 +865,7 @@ class RolesTab extends Component {
                                 </div>
 
                                 <div className=" col s12 functions d-flex mb-1">
-                                    <h5 className="mt-1 mb-1"> Functions </h5>
+                                    <h5 className="mt-0"> Functions </h5>
                                     {
                                         this.functions.map(data => {
                                             return <Input type='checkbox' className='filled-in' name={data.name}
@@ -947,7 +990,7 @@ class RolesTab extends Component {
                                 {this.props.applicationMode == 'VIEW' ? null :
                                     <div className='mb-2 col s12'>
                                         {(!this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button type="submit"
-                                            className="btn_secondary otherButtonAddDetUpt" >Save</Button>}
+                                            className="btn_secondary otherButtonAddDetUpt" style={{ float: 'right' }}>Save</Button>}
                                         {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button type='button'
                                             className="show btn_secondary otherButtonAddDetUpt" onClick={this.UpdateRole} style={{ float: 'right' }}>Save</Button>}
                                         {(this.props.applicationMode !== 'VIEW') && <Button type='button'
@@ -965,8 +1008,8 @@ class RolesTab extends Component {
                     <p>Are you sure you want to delete it?</p>
 
                     <div className="col s12 m12 l12 xl12">
-                        <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>Cancel</Button>
-                        <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this.DeleteRole} >Delete</Button>
+                        <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>No</Button>
+                        <Button className='btn_secondary modalButton otherButtonAddDetUpt mb-2' onClick={this.DeleteRole} >Yes</Button>
                     </div>
                 </Modal>
                 <Modal

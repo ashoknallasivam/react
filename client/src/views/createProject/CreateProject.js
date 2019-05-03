@@ -6,6 +6,7 @@ import FormModal from '../../components/base/formModal';
 import TabsProject from '../../components/tabsProject';
 import FormEditModal from '../../components/base/formEditModal';
 import FormDeleteModal from '../../components/base/formDeleteModal';
+import list_to_tree from '../../utils/objectUtil';
 import uuid from 'uuid';
 
 // import FormModal from '../base/formModal';
@@ -14,7 +15,7 @@ const localConstant = objectUtil.getlocalizeData();
 
 class CreateProject extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       currentProject: {},
       name: '',
@@ -47,12 +48,32 @@ class CreateProject extends Component {
       requiredName: false,
     }
   }
+   list_to_tree =(list) =>{
+    var map = {},
+      node,
+      roots = [],
+      i;
+    for (i = 0; i < list.length; i += 1) {
+      map[list[i].id] = i; // initialize the map
+      list[i].children = []; // initialize the children
+    }
+    for (i = 0; i < list.length; i += 1) {
+      node = list[i];
+      if (node.parentId !== null) {
+        // if you have dangling branches check that map[node.parentId] exists
+        list[map[node.parentId]].children.push(node);
+      } else {
+        roots.push(node);
+      }
+    }
+    return roots;
+  }
+
   componentDidMount() {
     this.props.actions.fetchUserInfo();
     this.props.actions.fetchAllTenants().then((response)=>{
       if(response.status !== 200){
         //  console.log(response)
-         alert(response)
       }
      this.props.actions.fetchSavedTenants()
    });
@@ -63,15 +84,19 @@ class CreateProject extends Component {
       if (this.props.location.state.applicationMode === "VIEW" ) {
         this.props.actions.fetchSingleTenant(this.props.location.state.id).then(response => {
           // console.log(response)
-          if(response.status == 200)
+          if(response.status == 200 )
           {
-          this.setState({
-            preloader: false,
-            applicationMode: this.props.location.state.applicationMode
-          })
+            
+              this.setState({
+                preloader: false,
+                applicationMode: this.props.location.state.applicationMode
+              })
+            
+           
+         
           }
           else{
-           alert(response.data.message ?  response.data.message : response.statusText)
+           alert(response.data.message ?  response.data.message : response.statusText);
             this.setState({
               preloader: false,
             })
@@ -85,7 +110,9 @@ class CreateProject extends Component {
       }
       // checking for the data of the selected project
       if (this.props.projectList[this.props.location.state.id] != undefined) {
-        let currentProject = this.props.projectList[this.props.location.state.id]
+        let currentProject = this.props.projectList[this.props.location.state.id];
+       currentProject.orgs =  this.list_to_tree(currentProject.orgsList)
+      
         this.setState({
           currentProject: currentProject,
           name: currentProject.name,
@@ -110,10 +137,12 @@ class CreateProject extends Component {
     this.setState({
       applicationMode: value
     })
-  }
+  };
   componentWillReceiveProps(props) {
     if (props.location.state !== undefined) {
       let currentProject = props.projectList[props.location.state.id];
+      if( currentProject !== undefined && currentProject.orgs !== undefined && currentProject.orgsList !== undefined){
+      currentProject.orgs =  this.list_to_tree(currentProject.orgsList)}
       this.setState({
         currentProject: currentProject,
         name: currentProject !== undefined ? currentProject.name : '',
@@ -124,6 +153,9 @@ class CreateProject extends Component {
     }
     else {
       let currentProject = props.projectList[this.state.id];
+      
+      if( currentProject !== undefined && currentProject.orgs !== undefined && currentProject.orgsList !== undefined){
+        currentProject.orgs =  this.list_to_tree(currentProject.orgsList)}
       this.setState({
         currentProject: currentProject,
         name: currentProject !== undefined ? currentProject.name : '',
@@ -148,7 +180,7 @@ class CreateProject extends Component {
       if (data.id == e.target.value) {
         selectedOrganisation = data
       }
-    })
+    });
     this.setState({
       selectedOrganisation,
       allLocations,
@@ -156,13 +188,13 @@ class CreateProject extends Component {
         id: ''
       }
     });
-  }
+  };
   _handleLoc = (e) => {
     (Object.keys(this.state.allLocations)).map((item) => {
       if (item == e.target.value) {
         this.setState({
           [e.target.name]: this.state.allLocations[item]
-        })
+        });
         this.state.currentProject.orgsList.map(parentName =>{
           if(parentName.id==this.state.allLocations[item].parentId){
             this.setState({
@@ -172,7 +204,7 @@ class CreateProject extends Component {
         }) 
       }
     })
-  }
+  };
   SaveFunctions = (data) =>{
     let selectedOrganisation = this.state.selectedOrganisation;
     let allOrganisations = this.state.allOrganisations;
@@ -180,15 +212,15 @@ class CreateProject extends Component {
       tenantId : this.state.id,
       ttoId : this.state.selectedOrganisation.id,
       functionsList : data
-  }
+  };
   selectedOrganisation.functions = functionsData;
-  allOrganisations[selectedOrganisation.id] = selectedOrganisation
+  allOrganisations[selectedOrganisation.id] = selectedOrganisation;
 
   this.setState({
     selectedOrganisation,
     allOrganisations
   })
-  }
+  };
 
   SaveStudyConfig = (data) => {
     this.setState(({
@@ -197,7 +229,7 @@ class CreateProject extends Component {
         raConfig: [data]
       }
     }))
-  }
+  };
   SaveStudyConfig = (data) => {
     // this.setState(({
     //   selectedLocation: {
@@ -213,11 +245,11 @@ class CreateProject extends Component {
       if (data.id == item.id) {
         rollIndex = i;
       }
-    })
+    });
 
     if (rollIndex !== '') {
       selectedLocation.raConfig[rollIndex] = data;
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
       this.setState({
         selectedLocation,
         allLocations
@@ -225,13 +257,13 @@ class CreateProject extends Component {
       })
     } else {
       selectedLocation.raConfig = [...selectedLocation.raConfig, data];
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
             this.setState({
         selectedLocation,
         allLocations
       })
     }
-  }
+  };
   SaveEnrollment = (data) => {
     let selectedLocation = this.state.selectedLocation;
     let allLocations = this.state.allLocations;
@@ -240,23 +272,23 @@ class CreateProject extends Component {
       if (data.id == item.id) {
         rollIndex = i;
       }
-    })
+    });
 
     if (rollIndex !== '') {
       selectedLocation.enrollmentTargets[rollIndex] = data;
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
       this.setState({
         selectedLocation
 
       })
     } else {
       selectedLocation.enrollmentTargets = [...selectedLocation.enrollmentTargets, data];
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
       this.setState({
         selectedLocation
       })
     }
-  }
+  };
   SaveRoles = (data) => {
     let selectedLocation = this.state.selectedLocation;
     let allLocations = this.state.allLocations;
@@ -268,17 +300,17 @@ class CreateProject extends Component {
         if (data.id == item.id) {
           roleIndex = i;
         }
-      })
+      });
 
       if (roleIndex !== '') {
         selectedLocation.roles[roleIndex] = data;
-        allLocations[selectedLocation.id] = selectedLocation
+        allLocations[selectedLocation.id] = selectedLocation;
         this.setState({
           selectedLocation
         })
       } else {
         selectedLocation.roles = [...selectedLocation.roles, data];
-        allLocations[selectedLocation.id] = selectedLocation
+        allLocations[selectedLocation.id] = selectedLocation;
         this.setState({
           selectedLocation
         })
@@ -290,23 +322,23 @@ class CreateProject extends Component {
         if (data.id == item.id) {
           roleIndex = i;
         }
-      })
+      });
 
       if (roleIndex !== '') {
         selectedOrganisation.roles[roleIndex] = data;
-        allLocations[selectedLocation.id] = selectedLocation
+        allLocations[selectedLocation.id] = selectedLocation;
         this.setState({
           selectedOrganisation
         })
       } else {
         selectedOrganisation.roles = [...selectedOrganisation.roles, data];
-        allLocations[selectedLocation.id] = selectedLocation
+        allLocations[selectedLocation.id] = selectedLocation;
         this.setState({
           selectedOrganisation
         })
       }
     }
-  }
+  };
   SavePages = (data) => {
     let selectedLocation = this.state.selectedLocation;
     let allLocations = this.state.allLocations;
@@ -315,37 +347,37 @@ class CreateProject extends Component {
       if (data._id == item._id) {
         pageIndex = i;
       }
-    })
+    });
 
     if (pageIndex !== '') {
       selectedLocation.pages[pageIndex] = data;
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
       this.setState({
         selectedLocation
       })
     } else {
       selectedLocation.pages = [...selectedLocation.pages, data];
-      allLocations[selectedLocation.id] = selectedLocation
+      allLocations[selectedLocation.id] = selectedLocation;
       this.setState({
         selectedLocation
       })
     }
 
-  }
+  };
 
   // gets variable name and value from formModal and sets state
   _setValues = (e, data) => {
     this.setState({
       [e]: data,
-    })
+    });
     this.forceUpdate();
-  }
+  };
   _hanldetenatnInput = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
       requiredName: false,
     })
-  }
+  };
   _handleModal = (e) => {
     if (this.state.name == "") {
       this.setState({
@@ -363,7 +395,7 @@ class CreateProject extends Component {
         requiredName: false,
       })
     }
-  }
+  };
   
   saveTenant = (e) => {
     if (this.state.name !== '') {
@@ -389,13 +421,13 @@ class CreateProject extends Component {
     } else {
      // window.Materialize.toast('Please fill project name', 4000)
     }
-  }
+  };
   _handleModalClose = (e) => {
     
     this.setState({
       [e]: false
     })
-  }
+  };
   _discard = () => {
     if(this.state.applicationMode == "EDIT"){
      this.setState({
@@ -412,7 +444,7 @@ class CreateProject extends Component {
          id: ''
        },
      });
-     this.props.actions.removeProject(this.state.id)
+     this.props.actions.removeProject(this.state.id);
      this.props.actions.fetchSingleTenant(this.state.id).then(response => {
       if(response.status === 200 )
       { 
@@ -420,7 +452,7 @@ class CreateProject extends Component {
          preloader: false,
        })
       }else{
-        alert('Fetching data failed, try refreshing the ')
+        alert('Fetching data failed, try refreshing the ');
         this.setState({
           preloader: false,
         })
@@ -441,30 +473,30 @@ class CreateProject extends Component {
         selectedLocation: {
           id: ''
         },
-    })
+    });
       this.props.actions.fetchSingleSavedTenant(this.state.id)
     
  }else{
-     this.props.actions.removeProject(this.state.id)
+     this.props.actions.removeProject(this.state.id);
      this.props.history.push({
        pathname: '/dashboard',
    })
    }
   
-   }
+   };
 
   finalPublish = () => {
     this.setState({
       preloader: true
-    })
+    });
     //Publish the project 
     this.props.actions.publishProject(this.state.id).then(response => {
       //Publish Succcess
       if (response.status == 200) {
-        alert(response.data.messages)
+        alert(response.data.messages);
 
         //removing the published project form the store
-        this.props.actions.removeProject(this.state.id)
+        this.props.actions.removeProject(this.state.id);
 
         //removing the published project from the savedProjects folder
         if (this.state.currentProject != undefined && this.state.currentProject.projectStatus == "save") {
@@ -475,7 +507,7 @@ class CreateProject extends Component {
         this.props.actions.fetchSingleTenant(response.data.id).then(response => {
           this.setState({
             preloader: false,
-          })
+          });
 
 
           //Fetching success
@@ -487,10 +519,10 @@ class CreateProject extends Component {
           }
           //Fetching Failed
           else {
-            alert(response.data.messages ? response.data.messages : response.statusText)
+            alert(response.data.messages ? response.data.messages : response.statusText);
             this.props.history.push({
               pathname: '/dashboard',
-            })
+            });
             this.setState({
               preloader: false
 
@@ -500,7 +532,7 @@ class CreateProject extends Component {
       }
       //Publish Failed
       else {
-        alert(response.data.messages ? response.data.messages : response.statusText)
+        alert(response.data.messages ? response.data.messages : response.statusText);
         // this.props.history.push({
         //   pathname: '/dashboard',
         // })
@@ -510,14 +542,17 @@ class CreateProject extends Component {
       }
 
     });
-  }
+  };
 
   finalSave = () => {
     this.props.actions.saveProject(this.state.id).then(response => {
+     if(response){
+       alert("Project saved. Visit Unpublished project tab in Dashboard to view the project")
+     } 
       this.setState({
         preloader: false
-      })
-
+      });
+      this.props.actions.fetchSavedTenants()
       this.props.history.push({
         pathname: '/dashboard',
         state: {
@@ -526,11 +561,11 @@ class CreateProject extends Component {
         }
       })
     })
-  }
+  };
   deleteSaved = () =>{
     this.setState({
       preloader: true
-    })
+    });
     this.props.actions.deleteSavedProject(this.state.id).then(response =>{
 
       if(response.status == 200 ){
@@ -540,14 +575,14 @@ class CreateProject extends Component {
       }
       this.props.history.push({
         pathname: '/dashboard',
-      })
-      this.props.actions.removeProject(this.state.id)
+      });
+      this.props.actions.removeProject(this.state.id);
       this.setState({
         preloader: false
       })
 
     })
-  }
+  };
   componentWillUnmount(){
     if(this.state.applicationMode == "CREATE")
     this.props.actions.removeProject(this.state.id)
@@ -743,7 +778,7 @@ class CreateProject extends Component {
                 <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
                 {/* Display Discard in if project name is not empty */}
                 { this.state.currentProject && this.state.currentProject.projectStatus == "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.deleteSaved} disabled={(this.state.name !== '') ? false : true}>Delete</Button>}
-                {this.state.applicationMode  === "CREATE" &&  this.state.currentProject &&  this.state.currentProject.projectStatus !== "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>Save</Button>}
+                {this.state.applicationMode  === "CREATE" &&  <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>{"Save & Close"}</Button>}
                 <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  >Discard</Button>
               </Fragment>
             }

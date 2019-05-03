@@ -7,7 +7,7 @@ import * as actions from '../../actions';
 class Angular extends Component {
 	
 	constructor(props){
-    super(props)
+    super(props);
     this.state = {username:'default-username', password:'default-password'}
 	
   }
@@ -28,7 +28,7 @@ class Angular extends Component {
 
   handleNvEnter = (event) => {
     this.setState({ username: event.detail.username, password: event.detail.password })
-  }
+  };
 	
 	
 	render() {

@@ -10,7 +10,7 @@ const mapStateToProps=(state)=>{
         projectList : state.projectList.Projects,
       
     }
-}
+};
 const mapDispatchToProps=(dispatch)=>{
     return{
         actions:bindActionCreators(

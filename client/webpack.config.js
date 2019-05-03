@@ -16,7 +16,7 @@ const HASH_TYPE = NODE_ENV === 'production' ? 'chunkhash' : 'hash';
 module.exports = () => {
   // call dotenv and it will return an Object with a parsed key 
   const env = dotenv.config().parsed;
-  
+
   // reduce it to a nice object, the same as before
   const envKeys = Object.keys(env).reduce((prev, next) => {
     prev[`process.env.${next}`] = JSON.stringify(env[next]);
@@ -27,9 +27,9 @@ module.exports = () => {
     plugins: [
       new webpack.DefinePlugin(envKeys)
     ]
-};
+  };
 
-}
+};
 
 module.exports = {
   mode: 'development',
@@ -44,66 +44,66 @@ module.exports = {
     filename: `[name].[${HASH_TYPE}].js`,
     path: path.resolve(ROOT, 'build'),
     publicPath: '/',
-	filename: 'bundle.js'
+    filename: 'bundle.js'
   },
-	
- 
+
+
   module: {
-        rules: [
-            {
-                test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel-loader'
-                
-            },
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-            { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader" },
-            { test: /\.(woff|woff2)$/, loader: "url-loader?prefix=font/&limit=5000" },
-            { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
-            { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml" },
-            {
-                test: /\.scss$/,
-                use: [{
-                    loader: "style-loader" // creates style nodes from JS strings
-                }, {
-                    loader: "css-loader" // translates CSS into CommonJS
-                }, {
-                    loader: "sass-loader" // compiles Sass to CSS
-                }]
-              },{
-                test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
-                use: [
-                  {
-                    loader:  'url-loader',
-                    options: {
-                      limit: 100000,
-                      publicPath: '/public/assets/',
-                      name: '[name].[ext]'
-                    }
-                  }
-                ]
-              }
+    rules: [
+      {
+        test: /\.(js|jsx)$/, exclude: /node_modules/, loader: 'babel-loader'
+
+      },
+      { test: /\.css$/, loader: 'style-loader!css-loader' },
+      { test: /\.eot(\?v=\d+\.\d+\.\d+)?$/, loader: "file-loader" },
+      { test: /\.(woff|woff2)$/, loader: "url-loader?prefix=font/&limit=5000" },
+      { test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=application/octet-stream" },
+      { test: /\.svg(\?v=\d+\.\d+\.\d+)?$/, loader: "url-loader?limit=10000&mimetype=image/svg+xml" },
+      {
+        test: /\.scss$/,
+        use: [{
+          loader: "style-loader" // creates style nodes from JS strings
+        }, {
+          loader: "css-loader" // translates CSS into CommonJS
+        }, {
+          loader: "sass-loader" // compiles Sass to CSS
+        }]
+      }, {
+        test: /\.(eot|woff|woff2|ttf|svg|png|jpe?g|gif)(\?\S*)?$/,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 100000,
+              publicPath: '/public/assets/',
+              name: '[name].[ext]'
+            }
+          }
         ]
+      }
+    ]
   },
   devServer: {
     port: 3000,
     open: true,
-	contentBase: "public",
-	historyApiFallback:true,
+    contentBase: "public",
+    historyApiFallback: true,
     proxy: {
       '/api': 'http://localhost:4000'
     }
   },
   resolve: {
     modules: [
-     path.resolve(__dirname),
+      path.resolve(__dirname),
       "node_modules"
     ],
     extensions: [".json", ".js", ".jsx"],
     alias: {
-        stringUtil: "src/utils/stringUtil",
-        arrayUtil: "src/utils/arrayUtil",
-        arrayUtil: "src/utils/arrayUtil",       
-        appConstants:"src/constants/appConstants",
-        actionTypes:"src/constants/actionTypes"
+      stringUtil: "src/utils/stringUtil",
+      arrayUtil: "src/utils/arrayUtil",
+      arrayUtil: "src/utils/arrayUtil",
+      appConstants: "src/constants/appConstants",
+      actionTypes: "src/constants/actionTypes"
     }
   },
   plugins: [
@@ -112,8 +112,12 @@ module.exports = {
       template: './public/index.html',
       favicon: './public/favicon.ico'
     }),
-	 new webpack.DefinePlugin({
+    new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(NODE_ENV),
     }),
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery"
+    })
   ]
 };

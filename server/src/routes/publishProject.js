@@ -17,21 +17,8 @@ let pageBiz = require('../biz/pageBiz');
 let boundsbiz = require('../biz/boundsBiz');
 let validateBiz = require('../biz/importValidationBiz');
 let fs = require('fs');
-let multer = require('multer')
 
 
-
-const storage = multer.diskStorage({
-    destination: './file',
-    filename(req, file, cb) {
-        console.log(file)
-        cb(null, file.originalname);
-    },
-});
-
-const upload = multer({ storage }).single('file');
-
-// publish bounds.
 router.post('/publish', (req, res) => {
     let publishStatus = {};
     // token validation.
@@ -229,6 +216,9 @@ router.post('/publish', (req, res) => {
         }
 
     } else if (inpParam.projectStatus == "save") {
+        if (!fs.existsSync('savedProjects/')){
+                fs.mkdirSync('savedProjects/');
+            }
         fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
             if (err) {
                 logging.applogger.error(err);
@@ -246,95 +236,63 @@ router.post('/publish', (req, res) => {
 });
 
 
-router.post('/upload', (req, res) => {
+router.post('/validate', (req, res) => {
     let token = req.token
     if (token === undefined || token === "" || token === null) {
         res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
         return;
     }
-    upload(req, res, function (err) {
-        if (err instanceof multer.MulterError) {
-            return res.status(500).json(err)
-        } else if (err) {
-            return res.status(500).json(err)
+    let inpParam = req.body;
+    let orgsListTemp = inpParam.orgsList;
+    orgsListTemp.map((item, i) => {
+        orgsListTemp[i].statusFlag = "new";
+        orgsListTemp[i].userId = inpParam.userId;
+        //raconfig
+        for (let key in orgsListTemp[i].raConfig) {
+            orgsListTemp[i].raConfig[key].statusFlag = "new"
         }
-        return res.status(200).send(req.filename)
+        //enrollmentTargets
+        for (let key in orgsListTemp[i].enrollmentTargets) {
+            orgsListTemp[i].enrollmentTargets[key].statusFlag = "new"
+        }
+        //pages
+        for (let key in orgsListTemp[i].pages) {
+            orgsListTemp[i].pages[key].statusFlag = "new"
+        }
+        //roles
+        for (let key in orgsListTemp[i].roles) {
+            orgsListTemp[i].roles[key].statusFlag = "new";
+            //menu
+            for (let index in orgsListTemp[i].roles[key].menus) {
+                orgsListTemp[i].roles[key].menus[index].statusFlag = "new";
+            }
+            //resource
+            for (let index in orgsListTemp[i].roles[key].resources) {
+                orgsListTemp[i].roles[key].resources[index].statusFlag = "new";
+            }
+        }
     });
-})
+    inpParam.projectStatus = "save";
+    inpParam.statusFlag = "new";
+    inpParam.orgsList = orgsListTemp;
+    inpParam.orgs = validateBiz.list_to_tree(orgsListTemp);
+    if (validateBiz.validateForImport(inpParam)) {
+        if (!fs.existsSync('savedProjects/')){
+            fs.mkdirSync('savedProjects/');
+        }
+        fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+            if (err) {
+                logging.applogger.error(err);
+                res.status(500).send(err);
+            } else {
+                res.status(200).send({ savedProjectId: inpParam.id, messages: "Successfully imported as unpublished Project" });
+            }
 
-router.get('/validate', (req, res) => {
-    let token = req.token
-    if (token === undefined || token === "" || token === null) {
-        res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
-        return;
+        });
+    }else{
+        logging.applogger.error('validation failed');
+        res.status(500).send('Please check the uploaded project structure');
     }
-    fs.readdir('file', function (err, items) {
-        if (err) {
-            logging.applogger.error(err);
-            res.send(err);
-        } else {
-            let parsedData;
-            fs.readFile('file/' + req.query.fileName, (err, data) => {
-                if (err) {
-                    logging.applogger.error(err);
-                    res.send(err);
-                } else {
-                    parsedData = JSON.parse(data);
-                    let orgsListTemp = parsedData.orgsList;
-                    orgsListTemp.map((item, i) => {
-                        orgsListTemp[i].statusFlag = "new";
-                        orgsListTemp[i].userId = req.query.userId
-                        //raconfig
-                        for (let key in orgsListTemp[i].raConfig) {
-                            orgsListTemp[i].raConfig[key].statusFlag = "new"
-                        }
-                        //enrollmentTargets
-                        for (let key in orgsListTemp[i].enrollmentTargets) {
-                            orgsListTemp[i].enrollmentTargets[key].statusFlag = "new"
-                        }
-                        //pages
-                        for (let key in orgsListTemp[i].pages) {
-                            orgsListTemp[i].pages[key].statusFlag = "new"
-                        }
-                        //roles
-                        for (let key in orgsListTemp[i].roles) {
-                            orgsListTemp[i].roles[key].statusFlag = "new";
-                            //menu
-                            for (let index in orgsListTemp[i].roles[key].menus) {
-                                orgsListTemp[i].roles[key].menus[index].statusFlag = "new";
-                            }
-                            //resource
-                            for (let index in orgsListTemp[i].roles[key].resources) {
-                                orgsListTemp[i].roles[key].resources[index].statusFlag = "new";
-                            }
-                        }
-                    });
-                    parsedData.projectStatus = "save"
-                    parsedData.statusFlag = "new",
-                    parsedData.userId = req.query.userId,
-                    parsedData.orgsList = orgsListTemp;
-                    parsedData.orgs = validateBiz.list_to_tree(orgsListTemp);
-                    if (validateBiz.validateForImport(parsedData)) {
-                        fs.writeFile('savedProjects/' + parsedData.id + '.json', JSON.stringify(parsedData), 'utf8', function (err) {
-                            if (err) {
-                                logging.applogger.error(err);
-                                res.send(err);
-                            } else {
-                                res.status(200).send({ savedProjectId: parsedData.id });
-                                // fs.unlinkSync('AllProjects.json', function (err) {
-                                //     if (err) throw err;
-                                // })
-                            }
-
-                        });
-                    }else{
-                        logging.applogger.error('validation failed');
-                        res.status(500).send('Please check the uploaded project structure');
-                    }
-                }
-            })
-        }
-    });
 })
 module.exports = router;
 

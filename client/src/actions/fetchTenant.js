@@ -47,14 +47,14 @@ const actions = {
           payload: payload,
       };
   },
-}
+};
 
 export const fetchAllTenants = () => (dispatch, getState) => {
   let state = getState();
   if (state.projectList.isAllFetched == true ){
     let response = {
       status : 200
-    }
+    };
     return Promise.resolve(response);
   } else {
     return axios
@@ -85,7 +85,7 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
                         ...project,
                         [data.id] :{ ...data}
                     }
-                })
+                });
                 dispatch(actions.GetSavedProjectsSuccess(project));
                return false
             }
@@ -96,7 +96,7 @@ export const fetchSavedTenants= () => (dispatch, getState) => {
           dispatch(actions.GetSavedProjectsError( error.message));
           return false;
         });
-}
+};
 
 
 
@@ -118,5 +118,5 @@ if( state.projectList.userId ==""){
       });
 
   }
-}
+};
 

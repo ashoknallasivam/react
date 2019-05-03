@@ -98,7 +98,7 @@ class FormEditModal extends Component {
 					}
 				});
 				this.props.actions.SaveOrganization(newOrg.tenantId, newOrg);
-				this.props.setValues('selectedOrganisation',newOrg)
+				this.props.setValues('selectedOrganisation',newOrg);
 				this.props.setValues('allOrganisations', allOrganisations);
 				this.props.setValues('orgsList', orgsList);
 				this.props.handleModalClose(this.props.name);
@@ -149,7 +149,7 @@ class FormEditModal extends Component {
 					}
 				});
 				this.props.actions.SaveLocation(newLoc.tenantId, newLoc);
-				this.props.setValues('selectedLocation',newLoc)
+				this.props.setValues('selectedLocation',newLoc);
 				this.props.setValues('allLocations', allLocations);
 				this.props.setValues('orgsList', orgsList);
 				this.props.handleModalClose(this.props.name);
@@ -182,13 +182,14 @@ class FormEditModal extends Component {
 					}
 					onChange={this._input}
 					required
-				/>
+				style={{width:"98%"}}/>
 				{this.props.name == 'editLoc' && (
 					<select
 						name="parenOfLoc"
 						onChange={this._input}
 						value={this.state.selectedLocation.parentId}
 						disabled={true}
+						
 					>
 						<option value="" disabled>
 							{' '}
@@ -197,7 +198,7 @@ class FormEditModal extends Component {
 						{this.props.orgsList.map((data) => <option value={data.id}>{data.name}</option>)}
 					</select>
 				)}
-				<div className="col s12 m12 l12 xl12">
+				<div className="col s12 m12 l12 xl12 mt-2">
 					<Button
 						className="btn_secondary  otherButtonAddDetUpt modalButton mb-2 ml-1"
 						onClick={this._handleClose}

@@ -20,16 +20,16 @@ class ListView extends React.Component {
                 applicationMode: this.props.projectStatus == "save" ? "CREATE" : "VIEW"
             }
         })
-    }
+    };
     _handlePop = () => {
         this.setState({
             popup: !this.state.popup
         })
 
-    }
+    };
     _handleClone = (e) => {
         let ProjectId = e.target.parentElement.id;
-        this.props.loaderHandler(true)
+        this.props.loaderHandler(true);
         this.props.actions.fetchSingleTenant(e.target.parentElement.id).then(response => {
             let id = this.props.actions.cloneProject(ProjectId);
             this.props.history.push({
@@ -38,19 +38,19 @@ class ListView extends React.Component {
                     id: id,
                     applicationMode: "CREATE"
                 }
-            })
+            });
 
             this.props.loaderHandler(false);
         });
-    }
+    };
     _handleExport = (e) => {
-        this.props.loaderHandler(true)
+        this.props.loaderHandler(true);
         this.props.actions.exportProject(e.target.parentElement.id).then(response => {
             this.props.loaderHandler(response)
         });
 
 
-    }
+    };
 
     render() {
         let testing = new Map(Object.entries(this.props.projectList));

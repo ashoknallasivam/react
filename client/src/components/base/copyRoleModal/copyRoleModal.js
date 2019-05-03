@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 import { Input, Button, Modal, Row, Col, Preloader } from "react-materialize";
 import uuid from "uuid";
+import objectUtil from '../../../utils/objectUtil';
+const localConstant = objectUtil.getlocalizeData();
 
 class CopyRoleModal extends Component {
   constructor(props) {
@@ -12,7 +14,8 @@ class CopyRoleModal extends Component {
       preloader: false,
       allRole: [],
       selectedRole: {},
-      locRole: []
+      locRole: [],
+      rolesError: false
     };
   }
   componentWillMount() {
@@ -31,7 +34,7 @@ class CopyRoleModal extends Component {
 
   _input = e => {
     this.setState({
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value, rolesError: false
     });
     if (e.target.name == "selectedRole") {
       this.state.allRole.map((data, index) => {
@@ -82,7 +85,7 @@ class CopyRoleModal extends Component {
         this.setState({
           preloader: false
         });
-        if (response.status !== 200)
+        if (response.status !== 200 )
           alert(
             response.data.message ? response.data.message : response.statusText
           );
@@ -91,13 +94,17 @@ class CopyRoleModal extends Component {
   };
 
   _copyRole = () => {
-    let copiedRole = {
-      ...this.state.selectedRole,
-      id: uuid.v4(),
-      statusFlag: "new"
-    };
-    this.props.copyRole(copiedRole);
-    this.props.CancelconfirmationModal();
+    if (!objectUtil.isEmpty(this.state.selectedRole)) {
+      let copiedRole = {
+        ...this.state.selectedRole,
+        id: uuid.v4(),
+        statusFlag: "new"
+      };
+      this.props.copyRole(copiedRole);
+      this.props.CancelconfirmationModal();
+      this.setState({ selectedRole: {}, rolesError: false });
+    }
+    else this.setState({ rolesError: true });
   };
 
   _handleClose = () => { };
@@ -142,7 +149,7 @@ class CopyRoleModal extends Component {
         </Col>
 
         <Row>
-          <Col s={6}>
+          <Col s={6} className="pl-0">
             {this.state.selectedTenant && (
               <div className="pt-2">
               <label className="pl-1">Organization</label>
@@ -164,7 +171,7 @@ class CopyRoleModal extends Component {
             )}
           </Col>
 
-          <Col s={6}>
+          <Col s={6} className="pr-0">
             {Object.keys(this.state.organization).length > 0 && (
               <div className="pt-2">
               <label className="pl-1">Location</label>
@@ -199,21 +206,22 @@ class CopyRoleModal extends Component {
                 return <option value={data.id}> {data.name}</option>;
               })}
             </select>
-          )}
+          )}        
         </Row>
+        {this.state.rolesError ? <p className="pl-2 errorMessage">No Roles to display</p> : null}  
 
         <div className="col s12 m12 l12 xl12">
-          <Button
-            className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
-            onClick={this._copyRole}
-          >
-            Copy
-          </Button>
           <Button
             className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
             onClick={this.props.CancelconfirmationModal}
           >
             Close
+          </Button>
+          <Button
+            className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
+            onClick={this._copyRole}
+          >
+            Copy
           </Button>
         </div>
       </Modal>

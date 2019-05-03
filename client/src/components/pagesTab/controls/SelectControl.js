@@ -39,18 +39,82 @@ class SelectControl extends Component {
 		
 
 
-  render() {
-
-		
-		return (
+  render() {	
+	return (
+		<Fragment>
+			<div>
+				<Input
+					s={12}
+					label="Element type"
+					id="type"
+					name="type"
+					type="text"
+					value="select"
+					className= "labelText"
+					disabled
+					required
+				/>
+			</div>	
+			<div>	
+				<Input
+					s={12}
+					label="Name"
+					id="name"
+					name="name"
+					type="text"
+					className= "labelText"
+					value={this.state.name}
+					required
+					onChange={this.handleChange}
+				/><div className="helper-text" >A unique element name</div>
+			</div>
+			<div>	
+				<Input
+					s={12}
+					label="label"
+					id="label"
+					name="Label"
+					type="text"
+					className= "labelText"
+					value={this.state.label}
+					required
+					onChange={this.handleChange}
+				/><div className="helper-text" >A unique element name</div>
+			</div>
 			<Collapsible accordion={false}>
-				<CollapsibleItem header="Select" icon="keyboard_arrow_down">
-					<div>
-						<h5><b>Select Configuration</b></h5>
+			<CollapsibleItem header="Options" icon="keyboard_arrow_down">
+				<div>
+					<div>	
+						<Input
+							s={12}
+							label="Hint"
+							id="hint"
+							name="hint"
+							type="text"
+							value={this.state.hint}
+							onChange={this.handleChange}
+							disabled
+							className= "labelText"
+						/><div className="helper-text" >Give user a hint</div>
+					</div>	
+					<div>	
+						<Input
+							s={12}
+							label="Default value"
+							id="defaultValue"
+							name="defaultValue"
+							type="text"
+							value={this.state.defaultValue}
+							onChange={this.handleChange}
+							className= "labelText"
+						/><div className="helper-text" >Provide a default value</div>
 					</div>
-				</CollapsibleItem>
-			</Collapsible>
-			);
+					
+				</div>
+			</CollapsibleItem>
+		</Collapsible>
+		</Fragment>
+		);
 	 
   }	 
 	

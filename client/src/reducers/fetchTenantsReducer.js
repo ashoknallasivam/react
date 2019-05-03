@@ -4,7 +4,7 @@ const initialState = {
     Projects: {},
     userId:'',
     error: {}
-}
+};
 const store = (state = initialState, action) => {
     switch (action.type) {
         case 'STUDY_CONFIG_SUCCESS':
@@ -43,7 +43,7 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
 
         case 'FETCH_SINGLE_TENANT_ERROR':
@@ -98,7 +98,7 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
 
         case 'SAVE_ORGANIZATION':
@@ -108,7 +108,7 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
 
         case 'SAVE_LCOATION':
@@ -118,7 +118,7 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
         case 'CLONE_PROJECT':
             state = {
@@ -127,7 +127,7 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
         case 'SAVE_PROJECT_SUCCESS':
             state = {
@@ -136,14 +136,14 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     [action.payload.id]: action.payload
                 }
-            }
+            };
             return state;
         case 'SAVE_PROJECT_ERROR':
             state = {
                 ...state,
                 error: action.payload
 
-            }
+            };
             return state;
         case 'SAVED_PROJECTS_SUCCESS':
             state = {
@@ -152,36 +152,36 @@ const store = (state = initialState, action) => {
                     ...state.Projects,
                     ...action.payload
                 }
-            }
+            };
             return state;
             case 'SAVED_PROJECT_ERROR':
             state = {
                 ...state,
                 error: action.payload
                
-            }
+            };
             return state;
 
         case 'GET_USER_INFO_SUCCESS':
             state = {
                 ...state,
                 userId: action.payload
-            }
+            };
             return state;
             case 'GET_USER_INFO_ERROR':
             state = {
                 ...state,
                 error: action.payload
                
-            }
+            };
             return state;
         
         case 'REMOVE_PROJECT':
-         delete state.Projects[action.payload]
+         delete state.Projects[action.payload];
         return state;
         default:
             return state;
     }
-}
+};
 
 export default store;

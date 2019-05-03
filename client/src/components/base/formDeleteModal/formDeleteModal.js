@@ -31,7 +31,7 @@ class FormDeleteModal extends Component {
 
     _handleClose = () =>{
         this.props.handleModalClose(this.props.name)
-    }
+    };
     _handleOrg = () => {
         let newOrg = {
           ...this.state.selectedOrganisation,
@@ -40,15 +40,15 @@ class FormDeleteModal extends Component {
         };
        
             let arrIndex='';
-            let allOrganisations ={...this.props.allOrganisations}
-            delete  allOrganisations[this.state.selectedOrganisation.id]
-            let orgsList =this.props.orgsList
+            let allOrganisations ={...this.props.allOrganisations};
+            delete  allOrganisations[this.state.selectedOrganisation.id];
+            let orgsList =this.props.orgsList;
             orgsList.map((item,i)=>{
                 if(item.id == this.state.selectedOrganisation.id){
                     arrIndex = i;
                   }
-            })
-            orgsList.splice(arrIndex,1)
+            });
+            orgsList.splice(arrIndex,1);
             this.setState({ 
               selectedOrganisation:{
                 id:'',
@@ -57,14 +57,14 @@ class FormDeleteModal extends Component {
          });
          let selectedOrganisation = {
            id : ''
-         }
-         this.props.setValues('selectedOrganisation',selectedOrganisation) 
-         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg)
-         this.props.setValues('allOrganisations',allOrganisations) 
-         this.props.setValues('orgsList', orgsList)
+         };
+         this.props.setValues('selectedOrganisation',selectedOrganisation);
+         this.props.actions.SaveOrganization(newOrg.tenantId, newOrg);
+         this.props.setValues('allOrganisations',allOrganisations);
+         this.props.setValues('orgsList', orgsList);
          this.props.handleModalClose(this.props.name)
 
-          }
+          };
       
       _handleLoc = () => {
               let newLoc = {
@@ -73,8 +73,8 @@ class FormDeleteModal extends Component {
               statusFlag : this.state.locdel == "new" ? 'ignore' : 'delete'
             };
               let arrIndex='';           
-              let allLocations ={...this.props.allLocations}
-              delete allLocations[this.state.selectedLocation.id]
+              let allLocations ={...this.props.allLocations};
+              delete allLocations[this.state.selectedLocation.id];
               let orgsList =this.props.orgsList;
                   orgsList.map((item,i)=>{
                     if(item.id == this.state.selectedLocation.id){
@@ -87,16 +87,16 @@ class FormDeleteModal extends Component {
                       id:'',
                       name:''
                     }
-                  })
+                  });
                  let selectedLocation = {
                    id:''
-                 }
-           this.props.actions.SaveLocation(newLoc.tenantId, newLoc) 
-           this.props.setValues('allLocations',allLocations)
-           this.props.setValues('selectedLocation',selectedLocation)
-           this.props.setValues('orgsList',orgsList)
+                 };
+           this.props.actions.SaveLocation(newLoc.tenantId, newLoc);
+           this.props.setValues('allLocations',allLocations);
+           this.props.setValues('selectedLocation',selectedLocation);
+           this.props.setValues('orgsList',orgsList);
            this.props.handleModalClose(this.props.name)
-            }
+            };
         
  render(){
      return(

@@ -22,7 +22,7 @@ export const fetchMenuList = () => (dispatch, getState) => {
             // console.log(error)
         })
     
-}
+};
 
       
 export const fetchResourceList = () => (dispatch, getState) => {
@@ -35,6 +35,6 @@ export const fetchResourceList = () => (dispatch, getState) => {
     }).catch(error=>{
         // console.log(error)
     })
-}
+};
 
 

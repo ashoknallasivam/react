@@ -7,8 +7,8 @@ export const HeaderData = {
                 "width": 400,
                 "valueGetter": (params) => {   
                     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN","JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];                 
-                    let date = new Date(params.data.month)
-                    let month_value = monthNames[date.getMonth()]
+                    let date = new Date(params.data.month);
+                    let month_value = monthNames[date.getMonth()];
                     let year_value = date.getFullYear();
                     return month_value+"-"+year_value;
                 }
@@ -30,8 +30,8 @@ export const HeaderData = {
                 "width": 400,
                 "valueGetter": (params) => {   
                     const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN","JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];                 
-                    let date = new Date(params.data.month)
-                    let month_value = monthNames[date.getMonth()]
+                    let date = new Date(params.data.month);
+                    let month_value = monthNames[date.getMonth()];
                     let year_value = date.getFullYear();
                     return month_value+"-"+year_value;
                 }

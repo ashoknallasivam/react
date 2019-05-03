@@ -1,9 +1,8 @@
-import React, { Fragment } from 'react';
-import { Row, Col, Preloader, Button, Table } from 'react-materialize';
+import React, {Fragment} from 'react';
+import {Button, Col, Preloader, Row, Table} from 'react-materialize';
 import CustomCard from '../../components/base/card';
 import ListView from '../../components/base/list';
 import './dashboard.scss';
-import objectUtil from '../../utils/objectUtil';
 
 class Dashboard extends React.Component {
    constructor(props) {
@@ -24,7 +23,7 @@ class Dashboard extends React.Component {
        }
       this.setState({
          preloader: false
-      })
+      });
       this.props.actions.fetchSavedTenants()
     });
 }
@@ -39,12 +38,12 @@ class Dashboard extends React.Component {
             this.setState({
                   publishStatus: e.target.value
             })
-      }
+      };
       //  _populateLocation = (data) => {
       //   var location ;
-      //   Object.keys(data).map((item =>  { 
+      //   Object.keys(data).map((item =>  {
       //           if(data[item].children ){
-      //             this._populateLocation(data.children) 
+      //             this._populateLocation(data.children)
       //             console.log(data[item].children.id)
       //           }
       //           else{
@@ -53,7 +52,7 @@ class Dashboard extends React.Component {
 
       //           }
 
-      //         })); 
+      //         }));
       //         console.log(Object.keys(data))
 
       // }
@@ -64,13 +63,13 @@ class Dashboard extends React.Component {
 
             })
 
-      }
+      };
       handleGridView = () => {
             this.setState({
                viewGrid : !this.state.viewGrid
             })
-      }
-    
+      };
+
 
 
       render() {
@@ -89,7 +88,7 @@ class Dashboard extends React.Component {
                                                             <Button value="unpublished" className={(this.state.publishStatus === "unpublished") ? "selected" : null} onClick={this.handleDashboardBtn}>unpublished</Button>
                                                            {this.state.viewGrid == false &&  <i class="material-icons pointer" title="Grid View" onClick={this.handleGridView}>
                                                                   grid_on
-                                                            </i>} 
+                                                            </i>}
                                                             {this.state.viewGrid == true && <i class="material-icons pointer" title="List View" onClick={this.handleGridView}>
                                                                   view_list
                               </i> }

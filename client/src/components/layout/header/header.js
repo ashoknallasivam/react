@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { connect } from 'react-redux';
-import { Col, Button } from 'react-materialize';
+import { Col, Button, Preloader } from 'react-materialize';
 import logo from "../../../../public/assets/images/logo/materialize-logo.png";
 import profileImg from "../../../../public/assets/images/logo/materialize-logo.png";
 import './header.scss';
@@ -10,13 +10,15 @@ import { format } from "util";
 import {BACKEND_URL } from '../../../config';
 import { authHeaderFinal } from '../../../helpers';
 import axios from "axios";
+import uuid from 'uuid';
 
 class Header extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isdropDownOpen: false,
-            selectedFile: null,
+            selectedFile: '',
+            preloader:false
         };
     }
     // componentDidMount =() =>{
@@ -24,39 +26,67 @@ class Header extends Component {
     // }
     toggleProfileDropDown = () => {
         this.setState({ isdropDownOpen: !this.state.isdropDownOpen });
-    }
+    };
     handleImport = (e) => {
         this.refs.fileUpload.click();
-    }
+    };
 	handleClick= (e) =>{
-    }
+    };
     onChangFile =(e) =>{
         e.stopPropagation();
         e.preventDefault();
         let file = e.target.files[0];
-        this.setState({selectedFile: file});
-        let form = new FormData();
-        form.append('file', file);
-        debugger;
-        form.append('id', 23423);
-        let uploadHeader = authHeaderFinal();
-        uploadHeader['Content-type'] = 'multipart/form-data';
-        axios.post(`${BACKEND_URL}/upload`, form, {headers: uploadHeader}).then(response => {
-            if(response.status === 200){
-                axios.get(`${BACKEND_URL}/validate?userId=${this.props.userId}&fileName=${file.name}`, {headers: uploadHeader}). then(response => {
+        this.setState({selectedFile: file ,preloader:true});
+        let uploadJson = this.readUploadedFileAsText(file);
+        const generatedId = uuid.v4();
+        let userId = this.props.userId;
+        let newProps = this.props;
+        let newThis = this
+        let uploadedJson;
+        uploadJson.then(function(value) {
+            try{
+                uploadedJson = JSON.parse(value);
+                uploadedJson.userId = userId;
+                uploadedJson.id = generatedId;
+                axios.post(`${BACKEND_URL}/validate`, uploadedJson, { headers: authHeaderFinal() }). then(response => {
                     if (response.status === 200) {
-                         this.props.actions.fetchSavedTenants()
+                        newProps.actions.fetchSavedTenants()
+                            
+                            alert(response.data.messages ? response.data.messages : response.statusText)
+                            newThis.setState({selectedFile: '', preloader: false});
                     }else{
-                        alert(response);
-                    };
+                        alert(response.data.messages ? response.data.messages : response.statusText)
+                        newThis.setState({selectedFile: '', preloader: false});
+                    }
+                }).catch(error =>{
+                    alert(error.message)
+                    newThis.setState({selectedFile: '', preloader: false});
                 })
-            }else{
-                alert(response);
-            };
+            }catch(e){
+                alert('Please correct the json file syntax errors');
+                this.setState({selectedFile: '', preloader: false});
+            }    
         })
-    }
+    };
+    readUploadedFileAsText = (inputFile) => {
+        const temporaryFileReader = new FileReader();
+      
+        return new Promise((resolve, reject) => {
+          temporaryFileReader.onerror = () => {
+            temporaryFileReader.abort();
+            reject(new DOMException("Problem parsing input file."));
+          };
+      
+          temporaryFileReader.onload = () => {
+            resolve(temporaryFileReader.result);
+          };
+          temporaryFileReader.readAsText(inputFile);
+        });
+      };
+
+
     render() {
-        const env = localStorage.getItem("env")   
+        const env = localStorage.getItem("env");
         var homeLink = '';
         var createLink = '';
         var importButton = '';
@@ -67,7 +97,7 @@ class Header extends Component {
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} className="pl-2" name="VIEW">{"Home"}</Link>;
             createLink = <Link to={"/createProject"} onClick={this.handleClick} className="pl-2" name="CREATE">{"Create"}</Link>;
-            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
+            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project"}
             <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
             </Button>;
             profileButton =                  
@@ -80,6 +110,9 @@ class Header extends Component {
 
         return (
             <Fragment>
+                 <Col s={12} className={this.state.preloader ? "valign-wrapper leftzero loader-overlay-view" : "hide"}>
+            <Preloader className="spinner" size='big' active={this.state.preloader} />
+          </Col>
                 <header id="header" className="page-topbar">
                     <Col className="navbar-fixed">
                         <nav className="navbar-color">
@@ -109,4 +142,3 @@ function mapStateToProps(state) {
 }
 
 export default connect(mapStateToProps)(Header);
-

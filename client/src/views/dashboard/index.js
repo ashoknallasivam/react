@@ -1,6 +1,6 @@
-import { connect } from 'react-redux';
-import Dashboard from './dashboard';
-import { bindActionCreators } from 'redux';
+import { connect } from "react-redux";
+import Dashboard from "./dashboard";
+import { bindActionCreators } from "redux";
 import {fetchAllTenants, fetchSavedTenants,fetchUserInfo} from '../../actions';
 
 const mapStateToProps=(state)=>{
@@ -9,7 +9,7 @@ const mapStateToProps=(state)=>{
         error : state.projectList.error,
         auth : state.auth.authenticated
     }
-}
+};
 
 const mapDispatchToProps=(dispatch)=>{
     return{
