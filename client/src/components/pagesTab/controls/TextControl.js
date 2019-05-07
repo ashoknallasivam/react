@@ -148,7 +148,7 @@ class TextControl extends Component {
 				}  
 		};
 		//console.log(initialState)
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState, this.props.index);
 
 		this.props.close();

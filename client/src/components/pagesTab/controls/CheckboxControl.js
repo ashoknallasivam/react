@@ -9,7 +9,8 @@ class CheckboxControl extends Component {
 		super(props);
 
 		this.state = {
-
+			align: "after",
+			disabled: "true"
 		};
 
 
@@ -29,8 +30,8 @@ class CheckboxControl extends Component {
 			this.setState({
 				name: this.props.data.name,
 				label: this.props.data.label,
-				align: this.props.data.options ? this.props.data.options.align : '',
-				disabled: this.props.data.options ? this.props.data.options.disabled : '',
+				align: this.props.data.options ? this.props.data.options.align : "after",
+				disabled: this.props.data.options ? this.props.data.options.disabled : "true",
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
 				required: this.props.data.options.validation ? this.props.data.options.validation.required : '',
 				property: this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.property : '',
@@ -103,7 +104,7 @@ class CheckboxControl extends Component {
 
 
 
-		alert('submitted');
+		alert('Submitted');
 		this.props.onChange(initialState, this.props.index);
 		this.props.close();
 	};
@@ -159,7 +160,7 @@ class CheckboxControl extends Component {
 				</div>
 
 				<div>
-
+					<h5><b>Options</b></h5>
 					<div>
 						<Input
 							s={12}
@@ -173,7 +174,7 @@ class CheckboxControl extends Component {
 						/><div className="helper-text" >Provide a default value</div>
 					</div>
 					<div>
-						<label className="innerDynamicLabel">Align to box*</label>
+						<label className="innerDynamicLabel">Align box to...*</label>
 
 						<div>
 							<input name='align' className="with-gap" value="after" type='radio' checked={this.state.align == "after"} id='alignafter' onChange={this.handleChange} />
@@ -197,42 +198,42 @@ class CheckboxControl extends Component {
 						</div>
 					</div>
 
-					
-				<fieldset>
-					<legend><b>Validation</b></legend>
-					<div>
-						<div>
-							<input s={12} type="checkbox" id="required" name="required" checked={this.state.required} onChange={this.handleChange} />
-							<label htmlFor="required">Required?</label>
-						</div>
-					</div>
+
 					<fieldset>
-						<legend><b>Required If?</b></legend>
+						<legend><b>Validation</b></legend>
 						<div>
-							<Input
-								s={12}
-								label="Property name"
-								id="property"
-								name="property"
-								type="text"
-								className="labelText mb-1"
-								value={this.state.property}
-								onChange={this.handleChange}
-							/><div className="helper-text" >Property name of field dependency.</div>
+							<div>
+								<input s={12} type="checkbox" id="required" name="required" checked={this.state.required} onChange={this.handleChange} />
+								<label htmlFor="required">Required?</label>
+							</div>
 						</div>
-						<div>
-							<Input
-								s={12}
-								label="Property value"
-								id="value"
-								name="value"
-								type="text"
-								className="labelText mb-1"
-								value={this.state.value}
-								onChange={this.handleChange}
-							/><div className="helper-text" >Value of dependent field.</div>
-						</div>
-					</fieldset>
+						<fieldset>
+							<legend><b>Required If?</b></legend>
+							<div>
+								<Input
+									s={12}
+									label="Property name"
+									id="property"
+									name="property"
+									type="text"
+									className="labelText mb-1"
+									value={this.state.property}
+									onChange={this.handleChange}
+								/><div className="helper-text" >Property name of field dependency.</div>
+							</div>
+							<div>
+								<Input
+									s={12}
+									label="Property value"
+									id="value"
+									name="value"
+									type="text"
+									className="labelText mb-1"
+									value={this.state.value}
+									onChange={this.handleChange}
+								/><div className="helper-text" >Value of dependent field.</div>
+							</div>
+						</fieldset>
 					</fieldset>
 				</div>
 				<div className="right valign-wrapper mt-2">

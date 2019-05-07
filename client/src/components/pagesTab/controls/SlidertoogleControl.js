@@ -110,7 +110,7 @@ class SlidertoogleControl extends Component {
 				}
 			}
 		};
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState, this.props.index);
 		this.props.close();
 	}
@@ -172,35 +172,35 @@ class SlidertoogleControl extends Component {
 
 				<div><label className="innerDynamicLabel"> Align toggle to... *</label></div>
 				<div>
-					<input id="after" name="align" type="radio" value="after" checked={this.state.align === 'after'} onChange={this.handleChange} />
+					<input id="after" className="with-gap" name="align" type="radio" value="after" checked={this.state.align === 'after'} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="after">Start</label>
 				</div>
 				<div>
-					<input id="end" type="radio" name="align" value="before" checked={this.state.align === 'before'} onChange={this.handleChange} />
+					<input id="end" className="with-gap" type="radio" name="align" value="before" checked={this.state.align === 'before'} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="end">End</label>
 				</div>
 
 				<div><label className="innerDynamicLabel">Color *</label></div>
 				<div>
-					<input id="accent" name="color" type="radio" value="accent" checked={this.state.color === "accent"} onChange={this.handleChange} />
+					<input id="accent" className="with-gap" name="color" type="radio" value="accent" checked={this.state.color === "accent"} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="accent">Accent</label>
 				</div>
 				<div>
-					<input id="primary" type="radio" name="color" value="primary" checked={this.state.color === "primary"} onChange={this.handleChange} />
+					<input id="primary" className="with-gap" type="radio" name="color" value="primary" checked={this.state.color === "primary"} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="primary">Primary</label>
 				</div>
 				<div>
-					<input id="warn" type="radio" name="color" value="warn" checked={this.state.color === "warn"} onChange={this.handleChange} />
+					<input id="warn" className="with-gap" type="radio" name="color" value="warn" checked={this.state.color === "warn"} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="warn">Warn</label>
 				</div>
 
 				<div> <label className="innerDynamicLabel">Default state *</label></div>
 				<div>
-					<input id="disabled" name="disabled" type="radio" value={true} checked={this.state.disabled === "true"} onChange={this.handleChange} />
+					<input id="disabled" className="with-gap" name="disabled" type="radio" value={true} checked={this.state.disabled === "true"} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="disabled">Disabled</label>
 				</div>
 				<div>
-					<input id="enabled" type="radio" name="disabled" value={false} checked={this.state.disabled === "false"} onChange={this.handleChange} />
+					<input id="enabled" className="with-gap" type="radio" name="disabled" value={false} checked={this.state.disabled === "false"} onChange={this.handleChange} />
 					<label className="innerDynamicLabel ml-1" htmlFor="enabled">Enabled</label>
 				</div>
 
@@ -234,7 +234,7 @@ class SlidertoogleControl extends Component {
 						/><div className="helper-text" >Value of dependent field</div>
 					</fieldset>
 				</fieldset>
-				<div className="right valign-wrapper">
+				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 

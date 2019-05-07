@@ -106,7 +106,7 @@ class TimeControl extends Component {
 			}
 		};
 		//console.log(initialState)
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState, this.props.index);
 
 		this.props.close();
@@ -176,7 +176,7 @@ class TimeControl extends Component {
 									value={this.state.hint}
 									onChange={this.handleChange}
 									disabled
-									className="labelText mb-1"
+									className="mb-1"
 								/><div className="helper-text" >Give user a hint</div>
 							</div>
 							<div>
@@ -201,7 +201,7 @@ class TimeControl extends Component {
 									value={this.state.inputMask}
 									onChange={this.handleChange}
 									disabled
-									className="labelText mb-1"
+									className="mb-1"
 								/><div className="helper-text" >Enter the input mask.</div>
 							</div>
 							<fieldset>
@@ -248,6 +248,7 @@ class TimeControl extends Component {
 											value={this.state.pattern}
 											onChange={this.handleChange}
 											disabled
+											className="mb-1"
 										/><div className="helper-text" >The pattern that can be entered.</div>
 									</div>
 									<div>
@@ -260,7 +261,7 @@ class TimeControl extends Component {
 											value={this.state.patternValMsg}
 											onChange={this.handleChange}
 											disabled
-											className="labelText mb-1"
+											className="mb-1"
 										/><div className="helper-text" >Error message for text not matching pattern.</div>
 									</div>
 									<fieldset>

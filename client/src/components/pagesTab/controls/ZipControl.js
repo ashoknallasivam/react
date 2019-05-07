@@ -124,7 +124,7 @@ class ZipControl extends Component {
 				}  
 		};
 		//console.log(initialState)
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState,this.props.index);
 
 		this.props.close();
@@ -163,7 +163,7 @@ class ZipControl extends Component {
 							value={this.state.name}
 							required
 							onChange={this.handleChange}
-							className= "labelText"
+							className= "labelText mb-1"
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>	
@@ -176,7 +176,7 @@ class ZipControl extends Component {
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
-							className= "labelText"
+							className= "labelText mb-1"
 						/><div className="helper-text" >The text the user sees</div>
 						
 					</div>
@@ -194,7 +194,7 @@ class ZipControl extends Component {
 										value={this.state.hint}
 										onChange={this.handleChange}
 										disabled
-										className= "labelText"
+										className= "mb-1"
 									/><div className="helper-text" >Give user a hint</div>
 								</div>
 								<div>	
@@ -206,7 +206,7 @@ class ZipControl extends Component {
 										type="text"
 										value={this.state.defaultValue}
 										onChange={this.handleChange}
-										className= "labelText"
+										className= "labelText mb-1"
 									/><div className="helper-text" >Provide a default value</div>
 								</div>
 								<div>	
@@ -219,7 +219,7 @@ class ZipControl extends Component {
 										value={this.state.inputMask}
 										onChange={this.handleChange}
 										disabled
-										className= "labelText"
+										className= "mb-1"
 									/><div className="helper-text" >Enter the input mask.</div>
 								</div>
 								<fieldset>
@@ -241,7 +241,7 @@ class ZipControl extends Component {
 											type="number"
 											value={this.state.minLength}
 											onChange={this.handleChange}
-											className= "labelText"
+											className= "labelText mb-1"
 										/><div className="helper-text" >The minimum characters that must be entered</div>
 									</div>
 									<div>
@@ -253,7 +253,7 @@ class ZipControl extends Component {
 											type="number"
 											value={this.state.maxLength}
 											onChange={this.handleChange}
-											className= "labelText"
+											className= "labelText mb-1"
 										/><div className="helper-text" >The maximum characters that must be entered</div>
 									</div>
 									<div>	
@@ -266,6 +266,7 @@ class ZipControl extends Component {
 											value={this.state.pattern}
 											onChange={this.handleChange}
 											disabled
+											className="mb-1"
 										/><div className="helper-text" >The pattern that can be entered.</div>
 									</div>
 									<div>	
@@ -278,7 +279,7 @@ class ZipControl extends Component {
 											value={this.state.patternValMsg}
 											onChange={this.handleChange}
 											disabled
-											className= "labelText"
+											className= "mb-1"
 										/><div className="helper-text" >Error message for text not matching pattern.</div>
 									</div>
 									<fieldset>
@@ -292,7 +293,7 @@ class ZipControl extends Component {
 											type="text"
 											value={this.state.property}
 											onChange={this.handleChange}
-											className= "labelText"
+											className= "labelText mb-1"
 										/><div className="helper-text" >Property name of field dependency.</div>
 									</div>
 									<div>
@@ -304,7 +305,7 @@ class ZipControl extends Component {
 											type="text"
 											value={this.state.value}
 											onChange={this.handleChange}
-											className= "labelText"
+											className= "labelText mb-1"
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
 									</fieldset>
@@ -315,7 +316,7 @@ class ZipControl extends Component {
     				</div>
 				
 			</div>
-			<div className="right valign-wrapper">
+			<div className="right valign-wrapper mt-2">
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 								

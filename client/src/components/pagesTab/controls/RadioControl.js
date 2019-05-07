@@ -2,14 +2,13 @@ import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 import { flatten  } from 'flat';
 
-
-
 class RadioControl extends Component {
 
 	constructor(props) {
 		super(props);
-
+       // this.state = initialState; 
 		this.state = {
+			
 			data: [],
 			name: '',
 			label: '',
@@ -19,11 +18,13 @@ class RadioControl extends Component {
 
 
 		this.handleChange = this.handleChange.bind(this);
+		this.handleCheckChange = this.handleCheckChange.bind(this);
+		
 		this.handleSubmit = this.handleSubmit.bind(this);
 
 
 	}
-
+	
 	componentDidMount() {
 		 //alert('did')
 		this.setState({
@@ -38,16 +39,43 @@ class RadioControl extends Component {
 					label 				: 	this.props.data.label,
 					hint				:	this.props.data.options ? this.props.data.options.hint : '',
 					defaultValue	    :	this.props.data.options ? this.props.data.options.defaultValue:'',
-					vertical		    :	this.props.data.options.vertical ? this.props.data.options.vertical:'',
-					disabled		    :	this.props.data.options.disabled ? this.props.data.options.disabled:'',
 					items				:	this.props.data.options.items ? this.props.data.options.items :'',
-					required			:	this.props.data.options.validation? this.props.data.options.validation.required:'',
 					property			:	this.props.data.options.showIf ? this.props.data.options.showIf.property :'',
 					value				:	this.props.data.options.showIf ? this.props.data.options.showIf.value :''
 					
 			})	
 			
+			
+					if (this.props.data.options.vertical === true) {
+			this.setState({
+				vertical : 'true',
+			})	
+		} else {
+			this.setState({
+				vertical : 'false',
+			})
 		}
+		if (this.props.data.options.disabled === true) {
+			this.setState({
+				disabled : 'true',
+			})	
+		} else {
+			this.setState({
+				disabled : 'false',
+			})
+		}
+		if (this.props.data.options.validation.required === true) {
+			this.setState({
+				required : true,
+			})	
+		} else {
+			this.setState({
+				required : false,
+			})
+		}
+			
+		}
+
 		
     }
    
@@ -72,6 +100,22 @@ class RadioControl extends Component {
 	
 		
     }
+	
+	handleCheckChange(e) {
+
+		
+
+	   this.setState({required: !this.state.required}); //look at the !NOT sign
+		this.setState({required: !this.state.required}, () => {
+		this.viewRadio(); // Call back function as SetState is Asynch
+	  }) 
+    }
+	
+	viewRadio = () => {
+	  
+	  
+	  console.log("Required",this.state.required)
+   }	
 	
 	createSchema(){
 		
@@ -109,7 +153,7 @@ class RadioControl extends Component {
 		}
 		
 		if (this.state.required !== undefined) {
-			if (this.state.required == 'on') {
+			if (this.state.required === true) {
 				var required = true;
 			} else {
 				var required = false;
@@ -155,7 +199,7 @@ class RadioControl extends Component {
                 			
 		};
 		//console.log(initialState)
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState, this.props.index);
 
 		this.props.close();
@@ -172,39 +216,39 @@ class RadioControl extends Component {
   };
   
   itemSchema = (idx) => {
-	  console.log("BeforeItems",this.state.items)
 	  
+	  var flattenData = ''
+	  var item = this.state.items[idx];
+	  flattenData = flatten(item); 
 	  
-	  
-	  	if (this.state.itemvalue !== undefined) {
-			var value = this.state.itemvalue;
-		}
-		if (this.state.itemlabel !== undefined) {
-			var label = this.state.itemlabel;
-		}
-		
-	  
-	  
-	  
-	  
-	  
+	  var itemvalue  =  this.state[`itemvalue${idx}`] !== undefined ? this.state[`itemvalue${idx}`] : flattenData['value'];
+	  var itemlabel  =  this.state[`itemlabel${idx}`] !== undefined ? this.state[`itemlabel${idx}`] : flattenData['label'];
+	  var element_type  =  this.state[`element_type${idx}`] !== undefined ? this.state[`element_type${idx}`] : flattenData['options.specify.type'];
+	  var othername  =  this.state[`othername${idx}`] !== undefined ? this.state[`othername${idx}`] : flattenData['options.specify.name'];
+	  var otherlabel  =  this.state[`otherlabel${idx}`] !== undefined ? this.state[`otherlabel${idx}`] : flattenData['options.specify.label'];
+	  var otherhint  =  this.state[`otherhint${idx}`] !== undefined ? this.state[`otherhint${idx}`] : flattenData['options.specify.options.hint'];
+	  var otherproperty  =  this.state[`otherproperty${idx}`] !== undefined ? this.state[`otherproperty${idx}`] : flattenData['options.specify.options.validation.requiredIf.property'];
+	  var othervalue  =  this.state[`othervalue${idx}`] !== undefined ? this.state[`othervalue${idx}`] : flattenData['options.specify.options.validation.requiredIf.value'];
+	  var otherminLength  =  this.state[`otherminLength${idx}`] !== undefined ? this.state[`otherminLength${idx}`] : flattenData['options.specify.options.validation.minLength'];
+	  var othermaxLength  =  this.state[`othermaxLength${idx}`] !== undefined ? this.state[`othermaxLength${idx}`] : flattenData['options.specify.options.validation.maxLength'];
+
 	  var initialItemSchema =  {  
-			value,
-			label, 
+			value:itemvalue,
+			label:itemlabel, 
 			options: { 
 				specify: {
-						type:this.state.element_type,
-						name:this.state.othername,
-						label:this.state.otherlabel,
+						type:element_type,
+						name:othername,
+						label:otherlabel,
 						options: {
-							hint:this.state.otherhint,
+							hint:otherhint,
 							validation : {
 								requiredIf : {
-									property:this.state.otherproperty,
-									value:this.state.othervalue,
+									property:otherproperty,
+									value:othervalue,
 								},
-								minLength:this.state.otherminLength,
-								maxLength:this.state.othermaxLength,
+								minLength:otherminLength,
+								maxLength:othermaxLength,
 							} 
 						}
 					} 
@@ -230,6 +274,7 @@ class RadioControl extends Component {
   }	
   
   handleAddItem = () => {
+
     this.setState({
       items: this.state.items.concat([{ label: "" }])
     });
@@ -242,7 +287,7 @@ class RadioControl extends Component {
   };
   
   render() {
-	  
+	  var flattenData = '';
 	  const { data } = this.state;
 
 		return (
@@ -262,7 +307,6 @@ class RadioControl extends Component {
 							value="radio"
 							disabled
 							required
-							className="labelText"
 						/>
 					</div>
 					<div>
@@ -275,7 +319,7 @@ class RadioControl extends Component {
 							value={this.state.name}
 							required
 							onChange={this.handleChange}
-							className="labelText"
+							className="labelText mb-1"
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>
@@ -288,7 +332,7 @@ class RadioControl extends Component {
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
-							className="labelText"
+							className="labelText mb-1"
 						/><div className="helper-text" >The text the user sees</div>
 
 					</div>
@@ -305,7 +349,7 @@ class RadioControl extends Component {
 										type="text"
 										value={this.state.hint}
 										onChange={this.handleChange}
-										className= "labelText"
+										className= "labelText mb-1"
 									/><div className="helper-text" >Give user a hint</div>
 								</div>
 								<div>	
@@ -317,7 +361,7 @@ class RadioControl extends Component {
 										type="text"
 										value={this.state.defaultValue}
 										onChange={this.handleChange}
-										className= "labelText"
+										className= "labelText mb-1"
 									/><div className="helper-text" >Provide a default value</div>
 								</div>
 								<fieldset>
@@ -331,7 +375,7 @@ class RadioControl extends Component {
 												type="text"
 												value={this.state.property}
 												onChange={this.handleChange}
-												className="labelText"
+												className="labelText mb-1"
 											/><div className="helper-text" >Property name of field dependency.</div>
 										</div>
 										<div>
@@ -343,37 +387,34 @@ class RadioControl extends Component {
 												type="text"
 												value={this.state.value}
 												onChange={this.handleChange}
-												className="labelText"
+												className="labelText mb-1"
 											/><div className="helper-text" >Value of dependent field.</div>
 										</div>
 								</fieldset>
-								<div className="valign-wrapper">	
-									<label>List will be...*</label>
-									<p>
-									    <Input name='vertical' type='radio' className="with-gap" value='true' label='Vertical' checked={!this.state.vertical}  onChange={this.handleChange}/>
-										
-										</p>
-										<p>
-										<Input name='vertical' type='radio' className="with-gap" value='false' label='Horizontal' checked={this.state.vertical} onChange={this.handleChange}/>
-										
-									</p>
+								<div> <label className="innerDynamicLabel">List will be...*</label></div>
+								<div>
+									<input id="after" className="with-gap" name="vertical" type="radio" value="true" checked={this.state.vertical === 'true'} onChange={this.handleChange} />
+									<label className="innerDynamicLabel ml-1" htmlFor="after">Vertical</label>
 								</div>
-								<div className="valign-wrapper">	
-									<label>Default state*</label>
-									<p>
-										<Input name='disabled' className="with-gap" value="false" label="Enabled" type='radio' checked={!this.state.disabled} id='radio-3' onChange={this.handleChange}/>
-										
-										</p>
-										<p>
-										<Input name='disabled' className="with-gap" value="true" label="Disabled" type='radio' checked={this.state.disabled} id='radio-4' onChange={this.handleChange}/>
-										
-									</p>
+								<div>
+									<input id="end" className="with-gap" type="radio" name="vertical" value="false" checked={this.state.vertical === 'false'} onChange={this.handleChange} />
+									<label className="innerDynamicLabel ml-1" htmlFor="end">Horizontal</label>
 								</div>
+								<div> <label className="innerDynamicLabel">Default state*</label></div>
+								<div>
+									<input id="primary" className="with-gap" type="radio" name="disabled" value="true" checked={this.state.disabled === 'true' } onChange={this.handleChange} />
+									<label className="innerDynamicLabel ml-1" htmlFor="primary">Disabled</label>
+								</div>
+								<div>
+									<input id="accent" className="with-gap" name="disabled" type="radio" value="false" checked={this.state.disabled === 'false'} onChange={this.handleChange} />
+									<label className="innerDynamicLabel ml-1" htmlFor="accent">Enabled</label>
+								</div>
+								
 								 <fieldset>
 									<legend><b>Validation</b></legend>
 									<div>
 										<div>
-											<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} value={this.state.required} />
+										    <input s={12} type="checkbox" className='filled-in' id="required" name="required" checked={this.state.required} onChange={this.handleCheckChange} />
 											<label htmlFor="required">Required?</label>
 										</div>
 									</div>
@@ -383,18 +424,17 @@ class RadioControl extends Component {
 								</div>
 								
 								{this.state.items.map((item, idx) => {
-                                 var flattenData = flatten(item);  
+								 
+                                 flattenData = flatten(item);  
 									//console.log("Flatten",flattenData);
 																
 								 return <fieldset>
 									<div className="collection-item">
 										<div className="valign-wrapper">
 											
-											<button type='button' className='col s12 m4 l4 xl4 mt-1' name="deleteItem" onClick={this.handleRemoveItem(idx)}
-												style={{ backgroundColor: 'unset', border: 'unset', color: '#004e92' }}
-											>
+											<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="deleteItem" onClick={this.handleRemoveItem(idx)}>
 												<i className="material-icons" title='Delete'>delete</i>
-											</button>
+											</Button>
 											
 										</div>
 										<div className="valign-wrapper">
@@ -402,10 +442,10 @@ class RadioControl extends Component {
 										    <Input
 												s={8}
 												label={`Value #${idx + 1}`}
-												id="itemvalue"
-												name="itemvalue"
+												id={`itemvalue${idx}`}
+												name={`itemvalue${idx}`}
 												type="text"
-												value={item.value}
+												value={flattenData['value']}
 												onChange={this.handleItemLabelChange(idx)}
 												className="labelText"
 											/>
@@ -418,12 +458,12 @@ class RadioControl extends Component {
 											 <Input
 												s={8}
 												label={`Label #${idx + 1}`}
-												id="itemlabel"
-												name="itemlabel"
+												id={`itemlabel${idx}`}
+												name={`itemlabel${idx}`}
 												type="text"
-												value={item.label}
+												value={flattenData['label']}
 												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
+												className="labelText mb-1"
 											/>
 										  </Col>
 										</div>
@@ -436,8 +476,8 @@ class RadioControl extends Component {
 										</div>
 									
 										<div className="valign-wrapper">
-										  <Col s={8} m={6} l={4} xl={8} >
-											 <select defaultValue={flattenData['options.specify.type']} s={8} m={6} l={4} xl={8}  id='element_type' name='element_type' type='select' onChange={this.handleItemLabelChange(idx)} >
+										  <Col s={12} m={6} l={4} xl={12}>
+											 <select className="col s8 mt-1 ml-1 pl-0 Dropdown" value={flattenData['options.specify.type']} id={`element_type${idx}`} name={`element_type${idx}`} type='select' onChange={this.handleItemLabelChange(idx)} >
 											  <option value='' >Element Type</option>
 											  <option value='text' >Text</option>
 											 </select>
@@ -449,12 +489,12 @@ class RadioControl extends Component {
 											 <Input
 												s={8}
 												label='Name'
-												id="othername"
-												name="othername"
+												id={`othername${idx}`}
+												name={`othername${idx}`}
 												type="text"
 												value={flattenData['options.specify.name']}
 												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
+												className="labelText mb-1"
 											/>
 										  </Col>
 										</div>
@@ -463,12 +503,12 @@ class RadioControl extends Component {
 											 <Input
 												s={8}
 												label='Label'
-												id="otherlabel"
-												name="otherlabel"
+												id={`otherlabel${idx}`}
+												name={`otherlabel${idx}`}
 												type="text"
 												value={flattenData['options.specify.label']}
 												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
+												className="labelText mb-1"
 											/>
 										  </Col>
 										</div>
@@ -480,12 +520,12 @@ class RadioControl extends Component {
 											 <Input
 												s={8}
 												label='Hint'
-												id="otherhint"
-												name="otherhint"
+												id={`otherhint${idx}`}
+												name={`otherhint${idx}`}
 												type="text"
 												value={flattenData['options.specify.options.hint']}
 												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
+												className="labelText mb-1"
 											/>
 										  </Col>
 										</div>
@@ -500,24 +540,24 @@ class RadioControl extends Component {
 													<Input
 														s={12}
 														label="Property name"
-														id="otherproperty"
-														name="otherproperty"
+														id={`otherproperty${idx}`}
+														name={`otherproperty${idx}`}
 														type="text"
 														value={flattenData['options.specify.options.validation.requiredIf.property']}
 														onChange={this.handleItemLabelChange(idx)}
-														className="labelText"
+														className="labelText mb-1"
 													/><div className="helper-text" >Property name of field dependency.</div>
 												</div>
 												<div>
 													<Input
 														s={12}
 														label="Property value"
-														id="othervalue"
-														name="othervalue"
+														id={`othervalue${idx}`}
+														name={`othervalue${idx}`}
 														type="text"
 														value={flattenData['options.specify.options.validation.requiredIf.value']}
 														onChange={this.handleItemLabelChange(idx)}
-														className="labelText"
+														className="labelText mb-1"
 													/><div className="helper-text" >Value of dependent field.</div>
 												</div>
 											</fieldset>
@@ -525,24 +565,24 @@ class RadioControl extends Component {
 											<Input
 												s={12}
 												label="Minimum length"
-												id="otherminLength"
-												name="otherminLength"
+												id={`otherminLength${idx}`}
+												name={`otherminLength${idx}`}
 												type="number"
 												value={flattenData['options.specify.options.validation.minLength']}
 												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
+												className="labelText mb-1"
 												/><div className="helper-text" >The minimum characters that must be entered</div>
 											</div>
 											<div>
 												<Input
 													s={12}
 													label="Maximum length"
-													id="othermaxLength"
-													name="othermaxLength"
+													id={`othermaxLength${idx}`}
+													name={`othermaxLength${idx}`}
 													type="number"
 													value={flattenData['options.specify.options.validation.maxLength']}
 													onChange={this.handleItemLabelChange(idx)}
-													className="labelText"
+													className="labelText mb-1"
 												/><div className="helper-text" >The maximum characters that must be entered</div>
 											</div>
 										</fieldset>
@@ -555,8 +595,8 @@ class RadioControl extends Component {
 								})}
 								<div>
 									<Col s={12} m={6} l={4} xl={12} >
-										<Button type="button" className='orgIcon col s12 m2 l2 xl2 right' name="addOrg" onClick={this.handleAddItem}>
-											<i className="material-icons" title='Add Items'>add_circle</i>
+										<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton right' name="addOrg" onClick={this.handleAddItem}>
+											<i className="material-icons" title='Add Items'>add_circle</i><span>Add Items</span>
 										</Button>
 									</Col>
 								</div>	

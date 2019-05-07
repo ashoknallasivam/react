@@ -8,12 +8,20 @@
 		"label": "Address"
 	},
 	{
+		"value": "array",
+		"label": "Array"
+	},
+	{
 		"value": "button",
 		"label": "Button"
 	},
 	{
 		"value": "checkbox",
 		"label": "Checkbox"
+	},
+	{
+		"value": "checkbox-group",
+		"label": "CheckboxGroup"
 	},
 	{
 		"value": "date",
@@ -42,6 +50,10 @@
 	{
 		"value": "radio",
 		"label": "Radio"
+	},
+	{
+		"value": "select",
+		"label": "Select"
 	},
 	{
 		"value": "slider",

@@ -12,7 +12,7 @@ class ButtonControl extends Component {
 			data: [],
 			name: '',
 			label: '',
-			disabled: ''
+			disabled: "false"
 		};
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this)
@@ -87,7 +87,7 @@ class ButtonControl extends Component {
 			disabled
 		};
 
-		alert('submitted');
+		alert('Submitted');
 		onChange(initialState, this.props.index);
 		this.props.close();
 	};
@@ -143,6 +143,7 @@ class ButtonControl extends Component {
 					/><div className="helper-text" >The text the user sees</div>
 
 				</div>
+				<h5><b>Options</b></h5>
 				<Row>
 					<Col>
 						<div>

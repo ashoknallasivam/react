@@ -1001,7 +1001,7 @@ class RolesTab extends Component {
                         </div>}
                 </div>
                 <Modal
-                    header='Rapter Configurator'
+                    header='RAPTER Configurator'
                     id='DeleteRoleModal'
                     modalOptions={{ dismissible: false }}
                     open={this.state.DeleteModal} >

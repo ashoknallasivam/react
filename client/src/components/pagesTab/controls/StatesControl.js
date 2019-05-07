@@ -191,7 +191,7 @@ class StatesControl extends Component {
 
 					<fieldset>
 						<legend><b>Validation</b></legend>
-						<div className="col s12 functions d-flex mb-1">
+						<div className="col s12 pl-0">
 							<Input type="checkbox" className='filled-in' id="" name="option_validation_required" label={"Required"}
 								checked={this.state.option_validation_required} autoComplete='off' onChange={this.handleChange} />
 						</div>

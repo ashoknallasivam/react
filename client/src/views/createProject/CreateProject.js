@@ -600,6 +600,8 @@ class CreateProject extends Component {
             <Row className="project-form">
               <Col s={12} m={12} l={12} xl={12} className='project_name mt-1'>
                 <Input className={this.state.applicationMode == 'VIEW' ? 'labelText mt-0' : this.state.applicationMode == 'EDIT' ? 'labelText mt-0 project_name' : 'mt-0'} s={12} m={4} l={4} xl={4} label="Project Name" name="name" onChange={this._hanldetenatnInput} value={this.state.name} disabled={this.state.applicationMode == "VIEW" ? true : false} onBlur={this.saveTenant} />
+                {this.state.applicationMode == "VIEW" &&
+              <Button className="mt-1 CreateProjectPublish btn_primary" name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}>Edit</Button>}
               </Col>
               {this.state.requiredName == true ? <p className = "m-0 ml-2 errorMessage"> Project name is required </p>:null }
               <Col s={12} m={12} l={12} xl={12} className=' mt-2'>
@@ -769,8 +771,6 @@ class CreateProject extends Component {
           }
           <Col className="col-centered mb-3 p-0 form-footer" s={12} m={12} l={12} xl={12}>
             {/* Display Edit in view mode */}
-            {this.state.applicationMode == "VIEW" &&
-              <Button className="mt-1 CreateProjectPublish btn_primary" name="EDIT" onClick={(e) => this._handleAppMode('EDIT')}>Edit</Button>}
 
             {/* Display publish in create and edit mode */}
             {this.state.applicationMode !== 'VIEW' &&

@@ -81,7 +81,7 @@ class EmailControl extends Component {
 				}
 			};
 			onChange(data, this.props.index);
-			alert('submitted');
+			alert('Submitted');
 			this.props.close();
 		}
 		else {

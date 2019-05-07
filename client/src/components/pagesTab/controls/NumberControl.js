@@ -106,7 +106,7 @@ class NumberControl extends Component {
 					}
 				}
 			};
-			alert('submitted');
+			alert('Submitted');
 			onChange(initialState, this.props.index);
 			this.props.close();
 		}
@@ -232,7 +232,7 @@ class NumberControl extends Component {
 						/><div className="helper-text" >Value of dependent field</div>
 					</fieldset>
 				</fieldset>
-				<div className="right valign-wrapper">
+				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 

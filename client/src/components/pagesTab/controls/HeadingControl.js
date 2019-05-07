@@ -10,7 +10,7 @@ class HeadingControl extends Component {
 
 		this.state = {
 			label: '',
-			level: ''
+			level: "1"
 		};
 
 
@@ -105,6 +105,7 @@ class HeadingControl extends Component {
 						/><div className="helper-text" >What the user sees</div>
 					</div>
 					<div>
+					<h5><b>Options</b></h5>
 						<div style={{height:"80px"}}>
 						<label className="innerDynamicLabel" htmlFor="required">Level *</label>
 							<Input

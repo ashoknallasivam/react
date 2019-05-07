@@ -16,7 +16,7 @@ export const localeConstants_en = {
         MODIFIED : 'modified',
         IGNORE:'ignore',
         PUBLISH:'publish',
-        RAPTER_CONFIGURATOR: "Rapter Configurator"
+        RAPTER_CONFIGURATOR: "RAPTER Configurator"
     },
     functions: {
         FUNCTIONS: "Functions",

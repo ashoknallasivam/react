@@ -15,8 +15,9 @@ let menuBiz = require('../biz/menuRoleAccessBiz');
 let resourceBiz = require('../biz/resourceRoleAccessBiz');
 let pageBiz = require('../biz/pageBiz');
 let boundsbiz = require('../biz/boundsBiz');
-let validateBiz = require('../biz/importValidationBiz');
+let toTreeBiz = require('../biz/listToTree');
 let fs = require('fs');
+const isvalid = require('isvalid');
 
 
 router.post('/publish', (req, res) => {
@@ -243,56 +244,230 @@ router.post('/validate', (req, res) => {
         return;
     }
     let inpParam = req.body;
-    let orgsListTemp = inpParam.orgsList;
-    orgsListTemp.map((item, i) => {
-        orgsListTemp[i].statusFlag = "new";
-        orgsListTemp[i].userId = inpParam.userId;
-        //raconfig
-        for (let key in orgsListTemp[i].raConfig) {
-            orgsListTemp[i].raConfig[key].statusFlag = "new"
-        }
-        //enrollmentTargets
-        for (let key in orgsListTemp[i].enrollmentTargets) {
-            orgsListTemp[i].enrollmentTargets[key].statusFlag = "new"
-        }
-        //pages
-        for (let key in orgsListTemp[i].pages) {
-            orgsListTemp[i].pages[key].statusFlag = "new"
-        }
-        //roles
-        for (let key in orgsListTemp[i].roles) {
-            orgsListTemp[i].roles[key].statusFlag = "new";
-            //menu
-            for (let index in orgsListTemp[i].roles[key].menus) {
-                orgsListTemp[i].roles[key].menus[index].statusFlag = "new";
+    isvalid(inpParam, {
+        type: Object,
+        unknownKeys: 'remove',
+        schema: {
+            name: { type: String, required: true },
+            id: {type: String, required: true},
+            orgsList: { 
+                type: Array,
+                required: true,
+                schema: {
+                    type: Object,
+                    unknownKeys: 'remove',
+                    required: true,
+                    schema:{
+                        id:{ type: Number, required: true },
+                        name: { type: String, required: true },
+                        tenantId: { type: Number, required: true },
+                        ttoId: { type: Number, required: true, allowNull: true },
+                        parentId: { type: Number, required: true, allowNull: true },
+                        level: { type: Number, required: true },
+                        roles: { 
+                            type: Array, 
+                            required: true,
+                            schema: {
+                                type: Object,
+                                unknownKeys: 'remove',
+                                schema:{
+                                    id:{ type: Number, required: true },
+                                    name: { type: String, required: true },
+                                    description: { type: String, required: true },
+                                    orgId:{ type: Number, required: true },
+                                    isAssignable: { 
+                                        type: Object, 
+                                        unknownKeys: 'remove',
+                                        required: true,
+                                        schema:{
+                                            data: {
+                                                type: Array,
+                                                len: 1,
+                                                schema: Number
+                                            },
+                                            type: {type: String, required: true, default: "buffer"}
+                                        }
+                                    },
+                                    isAutoAccess: { 
+                                        type: Object, 
+                                        unknownKeys: 'remove',
+                                        required: true,
+                                        schema:{
+                                            data: {
+                                                type: Array,
+                                                len: 1,
+                                                schema: Number
+                                            },
+                                            type: {type: String, required: true, default: "buffer"}
+                                        } 
+                                    },
+                                    isAutoAssignOnIntake: { 
+                                        type: Object, 
+                                        unknownKeys: 'remove',
+                                        required: true,
+                                        schema:{
+                                            data: {
+                                                type: Array,
+                                                len: 1,
+                                                schema: Number
+                                            },
+                                            type: {type: String, required: true, default: "buffer"}
+                                        } 
+                                    },
+                                    menus:{
+                                        type:Array,
+                                        required: true,
+                                        schema:{
+                                            type:Object,
+                                            unknownKeys: 'remove',
+                                            schema:{
+                                                roleId:{ type: Number, required: true },
+                                                menuId:{ type: Number, required: true },
+                                            }
+                                        }
+                                    },
+                                    resources:{
+                                        type:Array,
+                                        required: true,
+                                        schema:{
+                                            type:Object,
+                                            unknownKeys: 'remove',
+                                            schema:{
+                                                roleId:{ type: Number, required: true },
+                                                resourceId:{ type: Number, required: true },
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        enrollmentTargets: { 
+                            type: Array,
+                            required: true,
+                            schema:{
+                                type: Object,
+                                unknownKeys: 'remove',
+                                schema:{
+                                    id:{ type: Number, required: true },
+                                    orgId:{type: Number, required: true},
+                                    month:{type: String, required: true},
+                                    target:{type: Number, required: true}
+                                }
+                            }
+                        },
+                        pages: { 
+                            type: Array,
+                            required: true ,
+                            schema:{
+                                type: Object,
+                                unknownKeys: 'remove',
+                                schema:{
+                                    _id:{ type: String, required: true },
+                                    key:{type: String, required: true},
+                                    collection:{type: String, required: true},
+                                    title:{type: String, required: true},
+                                    subtitle:{type: String, required: true}
+                                }
+                            }
+                        },
+                        raConfig:{
+                            type: Array,
+                            required: true,
+                            schema:{
+                                type: Object,
+                                unknownKeys: 'remove',
+                                schema:{
+                                    _id:{ type: String, required: true },
+                                    description:{type: String, required: true},
+                                    stratum:{
+                                        type: Array,
+                                        required: true,
+                                        len: 1,
+                                        schema:{
+                                            type: Object,
+                                            required: true,
+                                            unknownKeys: 'remove',
+                                            schema:{
+                                                value:{type: Number, required: true},
+                                                variable:{type: String, required: true, default: "ltoId"}
+                                            }
+                                        }
+                                    },
+                                    blockSize:{type: String, required: true},
+                                    groups:{
+                                        type: Array,
+                                        schema:{
+                                            type: Object,
+                                            unknownKeys: 'remove',
+                                            schema:{
+                                                assignment:{type: String, required: true},
+                                                description:{type: String, required: true},
+                                                ratio:{type: String, required: true},
+                                                sequenceLimit:{type: String, required: true},
+                                            }
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                    }
+                }
             }
-            //resource
-            for (let index in orgsListTemp[i].roles[key].resources) {
-                orgsListTemp[i].roles[key].resources[index].statusFlag = "new";
-            }
         }
-    });
-    inpParam.projectStatus = "save";
-    inpParam.statusFlag = "new";
-    inpParam.orgsList = orgsListTemp;
-    inpParam.orgs = validateBiz.list_to_tree(orgsListTemp);
-    if (validateBiz.validateForImport(inpParam)) {
-        if (!fs.existsSync('savedProjects/')){
-            fs.mkdirSync('savedProjects/');
-        }
-        fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
-            if (err) {
-                logging.applogger.error(err);
-                res.status(500).send(err);
-            } else {
-                res.status(200).send({ savedProjectId: inpParam.id, messages: "Successfully imported as unpublished Project" });
+    }).then((data) => {
+        const{name, orgsList} = data;
+        try{
+            orgsList.map((item, i) => {
+                orgsList[i].statusFlag = "new";
+                orgsList[i].userId = inpParam.userId;
+                //raconfig
+                for (let key in orgsList[i].raConfig) {
+                    orgsList[i].raConfig[key].statusFlag = "new"
+                }
+                //enrollmentTargets
+                for (let key in orgsList[i].enrollmentTargets) {
+                    orgsList[i].enrollmentTargets[key].statusFlag = "new"
+                }
+                //pages
+                for (let key in orgsList[i].pages) {
+                    orgsList[i].pages[key].statusFlag = "new"
+                }
+                //roles
+                for (let key in orgsList[i].roles) {
+                    orgsList[i].roles[key].statusFlag = "new";
+                    //menu
+                    for (let index in orgsList[i].roles[key].menus) {
+                        orgsList[i].roles[key].menus[index].statusFlag = "new";
+                    }
+                    //resource
+                    for (let index in orgsList[i].roles[key].resources) {
+                        orgsList[i].roles[key].resources[index].statusFlag = "new";
+                    }
+                }
+            });
+            data.projectStatus = "save";
+            data.statusFlag = "new";
+            data.orgsList = orgsList;
+            data.orgs = toTreeBiz.list_to_tree(orgsList);
+            if (!fs.existsSync('savedProjects/')){
+                fs.mkdirSync('savedProjects/');
             }
+            fs.writeFile('savedProjects/' + data.id + '.json', JSON.stringify(data), 'utf8', function (err) {
+                if (err) {
+                    logging.applogger.error(err);
+                    res.status(500).send(err);
+                } else {
+                    res.status(200).send({ savedProjectId: data.id, messages: "Successfully imported as unpublished Project" });
+                }
 
-        });
-    }else{
-        logging.applogger.error('validation failed');
+            });
+        }catch(e){
+            logging.applogger.error(e);
+            res.status(500).send('Please check the uploaded project structure');
+        }
+    }).catch((err) => {
         res.status(500).send('Please check the uploaded project structure');
-    }
+    });
 })
 module.exports = router;
 

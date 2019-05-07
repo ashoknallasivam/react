@@ -117,7 +117,7 @@ class SliderControl extends Component {
 				}
 			};
 			onChange(data, this.props.index);
-			alert('submitted');
+			alert('Submitted');
 			this.props.close();
 		}
 		else {
@@ -265,7 +265,7 @@ class SliderControl extends Component {
 						value={true}
 						checked={this.state.thumbLabel === "true"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="thumbYes">Yes</label></div>
 					<div><input
 						id="thumbNo"
@@ -274,7 +274,7 @@ class SliderControl extends Component {
 						type="radio"
 						checked={this.state.thumbLabel === "false"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="thumbNo">No</label></div>
 					<div><label className="innerDynamicLabel">Orientation *</label></div>
 					<div><input
@@ -284,7 +284,7 @@ class SliderControl extends Component {
 						value={true}
 						checked={this.state.vertical === "true"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="vertical">Vertical</label></div>
 					<div><input
 						id="horizontal"
@@ -293,7 +293,7 @@ class SliderControl extends Component {
 						value={false}
 						checked={this.state.vertical === "false"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="horizontal">Horizontal</label></div>
 					<div>
 						<label className="innerDynamicLabel">Invert slider? *</label></div>
@@ -304,7 +304,7 @@ class SliderControl extends Component {
 						value={true}
 						checked={this.state.invert === "true"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="invertYes">Yes</label></div>
 					<div><input
 						id="invertNo"
@@ -313,7 +313,7 @@ class SliderControl extends Component {
 						value={false}
 						checked={this.state.invert === "false"}
 						onChange={this.handleChange}
-						className="mb-1"
+						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="invertNo">No</label></div>
 					<Input
 						s={12}

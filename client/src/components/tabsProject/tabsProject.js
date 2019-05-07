@@ -10,7 +10,110 @@ import PagesTab from '../pagesTab';
 let roles;
 class TabsProject extends Component {
     constructor(props) {
-        super(props)
+        super(props);
+        this.state = {
+            studyConfigsEmpty: true,
+            enrollmentTargetsEmpty: true,
+            pagesEmpty: true,
+            rolesEmpty: true,
+        }
+    }
+
+    componentWillReceiveProps(){
+        console.log(this.props.selectedLocation.pages);
+        this.setState({studyConfigsEmpty: this.studyConfigsEmptyCheck(this.props.selectedLocation.raConfig)})
+        this.setState({enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(this.props.selectedLocation.enrollmentTargets)})
+        this.setState({rolesEmpty: this.rolesEmptyCheck(this.props.selectedLocation.roles)})
+        this.setState({pagesEmpty: this.pagesEmptyCheck(this.props.selectedLocation.pages)})
+    }
+
+    componentDidMount(){
+        console.log(this.props);
+
+    }
+
+    studyConfigsEmptyCheck = (raConfig) => {
+        if(raConfig !== undefined){
+            if (raConfig.length !== 0 && raConfig[0].statusFlag !== "ignore") {
+                return false
+            }else{
+                return true
+            }   
+        }else{
+            return true;
+        }
+    }
+
+    rolesEmptyCheck = (roles) => {
+        if(roles !== undefined){
+            if(roles.length > 0 ){
+                let checkStatus = [];
+                roles.map(item => {
+                    if (item.statusFlag !== "ignore") {
+                        checkStatus.push(false)
+                    }else{
+                        checkStatus.push(true)
+                    }
+                })
+                if(checkStatus.includes(false)){
+                    return false
+                }else{
+                    return true
+                } 
+            }else{
+                return true
+            }
+        }else{
+            return true
+        }
+    }
+
+    pagesEmptyCheck = (pages) => {
+        if(pages !== undefined){
+            if(pages.length > 0 ){
+                let checkStatus = [];
+                pages.map(item => {
+                    if (item.statusFlag !== "ignore") {
+                        checkStatus.push(false)
+                    }else{
+                        checkStatus.push(true)
+                    }
+                })
+                if(checkStatus.includes(false)){
+                    return false
+                }else{
+                    return true
+                } 
+            }else{
+                return true
+            }
+        }else{
+            return true
+        }
+    }
+
+    enrollmentTargetsEmptyCheck = (enrollmentTargets) => {
+        if(enrollmentTargets !== undefined){
+            if (enrollmentTargets.length > 0) {
+                let checkStatus = []
+                enrollmentTargets.map(item => {
+                    if(item.statusFlag !== "ignore"){
+                        checkStatus.push(false)
+                    }else{
+                        checkStatus.push(true)
+                    }
+                }) 
+                if(checkStatus.includes(false)){
+                    return false
+                }else{
+                    return true
+                } 
+            }else{
+                return true
+            }
+        }else{
+            return true
+        }
     }
     
     render(){
@@ -19,10 +122,10 @@ class TabsProject extends Component {
                 <Tabs>
                         <TabList className="tabs customTabs z-depth-1 tabs-fixed-width">
                             {/* <Tab className="tab" >Functions</Tab> */}
-                            <Tab className="tab" >Study Config</Tab>
-                            <Tab className="tab" >Enrollment Target</Tab>
-                            <Tab className="tab" >Pages</Tab>
-                            <Tab className="tab" >Roles</Tab>
+                            <Tab className="tab" >Study Config {this.props.applicationMode == "CREATE" && this.state.studyConfigsEmpty ? <span className="empty-red">*</span> : null}</Tab>
+                            <Tab className="tab" >Enrollment Target {this.props.applicationMode == "CREATE" && this.state.enrollmentTargetsEmpty ? <span className="empty-red">*</span> : null}</Tab>
+                            <Tab className="tab" >Pages {this.props.applicationMode == "CREATE" && this.state.pagesEmpty ? <span className="empty-red">*</span> : null}</Tab>
+                            <Tab className="tab" >Roles {this.props.applicationMode == "CREATE" && this.state.rolesEmpty ? <span className="empty-red">*</span> : null}</Tab>
                         </TabList>
                         {/* <TabPanel>
                             <FunctionsTab/>

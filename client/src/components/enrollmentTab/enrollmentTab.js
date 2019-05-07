@@ -225,7 +225,7 @@ class EnrollmentTab extends Component {
                             <p className="pl-2">{localConstant.commonConstants.NO_DATA}</p> :
                             <div>
                                 <Modal
-                                    header='Rapter Configurator'
+                                    header='RAPTER Configurator'
                                     id='DeleteEnrollmentModal'
                                     open={this.state.deleteModal}
                                     modalOptions={{ dismissible: false }}

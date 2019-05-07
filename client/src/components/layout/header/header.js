@@ -59,12 +59,12 @@ class Header extends Component {
                         newThis.setState({selectedFile: '', preloader: false});
                     }
                 }).catch(error =>{
-                    alert(error.message)
+                    alert(error.response.data)
                     newThis.setState({selectedFile: '', preloader: false});
                 })
             }catch(e){
-                alert('Please correct the json file syntax errors');
-                this.setState({selectedFile: '', preloader: false});
+                alert("Import failed due to an invalid file type or syntax errors in the file. The file must be of JSON type and with no syntax errors");
+                newThis.setState({selectedFile: '', preloader: false});
             }    
         })
     };
@@ -97,7 +97,7 @@ class Header extends Component {
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} className="pl-2" name="VIEW">{"Home"}</Link>;
             createLink = <Link to={"/createProject"} onClick={this.handleClick} className="pl-2" name="CREATE">{"Create"}</Link>;
-            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project"}
+            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
             <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
             </Button>;
             profileButton =                  

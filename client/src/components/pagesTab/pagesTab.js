@@ -243,7 +243,7 @@ class PagesTab extends Component {
 								mode={this.state.editor} />;
 			
             jEditor = <Tabs className='tab-demo z-depth-1'>
-					   <Tab title={<i className="orgIcon material-icons" title='JSON Schema' >code</i>} active>
+					   <Tab disabled={true} title={<i className="orgIcon material-icons" title='JSON Schema' >code</i>} active>
 						   <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
 									<Row className="margin">
 										<Col className="input-field p-0" s={12}>
@@ -253,7 +253,7 @@ class PagesTab extends Component {
 												id='json_content'
 												locale={locale}
 												onChange={this.jsonValue}
-												height="340px"
+												height="440px"
 												width="500px"
 												onKeyPressUpdate={false}
 												viewOnly={viewOnly}
@@ -261,7 +261,7 @@ class PagesTab extends Component {
 										</Col>
 									</Row>
 							</div></Tab>
-							<Tab  disabled={true} title={<i className="orgIcon material-icons" title='Preview' >launch</i>} >{previewPage}</Tab>
+							<Tab disabled={true} title={<i className="orgIcon material-icons" title='Preview' >launch</i>} >{previewPage}</Tab>
 				   </Tabs>			
 		}
 
@@ -343,7 +343,7 @@ class PagesTab extends Component {
 
 			);
 
-		} else { return <p className="pl-2"><Row className='m-0'>{/*<LoadingSpinner />*/}No data to display</Row></p>; }
+		} else { return <p className="pl-2"><Row className='m-0'>{/*<LoadingSpinner />*/}Select the location</Row></p>; }
 
 
 

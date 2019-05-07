@@ -158,6 +158,7 @@ class TextareaControl extends Component {
 							value={this.state.name}
 							required
 							onChange={this.handleChange}
+							className="labelText mb-1"
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>	
@@ -170,6 +171,7 @@ class TextareaControl extends Component {
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
+							className="labelText mb-1"
 						/><div className="helper-text" >The text the user sees</div>
 						
 					</div>
@@ -185,6 +187,7 @@ class TextareaControl extends Component {
 										type="text"
 										value={this.state.hint}
 										onChange={this.handleChange}
+										className="labelText mb-1"
 									/><div className="helper-text" >Give user a hint</div>
 								</div>
 								<div>	
@@ -196,6 +199,7 @@ class TextareaControl extends Component {
 										type="text"
 										value={this.state.defaultValue}
 										onChange={this.handleChange}
+										className="labelText mb-1"
 									/><div className="helper-text" >Provide a default value</div>
 								</div>
 								<fieldset>
@@ -218,6 +222,7 @@ class TextareaControl extends Component {
 											type="text"
 											value={this.state.property}
 											onChange={this.handleChange}
+											className="labelText mb-1"
 										/><div className="helper-text" >Property name of field dependency.</div>
 									</div>
 									<div>
@@ -229,6 +234,7 @@ class TextareaControl extends Component {
 											type="text"
 											value={this.state.value}
 											onChange={this.handleChange}
+											className="labelText mb-1"
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
                                 </fieldset>
@@ -236,7 +242,7 @@ class TextareaControl extends Component {
 							</fieldset>
 						
     				</div>
-						<div className="right valign-wrapper">
+						<div className="right valign-wrapper mt-2">
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2"  onClick={this.handleSubmit}>Submit</Button>
 				  <Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 								

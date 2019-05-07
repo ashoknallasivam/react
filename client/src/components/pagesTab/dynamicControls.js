@@ -117,23 +117,11 @@ class dynamicControls extends React.Component {
 	}
 
 
-	// componentDidUpdate(prevProps) {
-	// 	if (prevProps.selectedPage !== this.props.selectedPage) {
-
-	// 		this.setState({ selectedPage: this.props.selectedPage, values: [], mode: this.props.mode });
-	// 	}
-
-
-
-	// }
-
 	handleChange(e) {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
 		value != '' ? this.setState({ type: value }) : ''
 	}
-
-
 
 
 	handleSchema(schema, idx) {
@@ -148,8 +136,6 @@ class dynamicControls extends React.Component {
 			};
 
 		});
-
-
 
 		this.setState({ values: newControls })
 
@@ -175,10 +161,6 @@ class dynamicControls extends React.Component {
 		else {
 			this.setState(prevState => ({ values: [...prevState.values, schema] }))
 		}
-
-
-
-
 
 
 		this.setState({ isModalOpen: false })
@@ -264,20 +246,6 @@ class dynamicControls extends React.Component {
 	handleSubmit(e) {
 		e.preventDefault();
 		this.props.sendData(this.state.values, this.state.key, this.state.collection, this.state.title, this.state.subtitle);
-
-		// if (this.state.mode == 'Edit') {
-
-
-		//       // const combinedArrays = [...this.state.layout, ...this.state.values];
-
-		//   this.props.sendData(this.state.values,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
-		//   this.setState({ values: [] });
-
-		// } else {
-		// 	console.log(this.state.values);	
-		// 	const combinedArrays = [...this.state.values];
-		// 	this.props.sendData(combinedArrays,this.state.key,this.state.collection,this.state.title,this.state.subtitle);
-		// }
 	}
 
 
@@ -365,7 +333,7 @@ class dynamicControls extends React.Component {
 			case 'zip':
 				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
 			default:
-				return <span className="pl-1">No Controls</span>;
+				return <span className="pl-2">Select element type</span>;
 		}
 
 		//this.setState({ isModalOpen: false })
@@ -384,20 +352,17 @@ class dynamicControls extends React.Component {
 				<div key={i}>
 					<Row>
 						<Col s={3}>
-							<h5 className="truncate">{el.type}</h5>
+							<h6 className="truncate labelText mb-1" >{el.name}</h6>
 						</Col>
-						<Col s={3}>
-							<h6 className="truncate">{el.name}</h6>
-						</Col>
-						<Col s={3}>
-							<h6 className="truncate">{el.label}</h6>
+						<Col s={6}>
+							<h6 className="truncate" style={{ textTransform: 'capitalize'}}><b>{el.type} configuration</b></h6>
 						</Col>
 						{viewOnly == false ? (
 							<Col s={3} >
-								<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+								<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
 									<i className="material-icons" title='Delete'>delete</i>
 								</Button>
-								<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="EDIT" onClick={(e) => this.handleOpenModal(e, i)}>
+								<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="EDIT" onClick={(e) => this.handleOpenModal(e, i)}>
 									<i className="material-icons" title='Update'>edit</i>
 								</Button>
 							</Col>
@@ -417,31 +382,7 @@ class dynamicControls extends React.Component {
 		const { key, collection, title, subtitle, values } = this.state;
 		var viewOnly = '';
 		viewOnly = this.state.applicationMode == 'EDIT' || this.state.applicationMode == 'CREATE' ? false : true;
-		// const existingControls =  values.map((el, i) => 
-		//           <li className="collection-item">
-		// 		<div key={i}>
-		// 			<Row>
-		// 			    <Col s={3}>
-		// 						<h5>{el.type}</h5>
-		// 				</Col>
-		// 				<Col s={3}>
-		// 					<h6>{el.name}</h6>
-		// 				</Col>
-		// 				<Col s={3}>
-		// 					<h6>{el.label}</h6>
-		// 				</Col>
-		// 				<Col s={3} >
-		// 				<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.removeControlsClick.bind(this, i)}>
-		// 						<i className="material-icons" title='Delete'>delete</i>
-		// 				</Button> 
-		// 				<Button type='button' className='orgIcon col s12 m2 l2 xl2 mt-8' name="deleteOrg" onClick={this.handleAttrOpenModal.bind(this,el, i)}>
-		// 						<i className="material-icons" title='Update'>edit</i>
-		// 				</Button>
-		// 				</Col>
-		// 			</Row>
-		// 		</div>
-		//           </li>
-		// )
+		
 
 		return (
 
@@ -497,14 +438,15 @@ class dynamicControls extends React.Component {
 
 
 
-				<Modal className="modal modal-fixed-footer dynamicModal" header={this.state.mode == "ADD" ? "Add control " : "Update Control"} open={this.state.isModalOpen} modalOptions={{ dismissible: false }} close={this.handleCloseModal} >
+				<Modal className="modal modal-fixed-footer dynamicModal" header={this.state.mode == "ADD" ? "Add an element " : "Update an element"} open={this.state.isModalOpen} modalOptions={{ dismissible: false }} close={this.handleCloseModal} >
 					<button className="modal_close" onClick={this.handleCloseModal}><i class="material-icons " >close</i> </button>
 					<Row>
 						<form onSubmit={this.handleControlSubmit} >
 							{this.state.mode == "ADD" &&
 								<div className="modal-content">
-									<select className="pl-0" defaultValue="" name='type' id='type' onChange={this.handleTypeChange} value={this.state.type} required s={4}>
-										<option value="" >Choose your option</option>
+									<label className="innerDynamicLabel">Element type</label>
+									<select className="pl-1" defaultValue="" name='type' id='type' onChange={this.handleTypeChange} value={this.state.type} required s={4}>
+										<option value="" >Choose your element</option>
 										{elementType.map(itemval => {
 											return <option value={itemval.value}>{itemval.label}</option>
 										})}
