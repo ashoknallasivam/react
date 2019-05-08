@@ -104,6 +104,19 @@ class PagesTab extends Component {
 		});
 	}
 
+	DeletePage = ()=>{
+		// console.log(this.state.pageJson)
+		// console.log(this.state.pageId)
+		// console.log(this.state.statusFlag)
+		let newJson = { '_id': this.state.pageId, 'statusFlag': this.state.statusFlag == "modified" ? "delete" : "ignore", 'location': this.state.selectedLocation.id, ...this.state.pageJson };
+		// console.log(newJson)	
+		this.props.actions.SavePages(this.state.tenantId, newJson);
+			this.props.SavePages(newJson)
+			this.setState({
+				newJson:{}
+			})
+	}
+
 	// Function to get data from child component
 	getData(dynamicJSON,key,collection,title,subtitle) {
 
@@ -186,9 +199,6 @@ class PagesTab extends Component {
 			pageJson: this.state.pageJson,
 			
     	});
-				
-		
-
 	}
 
 
@@ -202,7 +212,7 @@ class PagesTab extends Component {
 			let newJson = { '_id': this.state.pageId, 'statusFlag': this.state.statusFlag, 'location': this.state.selectedLocation.id, ...this.state.pageJson };
 			this.props.actions.SavePages(this.state.tenantId, newJson);
 			this.props.SavePages(newJson)
-			//console.log(newJson);		
+			console.log(newJson);		
 		}
 
 	}
@@ -288,6 +298,7 @@ class PagesTab extends Component {
 							<select defaultValue='' s={12} id='page_id' type='select' onChange={this.handleChange} >
 											  <option value='' >Select Page</option>
 											  {rowData.map(itemval => {
+												  console.log(itemval)
 												  var selected='';
 												  if(itemval.index === this.state.selectedPage )
 												  {
@@ -322,6 +333,12 @@ class PagesTab extends Component {
 												<i className="material-icons" title='Add Page'>
 													add_circle</i><span>Add Pages</span>
 											</Button>
+											{/* <Button className='btn btn btn_primary otherButtonAddDetUpt iconButton mt-8' name="addOrg" onClick={this.DeletePage}>
+											<i className="material-icons" title='Delete Pages'>
+                                            delete
+                                        </i>
+										<span>Delete Pages</span>
+											</Button> */}
 										</Col>
 									) : ('')
 									}

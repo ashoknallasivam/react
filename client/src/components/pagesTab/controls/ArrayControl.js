@@ -1,6 +1,35 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 import { flatten  } from 'flat';
+import ActionControl from '../controls/ActionControl';
+import AddressControl from '../controls/AddressControl';
+import ArrayControlMain from '../controls/ArrayControl';
+import ButtonControl from '../controls/ButtonControl';
+import CheckboxControl from '../controls/CheckboxControl';
+import CheckgroupControl from '../controls/CheckgroupControl';
+import DateControl from '../controls/DateControl';
+import EmailControl from '../controls/EmailControl';
+import FieldsetControl from '../controls/FieldsetControl';
+import HeadingControl from '../controls/HeadingControl';
+import LayoutControl from '../controls/LayoutControl';
+import NumberControl from '../controls/NumberControl';
+import PanelControl from '../controls/PanelControl';
+import PasswordControl from '../controls/PasswordControl';
+import PhoneControl from '../controls/PhoneControl';
+import RadioControl from '../controls/RadioControl';
+import SelectControl from '../controls/SelectControl';
+import SliderControl from '../controls/SliderControl';
+import SsnControl from '../controls/SsnControl';
+import StatesControl from '../controls/StatesControl';
+import StaticControl from '../controls/StaticControl';
+import StaticpanelControl from '../controls/StaticpanelControl';
+import TextControl from '../controls/TextControl';
+import TextareaControl from '../controls/TextareaControl';
+import TextmaskControl from '../controls/TextmaskControl';
+import TimeControl from '../controls/TimeControl';
+import SlidertoogleControl from '../controls/SlidertoogleControl';
+import ZipControl from '../controls/ZipControl';
+import elementType from '../controls/json/element-type.json';
 
 class ArrayControl extends Component {
 
@@ -13,16 +42,20 @@ class ArrayControl extends Component {
 			name: '',
 			label: '',
 			name: "",
-			items: [{ label: "" }]
+			fields: [],
+			isModalOpen: false,
 		};
 
 
 		this.handleChange = this.handleChange.bind(this);
-		this.handleCheckChange = this.handleCheckChange.bind(this);
-		
+		this.handleRequiredChange = this.handleRequiredChange.bind(this);
+		this.handleDefaultEmptyChange = this.handleDefaultEmptyChange.bind(this);
+		this.handleTypeChange = this.handleTypeChange.bind(this);
+		this.handleCloseModal = this.handleCloseModal.bind(this);
+		this.handleOpenModal = this.handleOpenModal.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-
-
+        this.addClick = this.addClick.bind(this);
+        this.removeClick = this.removeClick.bind(this);
 	}
 	
 	componentDidMount() {
@@ -38,32 +71,14 @@ class ArrayControl extends Component {
 					name 				: 	this.props.data.name  ,
 					label 				: 	this.props.data.label,
 					hint				:	this.props.data.options ? this.props.data.options.hint : '',
-					defaultValue	    :	this.props.data.options ? this.props.data.options.defaultValue:'',
-					items				:	this.props.data.options.items ? this.props.data.options.items :'',
+					addText	    		:	this.props.data.options ? this.props.data.options.addText:'',
+					removeText	    	:	this.props.data.options ? this.props.data.options.removeText:'',
+					fields				:	this.props.data.options.fields ? this.props.data.options.fields :'',
 					property			:	this.props.data.options.showIf ? this.props.data.options.showIf.property :'',
 					value				:	this.props.data.options.showIf ? this.props.data.options.showIf.value :''
 					
 			})	
-			
-			
-					if (this.props.data.options.vertical === true) {
-			this.setState({
-				vertical : 'true',
-			})	
-		} else {
-			this.setState({
-				vertical : 'false',
-			})
-		}
-		if (this.props.data.options.disabled === true) {
-			this.setState({
-				disabled : 'true',
-			})	
-		} else {
-			this.setState({
-				disabled : 'false',
-			})
-		}
+
 		if (this.props.data.options.validation.required === true) {
 			this.setState({
 				required : true,
@@ -73,6 +88,16 @@ class ArrayControl extends Component {
 				required : false,
 			})
 		}
+		
+		if (this.props.data.options.defaultEmpty === true) {
+			this.setState({
+				defaultEmpty : true,
+			})	
+		} else {
+			this.setState({
+				defaultEmpty : false,
+			})
+		}
 			
 		}
 
@@ -80,10 +105,11 @@ class ArrayControl extends Component {
     }
    
     componentWillReceiveProps(nextProps) {
-			// alert('will')
+		
 	   this.setState({
 			mode:nextProps.mode,
 			type:nextProps.type,
+			innertype:nextProps.innertype,
 			data:nextProps.data,
 		});
 		
@@ -101,21 +127,164 @@ class ArrayControl extends Component {
 		
     }
 	
-	handleCheckChange(e) {
+	handleOpenModal = (e, i) => {
+		let data = [];
+		if (e.currentTarget.name == "ADD") {
+			this.setState({ data, isModalOpen: true, mode: "ADD" })
+		} else if (e.currentTarget.name == "EDIT") {
+			data = this.state.fields[i];
+			console.log("Data",data);
+			this.setState({ mode: "EDIT", idx: i, data, innertype: data.type, isModalOpen: true, })
+		}
 
-		
+		// this.setState({ isModalOpen: true,
+		//  })
+	};
 
-	   this.setState({required: !this.state.required}); //look at the !NOT sign
-		this.setState({required: !this.state.required}, () => {
+
+	handleCloseModal = () => {
+
+		this.setState({
+			idx: '',
+			type: '',
+			data: {},
+			isModalOpen: false
+		})
+	};
+	
+	handleTypeChange(e) {
+        //alert('handletype');
+		const { name, value } = e.target;
+		this.setState({ [name]: value }, () => {
+			return this.addControl(); // Call back function as SetState is Asynch
+		})
+
+	}
+	
+	handleRequiredChange(e) {
+
+	   this.setState({required: !this.state.required}, () => {
 		this.viewRadio(); // Call back function as SetState is Asynch
-	  }) 
+	  })
+       
+    }
+	
+	handleDefaultEmptyChange(e) {
+
+	   this.setState({defaultEmpty:!this.state.defaultEmpty}, () => {
+		this.viewRadio(); // Call back function as SetState is Asynch
+	  })
+       
     }
 	
 	viewRadio = () => {
-	  
-	  
-	  console.log("Required",this.state.required)
+	  //console.log("Required",this.state.required)
+	  //console.log("defaultEmpty",this.state.defaultEmpty)
    }	
+	
+
+	addClick(schema, index) {
+		let valueIndex;
+		this.state.fields.map((data, idx) => {
+			if (idx == index) {
+				valueIndex = idx
+			}
+		});
+
+		if (valueIndex > -1) {
+			let fields = this.state.fields;
+			fields[valueIndex] = schema;
+			this.setState({
+				fields
+			})
+		}
+		else {
+			this.setState(prevState => ({ fields: [...prevState.fields, schema] }))
+		}
+
+        this.setState({ isModalOpen: false }, () => {
+			this.handleSave(); // Call back function as SetState is Asynch
+		})
+		
+
+	}
+	
+	removeClick(i) {
+		let fields = [...this.state.fields];
+		fields.splice(i, 1);
+		this.setState({ fields });
+	}
+	
+	
+	addControl(data, idx) {
+		//alert('innertype');
+
+		const { innertype } = this.state;
+
+		switch (innertype) {
+
+			case 'action-toolbar':
+				return (<ActionControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'address':
+				return (<AddressControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'array':
+				return (<ArrayControlMain index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'button':
+				return (<ButtonControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'checkbox':
+				return (<CheckboxControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'checkbox-group':
+				return (<CheckgroupControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'date':
+				return (<DateControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'email':
+				return (<EmailControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'fieldset':
+				return (<FieldsetControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'heading':
+				return (<HeadingControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'layout-editor':
+				return (<LayoutControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'number':
+				return (<NumberControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'panel':
+				return (<PanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'password':
+				return (<PasswordControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'phone':
+				return (<PhoneControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'radio':
+				return (<RadioControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'select':
+				return (<SelectControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'slider':
+				return (<SliderControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'slide-toggle':
+				return (<SlidertoogleControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'ssn':
+				return (<SsnControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'states':
+				return (<StatesControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'static':
+				return (<StaticControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'static-panel':
+				return (<StaticpanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'text':
+				return (<TextControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'textarea':
+				return (<TextareaControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'text-mask':
+				return (<TextmaskControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'time':
+				return (<TimeControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			case 'zip':
+				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+			default:
+				return <span className="pl-2">Select element type</span>;
+		}
+
+		//this.setState({ isModalOpen: false })
+	}
 	
 	createSchema(){
 		
@@ -124,7 +293,8 @@ class ArrayControl extends Component {
 	handleSubmit() {
 
 		const { onChange } = this.props;
-
+        var type = "array";
+		
 		if (this.state.name !== undefined) {
 			var name = this.state.name
 		}
@@ -134,23 +304,19 @@ class ArrayControl extends Component {
 		if (this.state.hint != undefined) {
 			var hint = this.state.hint;
 		}
-		if (this.state.defaultValue != undefined) {
-			var defaultValue = this.state.defaultValue;
+		if (this.state.addText != undefined) {
+			var addText = this.state.addText;
 		}
-		if (this.state.vertical !== undefined) {
-			if (this.state.vertical == 'true') {
-				var vertical = true;
+		if (this.state.removeText != undefined) {
+			var removeText = this.state.removeText;
+		}
+		if (this.state.defaultEmpty !== undefined) {
+			if (this.state.defaultEmpty === true) {
+				var defaultEmpty = true;
 			} else {
-				var vertical = false;
+				var defaultEmpty = false;
 			}
-		}
-		if (this.state.disabled !== undefined) {
-			if (this.state.disabled == 'true') {
-				var disabled = true;
-			} else {
-				var disabled = false;
-			}
-		}
+		}	
 		
 		if (this.state.required !== undefined) {
 			if (this.state.required === true) {
@@ -159,42 +325,25 @@ class ArrayControl extends Component {
 				var required = false;
 			}
 		}				
-		if(this.state.items !== undefined)
+		if(this.state.fields !== undefined)
 		{
-			//var items = [{ label: this.state.label_0 },{ label: this.state.label_1 }]
-			var items = this.state.items;
+			var fields = this.state.fields;
 			
-		}
-		if (this.state.minLength !== undefined) {
-			var minLength = this.state.minLength;
-		}
-		if (this.state.maxLength !== undefined) {
-			var maxLength = this.state.maxLength;
-		}
-		if (this.state.property !== undefined) {
-			var property = this.state.property;
-		}
-		if (this.state.value !== undefined) {
-			var value = this.state.value;
-		}
-		if (this.state.property !== undefined || this.state.value !== undefined) {
-			var showIf = { property, value }
 		}
 		
 		var initialState =  {  
-			type:this.state.type,
+			type,
 			name, 
 			label, 
 			options: { 
 				hint, 
-				defaultValue, 
-				showIf,
-				vertical,
-				disabled,
+				addText,
+				removeText,
+				defaultEmpty,
 				validation: {
 					required,
 				 },
-				items	
+				fields	
 				},
                 			
 		};
@@ -205,86 +354,48 @@ class ArrayControl extends Component {
 		this.props.close();
 	}
 	
-  handleItemLabelChange = idx => evt => {
-	  
-	const { name, value } = evt.target;
-	
-	this.setState({ [name]: value }, () => {
-		this.itemSchema(idx); // Call back function as SetState is Asynch
-	})  
-   
-  };
+
   
-  itemSchema = (idx) => {
-	  
-	  var flattenData = ''
-	  var item = this.state.items[idx];
-	  flattenData = flatten(item); 
-	  
-	  var itemvalue  =  this.state[`itemvalue${idx}`] !== undefined ? this.state[`itemvalue${idx}`] : flattenData['value'];
-	  var itemlabel  =  this.state[`itemlabel${idx}`] !== undefined ? this.state[`itemlabel${idx}`] : flattenData['label'];
-	  var element_type  =  this.state[`element_type${idx}`] !== undefined ? this.state[`element_type${idx}`] : flattenData['options.specify.type'];
-	  var othername  =  this.state[`othername${idx}`] !== undefined ? this.state[`othername${idx}`] : flattenData['options.specify.name'];
-	  var otherlabel  =  this.state[`otherlabel${idx}`] !== undefined ? this.state[`otherlabel${idx}`] : flattenData['options.specify.label'];
-	  var otherhint  =  this.state[`otherhint${idx}`] !== undefined ? this.state[`otherhint${idx}`] : flattenData['options.specify.options.hint'];
-	  var otherproperty  =  this.state[`otherproperty${idx}`] !== undefined ? this.state[`otherproperty${idx}`] : flattenData['options.specify.options.validation.requiredIf.property'];
-	  var othervalue  =  this.state[`othervalue${idx}`] !== undefined ? this.state[`othervalue${idx}`] : flattenData['options.specify.options.validation.requiredIf.value'];
-	  var otherminLength  =  this.state[`otherminLength${idx}`] !== undefined ? this.state[`otherminLength${idx}`] : flattenData['options.specify.options.validation.minLength'];
-	  var othermaxLength  =  this.state[`othermaxLength${idx}`] !== undefined ? this.state[`othermaxLength${idx}`] : flattenData['options.specify.options.validation.maxLength'];
 
-	  var initialItemSchema =  {  
-			value:itemvalue,
-			label:itemlabel, 
-			options: { 
-				specify: {
-						type:element_type,
-						name:othername,
-						label:otherlabel,
-						options: {
-							hint:otherhint,
-							validation : {
-								requiredIf : {
-									property:otherproperty,
-									value:othervalue,
-								},
-								minLength:otherminLength,
-								maxLength:othermaxLength,
-							} 
-						}
-					} 
-				} 
-    	};
-	  
- 
-	  const newItems = this.state.items.map((item, sidx) => {
-      if (idx !== sidx) return item;
-      return { ...item, ...initialItemSchema };
-    });
-
-    
-	this.setState({ items: newItems }, () => {
-		this.handleSave(); // Call back function as SetState is Asynch
-	})
-  }	
   
   handleSave = () => {
 	  
 	  
-	  console.log("Items",this.state.items)
+	  //console.log("Fields",this.state.fields)
   }	
   
-  handleAddItem = () => {
+  createUI() {
+		var renderfields = '';
+		const { fields } = this.state;
+		
+		renderfields = fields.map((el, i) => {
+			return <li className="collection-item">
+				<div key={i}>
+					<Row>
+						<Col s={3}>
+							<h6 className="truncate labelText mb-1" >{el.name}</h6>
+						</Col>
+						<Col s={6}>
+							<h6 className="truncate" style={{ textTransform: 'capitalize'}}><b>{el.type} configuration</b></h6>
+						</Col>
+						
+						<Col s={3} >
+							<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
+								<i className="material-icons" title='Delete'>delete</i>
+							</Button>
+							<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="EDIT" onClick={(e) => this.handleOpenModal(e, i)}>
+								<i className="material-icons" title='Update'>edit</i>
+							</Button>
+						</Col>
+						
+					</Row>
+				</div>
+			</li>;
+		});
 
-    this.setState({
-      items: this.state.items.concat([{ label: "" }])
-    });
-  };
+		return <div>{renderfields}</div>
 
-  handleRemoveItem = idx => () => {
-    this.setState({
-      items: this.state.items.filter((s, sidx) => idx !== sidx)
-    });
-  };
+	}
   
   render() {
 	  var flattenData = '';
@@ -376,205 +487,32 @@ class ArrayControl extends Component {
 										className= "labelText mb-1"
 									/><div className="helper-text" >Provide meaningful button text</div>
 								</div>
-									<div>
-										<div>
-										    <input s={12} type="checkbox" className='filled-in' id="defaultEmpty" name="defaultEmpty" checked={this.state.defaultEmpty} onChange={this.handleCheckChange} />
-											<label htmlFor="defaultEmpty">Default to empty array?</label>
-										</div>
-									</div>								
-								
+								<div>
+									<input s={12} type="checkbox" className='filled-in' id="defaultEmpty" name="defaultEmpty" checked={this.state.defaultEmpty} onChange={this.handleDefaultEmptyChange} />
+									<label htmlFor="defaultEmpty">Default to empty array?</label>
+								</div>								
+								<div>	
 								 <fieldset>
 									<legend><b>Validation</b></legend>
-									<div>
 										<div>
-										    <input s={12} type="checkbox" className='filled-in' id="required" name="required" checked={this.state.required} onChange={this.handleCheckChange} />
+										    <input s={12} type="checkbox" className='filled-in' id="required" name="required" checked={this.state.required} onChange={this.handleRequiredChange} />
 											<label htmlFor="required">Required?</label>
 										</div>
-									</div>
 								 </fieldset>
-								<div>
-									<h6>Items</h6>
-								</div>
-								
-								{this.state.items.map((item, idx) => {
-								 
-                                 flattenData = flatten(item);  
-									//console.log("Flatten",flattenData);
-																
-								 return <fieldset>
-									<div className="collection-item">
-										<div className="valign-wrapper">
-											
-											<button type='button' className='col s12 m4 l4 xl4 mt-1' name="deleteItem" onClick={this.handleRemoveItem(idx)}
-												style={{ backgroundColor: 'unset', border: 'unset', color: '#004e92' }}
-											>
-												<i className="material-icons" title='Delete'>delete</i>
-											</button>
-											
-										</div>
-										<div className="valign-wrapper">
-										 <Col s={12} m={6} l={4} xl={12} >
-										    <Input
-												s={8}
-												label={`Value #${idx + 1}`}
-												id={`itemvalue${idx}`}
-												name={`itemvalue${idx}`}
-												type="text"
-												value={flattenData['value']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText"
-											/>
-											
-										 </Col>
-										</div>
-										<div className="helper-text" >The value stored (e.g. 'NJ')</div>
-										<div className="valign-wrapper">
-										  <Col s={12} m={6} l={4} xl={12} >
-											 <Input
-												s={8}
-												label={`Label #${idx + 1}`}
-												id={`itemlabel${idx}`}
-												name={`itemlabel${idx}`}
-												type="text"
-												value={flattenData['label']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText mb-1"
-											/>
-										  </Col>
-										</div>
-										<div className="helper-text" >What the user sees (e.g. 'New Jersey')</div>
-										<Collapsible accordion={false}>
-					                     <CollapsibleItem header='Options' icon="keyboard_arrow_down">
-										
-										<div className="valign-wrapper">
-										<div className="helper-text" ><h6>Others Specify</h6></div>
-										</div>
-									
-										<div className="valign-wrapper">
-										  <Col s={8} m={6} l={4} xl={8} >
-											 <select value={flattenData['options.specify.type']} s={8} m={6} l={4} xl={8}  id={`element_type${idx}`} name={`element_type${idx}`} type='select' onChange={this.handleItemLabelChange(idx)} >
-											  <option value='' >Element Type</option>
-											  <option value='text' >Text</option>
-											 </select>
-										  </Col>
-										 
-										</div>
-                                        <div className="valign-wrapper">
-										  <Col s={12} m={6} l={4} xl={12} >
-											 <Input
-												s={8}
-												label='Name'
-												id={`othername${idx}`}
-												name={`othername${idx}`}
-												type="text"
-												value={flattenData['options.specify.name']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText mb-1"
-											/>
-										  </Col>
-										</div>
-										 <div className="valign-wrapper">
-										  <Col s={12} m={6} l={4} xl={12} >
-											 <Input
-												s={8}
-												label='Label'
-												id={`otherlabel${idx}`}
-												name={`otherlabel${idx}`}
-												type="text"
-												value={flattenData['options.specify.label']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText mb-1"
-											/>
-										  </Col>
-										</div>
-										<div className="valign-wrapper">
-										<div className="helper-text" ><h6><b>Options</b></h6></div>
-										</div>
-										<div className="valign-wrapper">
-										  <Col s={12} m={6} l={4} xl={12} >
-											 <Input
-												s={8}
-												label='Hint'
-												id={`otherhint${idx}`}
-												name={`otherhint${idx}`}
-												type="text"
-												value={flattenData['options.specify.options.hint']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText mb-1"
-											/>
-										  </Col>
-										</div>
-										
-										
-										<fieldset>
-										<legend><b>Validation</b></legend>
-											
-											<fieldset>
-												<legend><b>Required If?</b></legend>
-												<div>
-													<Input
-														s={12}
-														label="Property name"
-														id={`otherproperty${idx}`}
-														name={`otherproperty${idx}`}
-														type="text"
-														value={flattenData['options.specify.options.validation.requiredIf.property']}
-														onChange={this.handleItemLabelChange(idx)}
-														className="labelText mb-1"
-													/><div className="helper-text" >Property name of field dependency.</div>
-												</div>
-												<div>
-													<Input
-														s={12}
-														label="Property value"
-														id={`othervalue${idx}`}
-														name={`othervalue${idx}`}
-														type="text"
-														value={flattenData['options.specify.options.validation.requiredIf.value']}
-														onChange={this.handleItemLabelChange(idx)}
-														className="labelText mb-1"
-													/><div className="helper-text" >Value of dependent field.</div>
-												</div>
-											</fieldset>
-											<div>
-											<Input
-												s={12}
-												label="Minimum length"
-												id={`otherminLength${idx}`}
-												name={`otherminLength${idx}`}
-												type="number"
-												value={flattenData['options.specify.options.validation.minLength']}
-												onChange={this.handleItemLabelChange(idx)}
-												className="labelText mb-1"
-												/><div className="helper-text" >The minimum characters that must be entered</div>
-											</div>
-											<div>
-												<Input
-													s={12}
-													label="Maximum length"
-													id={`othermaxLength${idx}`}
-													name={`othermaxLength${idx}`}
-													type="number"
-													value={flattenData['options.specify.options.validation.maxLength']}
-													onChange={this.handleItemLabelChange(idx)}
-													className="labelText mb-1"
-												/><div className="helper-text" >The maximum characters that must be entered</div>
-											</div>
-										</fieldset>
-										</CollapsibleItem>
-										</Collapsible>
-										
-									</div>
-									
-									</fieldset>
-								})}
-								<div>
-									<Col s={12} m={6} l={4} xl={12} >
-										<Button type="button" className='orgIcon col s12 m2 l2 xl2 right' name="addOrg" onClick={this.handleAddItem}>
-											<i className="material-icons" title='Add Items'>add_circle</i>
+								 <Col s={12} m={6} l={4} xl={12} >
+										<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton right' name="ADD" onClick={this.handleOpenModal}>
+											<i className="material-icons" title='Add Items'>add_circle</i><span>Add Controls</span>
 										</Button>
-									</Col>
-								</div>	
+								  </Col>
+								  
+								  
+									
+								  
+								</div>
+								<Row>
+								  <div><ul className="collection">  {this.createUI()}</ul></div>
+							    </Row>
+								
 							 
 						</div>
 
@@ -586,8 +524,41 @@ class ArrayControl extends Component {
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
 
 				</div>
+				
+				
+				<Modal className="modal modal-fixed-footer dynamicModal" header={this.state.mode == "ADD" ? "Add an element " : "Update an element"} open={this.state.isModalOpen} modalOptions={{ dismissible: false }} close={this.handleCloseModal} >
+					<button className="modal_close" onClick={this.handleCloseModal}><i class="material-icons " >close</i> </button>
+					<Row>
+						<form onSubmit={this.handleControlSubmit} >
+							{this.state.mode == "ADD" &&
+								<div className="modal-content">
+									<label className="innerDynamicLabel">Element type</label>
+									<select className="pl-1" defaultValue="" name='innertype' id='innertype' onChange={this.handleTypeChange} value={this.state.innertype} required s={4}>
+										<option value="" >Choose your element</option>
+										{elementType.map(itemval => {
+											return <option value={itemval.value}>{itemval.label}</option>
+										})}
+									</select>
+
+									{this.addControl(this.state.data)}
+
+								</div>}
+							{this.state.mode == "EDIT" &&
+								<div className="row">
+									<div className="modal-content dataControl pt-1">
+										{this.addControl(this.state.data, this.state.idx)}
+									</div>
+								</div>
+							}
+
+						</form>
+					</Row>
+				</Modal>
 
 			</Fragment>
+			
+			
+			
 
 		);
 

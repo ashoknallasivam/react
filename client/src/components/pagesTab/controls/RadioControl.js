@@ -105,7 +105,7 @@ class RadioControl extends Component {
 
 		
 
-	   this.setState({required: !this.state.required}); //look at the !NOT sign
+	  // this.setState({required: !this.state.required}); //look at the !NOT sign
 		this.setState({required: !this.state.required}, () => {
 		this.viewRadio(); // Call back function as SetState is Asynch
 	  }) 
@@ -441,7 +441,7 @@ class RadioControl extends Component {
 										 <Col s={12} m={6} l={4} xl={12} >
 										    <Input
 												s={8}
-												label={`Value #${idx + 1}`}
+												label='Value'
 												id={`itemvalue${idx}`}
 												name={`itemvalue${idx}`}
 												type="text"
@@ -457,7 +457,7 @@ class RadioControl extends Component {
 										  <Col s={12} m={6} l={4} xl={12} >
 											 <Input
 												s={8}
-												label={`Label #${idx + 1}`}
+												label='Label'
 												id={`itemlabel${idx}`}
 												name={`itemlabel${idx}`}
 												type="text"

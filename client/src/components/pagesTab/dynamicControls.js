@@ -208,7 +208,7 @@ class dynamicControls extends React.Component {
 			this.setState({ isModalOpen: true, mode: "ADD" })
 		} else if (e.currentTarget.name == "EDIT") {
 			data = this.state.values[i];
-			console.log(data);
+			console.log("Data",data);
 			this.setState({ mode: "EDIT", idx: i, data, type: data.type, isModalOpen: true, })
 		}
 

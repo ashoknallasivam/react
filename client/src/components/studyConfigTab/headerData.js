@@ -2,7 +2,7 @@ export const HeaderData = {
     "Headerdata_View": {
         "columnDefs": [
             {
-                "headerName": "Assignment",
+                "headerName": "Assignment Code",
                 "field": "assignment",
                 "width": 250
 
@@ -29,7 +29,7 @@ export const HeaderData = {
     "Headerdata": {
         "columnDefs": [
             {
-                "headerName": "Assignment",
+                "headerName": "Assignment Code",
                 "field": "assignment",
                 "width": 285
 

@@ -19,138 +19,135 @@ class TabsProject extends Component {
         }
     }
 
-    componentWillReceiveProps(){
-        console.log(this.props.selectedLocation.pages);
-        this.setState({studyConfigsEmpty: this.studyConfigsEmptyCheck(this.props.selectedLocation.raConfig)})
-        this.setState({enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(this.props.selectedLocation.enrollmentTargets)})
-        this.setState({rolesEmpty: this.rolesEmptyCheck(this.props.selectedLocation.roles)})
-        this.setState({pagesEmpty: this.pagesEmptyCheck(this.props.selectedLocation.pages)})
+    componentWillReceiveProps() {
+        this.setState({ studyConfigsEmpty: this.studyConfigsEmptyCheck(this.props.selectedLocation.raConfig) })
+        this.setState({ enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(this.props.selectedLocation.enrollmentTargets) })
+        this.setState({ rolesEmpty: this.rolesEmptyCheck(this.props.selectedLocation.roles) })
+        this.setState({ pagesEmpty: this.pagesEmptyCheck(this.props.selectedLocation.pages) })
     }
 
-    componentDidMount(){
-        console.log(this.props);
-
+    componentDidMount() {
     }
 
     studyConfigsEmptyCheck = (raConfig) => {
-        if(raConfig !== undefined){
+        if (raConfig !== undefined) {
             if (raConfig.length !== 0 && raConfig[0].statusFlag !== "ignore") {
                 return false
-            }else{
+            } else {
                 return true
-            }   
-        }else{
+            }
+        } else {
             return true;
         }
     }
 
     rolesEmptyCheck = (roles) => {
-        if(roles !== undefined){
-            if(roles.length > 0 ){
+        if (roles !== undefined) {
+            if (roles.length > 0) {
                 let checkStatus = [];
                 roles.map(item => {
                     if (item.statusFlag !== "ignore") {
                         checkStatus.push(false)
-                    }else{
+                    } else {
                         checkStatus.push(true)
                     }
                 })
-                if(checkStatus.includes(false)){
+                if (checkStatus.includes(false)) {
                     return false
-                }else{
+                } else {
                     return true
-                } 
-            }else{
+                }
+            } else {
                 return true
             }
-        }else{
+        } else {
             return true
         }
     }
 
     pagesEmptyCheck = (pages) => {
-        if(pages !== undefined){
-            if(pages.length > 0 ){
+        if (pages !== undefined) {
+            if (pages.length > 0) {
                 let checkStatus = [];
                 pages.map(item => {
                     if (item.statusFlag !== "ignore") {
                         checkStatus.push(false)
-                    }else{
+                    } else {
                         checkStatus.push(true)
                     }
                 })
-                if(checkStatus.includes(false)){
+                if (checkStatus.includes(false)) {
                     return false
-                }else{
+                } else {
                     return true
-                } 
-            }else{
+                }
+            } else {
                 return true
             }
-        }else{
+        } else {
             return true
         }
     }
 
     enrollmentTargetsEmptyCheck = (enrollmentTargets) => {
-        if(enrollmentTargets !== undefined){
+        if (enrollmentTargets !== undefined) {
             if (enrollmentTargets.length > 0) {
                 let checkStatus = []
                 enrollmentTargets.map(item => {
-                    if(item.statusFlag !== "ignore"){
+                    if (item.statusFlag !== "ignore") {
                         checkStatus.push(false)
-                    }else{
+                    } else {
                         checkStatus.push(true)
                     }
-                }) 
-                if(checkStatus.includes(false)){
+                })
+                if (checkStatus.includes(false)) {
                     return false
-                }else{
+                } else {
                     return true
-                } 
-            }else{
+                }
+            } else {
                 return true
             }
-        }else{
+        } else {
             return true
         }
     }
-    
-    render(){
-        return(
+
+    render() {
+        return (
             <Row className='m-0'>
                 <Tabs>
-                        <TabList className="tabs customTabs z-depth-1 tabs-fixed-width">
-                            {/* <Tab className="tab" >Functions</Tab> */}
-                            <Tab className="tab" >Study Config {this.props.applicationMode == "CREATE" && this.state.studyConfigsEmpty ? <span className="empty-red">*</span> : null}</Tab>
-                            <Tab className="tab" >Enrollment Target {this.props.applicationMode == "CREATE" && this.state.enrollmentTargetsEmpty ? <span className="empty-red">*</span> : null}</Tab>
-                            <Tab className="tab" >Pages {this.props.applicationMode == "CREATE" && this.state.pagesEmpty ? <span className="empty-red">*</span> : null}</Tab>
-                            <Tab className="tab" >Roles {this.props.applicationMode == "CREATE" && this.state.rolesEmpty ? <span className="empty-red">*</span> : null}</Tab>
-                        </TabList>
-                        {/* <TabPanel>
+                    <TabList className="tabs customTabs z-depth-1 tabs-fixed-width">
+                        {/* <Tab className="tab" >Functions</Tab> */}
+                        <Tab className="tab" >Random Assignment {this.props.applicationMode == "CREATE" && this.state.studyConfigsEmpty ? <span style={{fontSize:"12px"}}>(Empty)</span> : null}</Tab>
+                        <Tab className="tab" >Enrollment Target {this.props.applicationMode == "CREATE" && this.state.enrollmentTargetsEmpty ? <span style={{fontSize:"12px"}}>(Empty)</span> : null}</Tab>
+                        <Tab className="tab" >Pages {this.props.applicationMode == "CREATE" && this.state.pagesEmpty ? <span style={{fontSize:"12px"}}>(Empty)</span> : null}</Tab>
+                        <Tab className="tab" > * Roles {this.props.applicationMode == "CREATE" && this.state.rolesEmpty ? <span style={{fontSize:"12px"}}>(Empty)</span> : null}</Tab>
+                    </TabList>
+                    {/* <TabPanel>
                             <FunctionsTab/>
                         </TabPanel> */}
 
-                        <TabPanel>
-                            <StudyConfigTab 
+                    <TabPanel>
+                        <StudyConfigTab
                             selectedLocation={this.props.selectedLocation}
-                             StudyConfig={this.props.selectedLocation.raConfig} 
-                             applicationMode={this.props.applicationMode} 
-                             upadateNew= {this.props.upadateNew} 
-                             SaveStudyConfig= {this.props.SaveStudyConfig} /> 
-                        </TabPanel>
+                            StudyConfig={this.props.selectedLocation.raConfig}
+                            applicationMode={this.props.applicationMode}
+                            upadateNew={this.props.upadateNew}
+                            SaveStudyConfig={this.props.SaveStudyConfig} />
+                    </TabPanel>
 
-                        <TabPanel>
-                             <EnrollmentTab applicationMode={this.props.applicationMode} selectedOrganisation ={this.props.selectedOrganisation} selectedLocation = {this.props.selectedLocation} enrollmentTargets={this.props.selectedLocation.enrollmentTargets} SaveEnrollment ={ this.props.SaveEnrollment} /> 
-                        </TabPanel>
+                    <TabPanel>
+                        <EnrollmentTab applicationMode={this.props.applicationMode} selectedOrganisation={this.props.selectedOrganisation} selectedLocation={this.props.selectedLocation} enrollmentTargets={this.props.selectedLocation.enrollmentTargets} SaveEnrollment={this.props.SaveEnrollment} />
+                    </TabPanel>
 
-                        <TabPanel>
-                             <PagesTab bounds={this.props.selectedLocation.bounds} pages={this.props.selectedLocation.pages} tenantId={this.props.selectedLocation.tenantId} applicationMode={this.props.applicationMode} selectedLocation = {this.props.selectedLocation} SavePages={this.props.SavePages} />
-                        </TabPanel>
+                    <TabPanel>
+                        <PagesTab bounds={this.props.selectedLocation.bounds} pages={this.props.selectedLocation.pages} tenantId={this.props.selectedLocation.tenantId} applicationMode={this.props.applicationMode} selectedLocation={this.props.selectedLocation} SavePages={this.props.SavePages} />
+                    </TabPanel>
 
-                        <TabPanel>
-                            <RolesTab SaveFunctions={this.props.SaveFunctions} orgRoles={this.props.selectedOrganisation} roles = {this.props.selectedLocation.roles} applicationMode={this.props.applicationMode} selectedLocation = {this.props.selectedLocation}  SaveRoles={this.props.SaveRoles} />
-                        </TabPanel>
+                    <TabPanel>
+                        <RolesTab SaveFunctions={this.props.SaveFunctions} orgRoles={this.props.selectedOrganisation} roles={this.props.selectedLocation.roles} applicationMode={this.props.applicationMode} selectedLocation={this.props.selectedLocation} SaveRoles={this.props.SaveRoles} />
+                    </TabPanel>
                 </Tabs>
             </Row>
         )

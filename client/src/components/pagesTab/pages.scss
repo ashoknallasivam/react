@@ -7,6 +7,15 @@
   width: 35%;
   will-change: top, opacity;
 }
+.modalpageinner {
+  left: 0;
+  right: 0;
+  background-color: #fafafa;
+  padding: 0;
+  height: 45%;
+  width: 25%;
+  will-change: top, opacity;
+}
 .required-field::after {
     content: "*";
     color: red;

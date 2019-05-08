@@ -125,7 +125,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
     padding: 0;
     margin: 0;
     text-transform: none !important; 
-    overflow-x: hidden !important;
+    //overflow-x: hidden !important;
     font-size: 16px;
 }
 .btn_add {
@@ -204,7 +204,7 @@ WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BET
 }
 
 .page-footer {
-    background: linear-gradient(to right, #004e92, #000428) !important;
+    background: linear-gradient(to left, #004e92, #000428) !important;
     z-index: 11;
 }
 

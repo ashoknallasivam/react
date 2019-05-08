@@ -32,12 +32,20 @@
 		"label": "Email"
 	},
 	{
+		"value": "fieldset",
+		"label": "Fieldset"
+	},
+	{
 		"value": "heading",
 		"label": "Heading"
 	},
 	{
 		"value": "number",
 		"label": "Number"
+	},
+	{
+		"value": "panel",
+		"label": "Panel"
 	},
 	{
 		"value": "password",

@@ -27,7 +27,7 @@ export const localeConstants_en = {
         BLOCK_SIZE: "Block Size",
         GROUPS: "Groups",
         ADD_GROUPS: "Add Groups",
-        ASSIGNMENT: "Assignment",
+        ASSIGNMENT: "Assignment Code",
         RATIO: "Ratio",
         SEQUENCE_LIMIT: "Sequence Limit"
     },
