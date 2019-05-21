@@ -18,6 +18,7 @@ router.post('/bounds', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.

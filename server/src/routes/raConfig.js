@@ -17,6 +17,8 @@ router.post('/ra-config', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.body;
     //Check for the input parameters.
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -44,6 +46,8 @@ router.get('/ra-config/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     // calling rapter ra-config find one api.
     raConfigBiz.getRaConfig(requestOptions, req.params.id, req.query.tenantId).then(response => {
         if (response.status === 200) {
@@ -63,6 +67,8 @@ router.get('/ra-config', (req, res) => { //Not using as of now
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.query;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
         // calling rapter ra-config list api.
@@ -92,6 +98,8 @@ router.put('/ra-config/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.params;
     let query_string = req.query.tenantId;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -120,6 +128,8 @@ router.delete('/ra-config/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.params;
     let query_string = req.query.tenantId;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {

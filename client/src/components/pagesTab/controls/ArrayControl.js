@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
-import { flatten  } from 'flat';
+import { flatten } from 'flat';
 import ActionControl from '../controls/ActionControl';
 import AddressControl from '../controls/AddressControl';
 import ArrayControlMain from '../controls/ArrayControl';
@@ -35,9 +35,9 @@ class ArrayControl extends Component {
 
 	constructor(props) {
 		super(props);
-       // this.state = initialState; 
+		// this.state = initialState; 
 		this.state = {
-			
+
 			data: [],
 			name: '',
 			label: '',
@@ -46,7 +46,6 @@ class ArrayControl extends Component {
 			isModalOpen: false,
 		};
 
-
 		this.handleChange = this.handleChange.bind(this);
 		this.handleRequiredChange = this.handleRequiredChange.bind(this);
 		this.handleDefaultEmptyChange = this.handleDefaultEmptyChange.bind(this);
@@ -54,96 +53,79 @@ class ArrayControl extends Component {
 		this.handleCloseModal = this.handleCloseModal.bind(this);
 		this.handleOpenModal = this.handleOpenModal.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
-        this.addClick = this.addClick.bind(this);
-        this.removeClick = this.removeClick.bind(this);
+		this.addClick = this.addClick.bind(this);
+		this.removeClick = this.removeClick.bind(this);
 	}
-	
+
 	componentDidMount() {
-		 //alert('did')
 		this.setState({
 			mode: this.props.mode,
+			innerMode: this.props.mode,
 			type: this.props.type,
 			data: this.props.data,
-
 		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
-					name 				: 	this.props.data.name  ,
-					label 				: 	this.props.data.label,
-					hint				:	this.props.data.options ? this.props.data.options.hint : '',
-					addText	    		:	this.props.data.options ? this.props.data.options.addText:'',
-					removeText	    	:	this.props.data.options ? this.props.data.options.removeText:'',
-					fields				:	this.props.data.options.fields ? this.props.data.options.fields :'',
-					property			:	this.props.data.options.showIf ? this.props.data.options.showIf.property :'',
-					value				:	this.props.data.options.showIf ? this.props.data.options.showIf.value :''
-					
-			})	
+				name: this.props.data.name,
+				prevName: this.props.data.name,
+				label: this.props.data.label,
+				hint: this.props.data.options ? this.props.data.options.hint : '',
+				addText: this.props.data.options ? this.props.data.options.addText : '',
+				removeText: this.props.data.options ? this.props.data.options.removeText : '',
+				fields: this.props.data.options.fields ? this.props.data.options.fields : '',
+				property: this.props.data.options.showIf ? this.props.data.options.showIf.property : '',
+				value: this.props.data.options.showIf ? this.props.data.options.showIf.value : ''
 
-		if (this.props.data.options.validation.required === true) {
-			this.setState({
-				required : true,
-			})	
-		} else {
-			this.setState({
-				required : false,
 			})
-		}
-		
-		if (this.props.data.options.defaultEmpty === true) {
-			this.setState({
-				defaultEmpty : true,
-			})	
-		} else {
-			this.setState({
-				defaultEmpty : false,
-			})
-		}
-			
-		}
 
-		
-    }
-   
-    componentWillReceiveProps(nextProps) {
-		
-	   this.setState({
-			mode:nextProps.mode,
-			type:nextProps.type,
-			innertype:nextProps.innertype,
-			data:nextProps.data,
-		});
-		
+			if (this.props.data.options.validation.required === true) {
+				this.setState({
+					required: true,
+				})
+			} else {
+				this.setState({
+					required: false,
+				})
+			}
 
+			if (this.props.data.options.defaultEmpty === true) {
+				this.setState({
+					defaultEmpty: true,
+				})
+			} else {
+				this.setState({
+					defaultEmpty: false,
+				})
+			}
+		}
 	}
-
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			mode: nextProps.mode,
+			type: nextProps.type,
+			innertype: nextProps.innertype,
+			data: nextProps.data,
+		});
+	}
 	handleChange(e) {
-
 		const { name, value } = e.target;
 		this.setState({ [name]: value }, () => {
 			this.createSchema(); // Call back function as SetState is Asynch
 		})
-
-	
-		
-    }
-	
+	}
 	handleOpenModal = (e, i) => {
 		let data = [];
 		if (e.currentTarget.name == "ADD") {
-			this.setState({ data, isModalOpen: true, mode: "ADD" })
+			this.setState({ data,innertype: '', isModalOpen: true, mode: "ADD" })
 		} else if (e.currentTarget.name == "EDIT") {
 			data = this.state.fields[i];
-			console.log("Data",data);
+			console.log("Data", data);
 			this.setState({ mode: "EDIT", idx: i, data, innertype: data.type, isModalOpen: true, })
 		}
-
 		// this.setState({ isModalOpen: true,
 		//  })
 	};
-
-
 	handleCloseModal = () => {
-
 		this.setState({
 			idx: '',
 			type: '',
@@ -151,38 +133,27 @@ class ArrayControl extends Component {
 			isModalOpen: false
 		})
 	};
-	
 	handleTypeChange(e) {
-        //alert('handletype');
+		//alert('handletype');
 		const { name, value } = e.target;
 		this.setState({ [name]: value }, () => {
 			return this.addControl(); // Call back function as SetState is Asynch
 		})
-
 	}
-	
 	handleRequiredChange(e) {
-
-	   this.setState({required: !this.state.required}, () => {
-		this.viewRadio(); // Call back function as SetState is Asynch
-	  })
-       
-    }
-	
+		this.setState({ required: !this.state.required }, () => {
+			this.viewRadio(); // Call back function as SetState is Asynch
+		})
+	}
 	handleDefaultEmptyChange(e) {
-
-	   this.setState({defaultEmpty:!this.state.defaultEmpty}, () => {
-		this.viewRadio(); // Call back function as SetState is Asynch
-	  })
-       
-    }
-	
+		this.setState({ defaultEmpty: !this.state.defaultEmpty }, () => {
+			this.viewRadio(); // Call back function as SetState is Asynch
+		})
+	}
 	viewRadio = () => {
-	  //console.log("Required",this.state.required)
-	  //console.log("defaultEmpty",this.state.defaultEmpty)
-   }	
-	
-
+		//console.log("Required",this.state.required)
+		//console.log("defaultEmpty",this.state.defaultEmpty)
+	}
 	addClick(schema, index) {
 		let valueIndex;
 		this.state.fields.map((data, idx) => {
@@ -202,172 +173,169 @@ class ArrayControl extends Component {
 			this.setState(prevState => ({ fields: [...prevState.fields, schema] }))
 		}
 
-        this.setState({ isModalOpen: false }, () => {
+		this.setState({ isModalOpen: false }, () => {
 			this.handleSave(); // Call back function as SetState is Asynch
 		})
-		
-
 	}
-	
 	removeClick(i) {
 		let fields = [...this.state.fields];
 		fields.splice(i, 1);
 		this.setState({ fields });
 	}
-	
-	
 	addControl(data, idx) {
-		//alert('innertype');
-
 		const { innertype } = this.state;
 
 		switch (innertype) {
 
 			case 'action-toolbar':
-				return (<ActionControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ActionControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'address':
-				return (<AddressControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<AddressControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'array':
-				return (<ArrayControlMain index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ArrayControlMain index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'button':
-				return (<ButtonControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ButtonControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'checkbox':
-				return (<CheckboxControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<CheckboxControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'checkbox-group':
-				return (<CheckgroupControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<CheckgroupControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'date':
-				return (<DateControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<DateControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'email':
-				return (<EmailControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<EmailControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'fieldset':
-				return (<FieldsetControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<FieldsetControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'heading':
-				return (<HeadingControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<HeadingControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'layout-editor':
-				return (<LayoutControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<LayoutControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'number':
-				return (<NumberControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<NumberControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'panel':
-				return (<PanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'password':
-				return (<PasswordControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PasswordControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'phone':
-				return (<PhoneControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PhoneControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'radio':
-				return (<RadioControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<RadioControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'select':
-				return (<SelectControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SelectControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'slider':
-				return (<SliderControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SliderControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'slide-toggle':
-				return (<SlidertoogleControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SlidertoogleControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'ssn':
-				return (<SsnControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SsnControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'states':
-				return (<StatesControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StatesControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'static':
-				return (<StaticControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StaticControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'static-panel':
-				return (<StaticpanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StaticpanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'text':
-				return (<TextControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'textarea':
-				return (<TextareaControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextareaControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'text-mask':
-				return (<TextmaskControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextmaskControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'time':
-				return (<TimeControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TimeControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			case 'zip':
-				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.fields} />);
 			default:
 				return <span className="pl-2">Select element type</span>;
 		}
-
 		//this.setState({ isModalOpen: false })
 	}
-	
-	createSchema(){
-		
+	createSchema() {
 		//onChange(index,initialState);
 	}
 	handleSubmit() {
-
 		const { onChange } = this.props;
-        var type = "array";
-		
-		if (this.state.name !== undefined) {
-			var name = this.state.name
+		let nameExists = "";
+		if (this.state.innerMode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.label !== undefined) {
-			var label = this.state.label
-		}
-		if (this.state.hint != undefined) {
-			var hint = this.state.hint;
-		}
-		if (this.state.addText != undefined) {
-			var addText = this.state.addText;
-		}
-		if (this.state.removeText != undefined) {
-			var removeText = this.state.removeText;
-		}
-		if (this.state.defaultEmpty !== undefined) {
-			if (this.state.defaultEmpty === true) {
-				var defaultEmpty = true;
-			} else {
-				var defaultEmpty = false;
+		else if (this.state.innerMode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
-		}	
-		
-		if (this.state.required !== undefined) {
-			if (this.state.required === true) {
-				var required = true;
-			} else {
-				var required = false;
-			}
-		}				
-		if(this.state.fields !== undefined)
-		{
-			var fields = this.state.fields;
-			
 		}
-		
-		var initialState =  {  
-			type,
-			name, 
-			label, 
-			options: { 
-				hint, 
-				addText,
-				removeText,
-				defaultEmpty,
-				validation: {
-					required,
-				 },
-				fields	
+		if (nameExists != "yes") {
+			var type = "array";
+
+			if (this.state.name !== undefined) {
+				var name = this.state.name
+			}
+			if (this.state.label !== undefined) {
+				var label = this.state.label
+			}
+			if (this.state.hint != undefined) {
+				var hint = this.state.hint;
+			}
+			if (this.state.addText != undefined) {
+				var addText = this.state.addText;
+			}
+			if (this.state.removeText != undefined) {
+				var removeText = this.state.removeText;
+			}
+			if (this.state.defaultEmpty !== undefined) {
+				if (this.state.defaultEmpty === true) {
+					var defaultEmpty = true;
+				} else {
+					var defaultEmpty = false;
+				}
+			}
+
+			if (this.state.required !== undefined) {
+				if (this.state.required === true) {
+					var required = true;
+				} else {
+					var required = false;
+				}
+			}
+			if (this.state.fields !== undefined) {
+				var fields = this.state.fields;
+
+			}
+			var initialState = {
+				type,
+				name,
+				label,
+				options: {
+					hint,
+					addText,
+					removeText,
+					defaultEmpty,
+					validation: {
+						required,
+					},
+					fields
 				},
-                			
-		};
-		//console.log(initialState)
-		alert('Submitted');
-		onChange(initialState, this.props.index);
-
-		this.props.close();
+			};
+			alert('Submitted');
+			onChange(initialState, this.props.index);
+			this.props.close();
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
-	
-
-  
-
-  
-  handleSave = () => {
-	  
-	  
-	  //console.log("Fields",this.state.fields)
-  }	
-  
-  createUI() {
+	handleSave = () => {
+		//console.log("Fields",this.state.fields)
+	}
+	createUI() {
 		var renderfields = '';
 		const { fields } = this.state;
-		
+
 		renderfields = fields.map((el, i) => {
 			return <li className="collection-item">
 				<div key={i}>
@@ -376,9 +344,9 @@ class ArrayControl extends Component {
 							<h6 className="truncate labelText mb-1" >{el.name}</h6>
 						</Col>
 						<Col s={6}>
-							<h6 className="truncate" style={{ textTransform: 'capitalize'}}><b>{el.type} configuration</b></h6>
+							<h6 className="truncate" style={{ textTransform: 'capitalize' }}><b>{el.type} configuration</b></h6>
 						</Col>
-						
+
 						<Col s={3} >
 							<Button type='button' className='orgIcon col s12 m2 l2 xl2' name="deleteOrg" onClick={this.removeClick.bind(this, i)}>
 								<i className="material-icons" title='Delete'>delete</i>
@@ -387,24 +355,21 @@ class ArrayControl extends Component {
 								<i className="material-icons" title='Update'>edit</i>
 							</Button>
 						</Col>
-						
+
 					</Row>
 				</div>
 			</li>;
 		});
-
 		return <div>{renderfields}</div>
-
 	}
-  
-  render() {
-	  var flattenData = '';
-	  const { data } = this.state;
+
+	render() {
+		var flattenData = '';
+		const { data } = this.state;
 
 		return (
 			<Fragment>
 				<div>
-
 					<div>
 						<h5><b>Array Configuration</b></h5>
 					</div>
@@ -431,6 +396,7 @@ class ArrayControl extends Component {
 							required
 							onChange={this.handleChange}
 							className="labelText mb-1"
+							autoComplete='off'
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>
@@ -444,88 +410,80 @@ class ArrayControl extends Component {
 							required
 							onChange={this.handleChange}
 							className="labelText mb-1"
+							autoComplete='off'
 						/><div className="helper-text" >The text the user sees</div>
-
 					</div>
-
 					<div>
 						<div>
 							<h5>Options</h5>
-								<div>	
-								   <Input
-										s={12}
-										label="Hint"
-										id="hint"
-										name="hint"
-										type="text"
-										value={this.state.hint}
-										onChange={this.handleChange}
-										className= "labelText mb-1"
-									/><div className="helper-text" >Give user a hint</div>
-								</div>
-								<div>	
-								   <Input
-										s={12}
-										label="Add button text"
-										id="addText"
-										name="addText"
-										type="text"
-										value={this.state.addText}
-										onChange={this.handleChange}
-										className= "labelText mb-1"
-									/><div className="helper-text" >Provide meaningful button text</div>
-								</div>
-								<div>	
-								   <Input
-										s={12}
-										label="Remove button text"
-										id="removeText"
-										name="removeText"
-										type="text"
-										value={this.state.removeText}
-										onChange={this.handleChange}
-										className= "labelText mb-1"
-									/><div className="helper-text" >Provide meaningful button text</div>
-								</div>
-								<div>
-									<input s={12} type="checkbox" className='filled-in' id="defaultEmpty" name="defaultEmpty" checked={this.state.defaultEmpty} onChange={this.handleDefaultEmptyChange} />
-									<label htmlFor="defaultEmpty">Default to empty array?</label>
-								</div>								
-								<div>	
-								 <fieldset>
+							<div>
+								<Input
+									s={12}
+									label="Hint"
+									id="hint"
+									name="hint"
+									type="text"
+									value={this.state.hint}
+									onChange={this.handleChange}
+									className="labelText mb-1"
+									autoComplete='off'
+								/><div className="helper-text" >Give user a hint</div>
+							</div>
+							<div>
+								<Input
+									s={12}
+									label="Add button text"
+									id="addText"
+									name="addText"
+									type="text"
+									value={this.state.addText}
+									onChange={this.handleChange}
+									className="labelText mb-1"
+									autoComplete='off'
+								/><div className="helper-text" >Provide meaningful button text</div>
+							</div>
+							<div>
+								<Input
+									s={12}
+									label="Remove button text"
+									id="removeText"
+									name="removeText"
+									type="text"
+									value={this.state.removeText}
+									onChange={this.handleChange}
+									className="labelText mb-1"
+									autoComplete='off'
+								/><div className="helper-text" >Provide meaningful button text</div>
+							</div>
+							<div>
+								<input s={12} type="checkbox" className='filled-in' id="defaultEmpty" name="defaultEmpty" checked={this.state.defaultEmpty} onChange={this.handleDefaultEmptyChange} />
+								<label htmlFor="defaultEmpty">Default to empty array?</label>
+							</div>
+							<div>
+								<fieldset>
 									<legend><b>Validation</b></legend>
-										<div>
-										    <input s={12} type="checkbox" className='filled-in' id="required" name="required" checked={this.state.required} onChange={this.handleRequiredChange} />
-											<label htmlFor="required">Required?</label>
-										</div>
-								 </fieldset>
-								 <Col s={12} m={6} l={4} xl={12} >
-										<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton right' name="ADD" onClick={this.handleOpenModal}>
-											<i className="material-icons" title='Add Items'>add_circle</i><span>Add Controls</span>
-										</Button>
-								  </Col>
-								  
-								  
-									
-								  
-								</div>
-								<Row>
-								  <div><ul className="collection">  {this.createUI()}</ul></div>
-							    </Row>
-								
-							 
+									<div>
+										<input s={12} type="checkbox" className='filled-in' id="required" name="required" checked={this.state.required} onChange={this.handleRequiredChange} />
+										<label htmlFor="required">Required?</label>
+									</div>
+								</fieldset>
+								<Col s={12} m={6} l={4} xl={12} >
+									<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton right' name="ADD" onClick={this.handleOpenModal}>
+										<i className="material-icons" title='Add Items'>add_circle</i><span>Add Controls</span>
+									</Button>
+								</Col>
+							</div>
+							<Row>
+								<div><ul className="collection">  {this.createUI()}</ul></div>
+							</Row>
 						</div>
-
 					</div>
-
 				</div>
 				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
-
 				</div>
-				
-				
+
 				<Modal className="modal modal-fixed-footer dynamicModal" header={this.state.mode == "ADD" ? "Add an element " : "Update an element"} open={this.state.isModalOpen} modalOptions={{ dismissible: false }} close={this.handleCloseModal} >
 					<button className="modal_close" onClick={this.handleCloseModal}><i class="material-icons " >close</i> </button>
 					<Row>
@@ -550,20 +508,11 @@ class ArrayControl extends Component {
 									</div>
 								</div>
 							}
-
 						</form>
 					</Row>
 				</Modal>
-
 			</Fragment>
-			
-			
-			
-
 		);
-
 	}
-
-
 }
 export default ArrayControl;

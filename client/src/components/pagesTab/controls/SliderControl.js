@@ -29,6 +29,7 @@ class SliderControl extends Component {
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				defaultValues: this.props.data.options ? this.props.data.options.defaultValue : '',
 				required: this.props.data.options.validation ? this.props.data.options.validation.required : '',
@@ -36,11 +37,35 @@ class SliderControl extends Component {
 				maximumValue: this.props.data.options.validation ? this.props.data.options.validation.max : 10,
 				property: this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.property : '',
 				propertyValue: this.props.data.options.validation.requiredIf ? this.props.data.options.validation.requiredIf.value : '',
-				increments: this.props.data.options ? this.props.data.options.step : 1,
-				thumbLabel: this.props.data.options ? this.props.data.options.thumbLabel : "true",
-				vertical: this.props.data.options ? this.props.data.options.vertical : "false",
-				invert: this.props.data.options ? this.props.data.options.invert : "false"
+				increments: this.props.data.options ? this.props.data.options.step : 1
 			})
+			if (this.props.data.options.invert === true) {
+				this.setState({
+					invert: 'true',
+				})
+			} else {
+				this.setState({
+					invert: 'false',
+				})
+			}
+			if (this.props.data.options.vertical === true) {
+				this.setState({
+					vertical: 'true',
+				})
+			} else {
+				this.setState({
+					vertical: 'false',
+				})
+			}
+			if (this.props.data.options.thumbLabel === true) {
+				this.setState({
+					thumbLabel: 'true',
+				})
+			} else {
+				this.setState({
+					thumbLabel: 'false',
+				})
+			}
 		}
 	}
 
@@ -54,74 +79,111 @@ class SliderControl extends Component {
 
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		let name = "";
-		let label = "";
-		let defaultValues = "";
-		let minimumValue = "";
-		let maximumValue = "";
-		let required = "";
-		let property = "";
-		let propertyValue = "";
-		let increments = null;
-		let thumbLabel = "";
-		let vertical = "";
-		let invert = "";
 
-		if (this.state.name != undefined && this.state.label != undefined && this.state.minimumValue != undefined && this.state.maximumValue != undefined
-			&& this.state.increments != undefined && this.state.thumbLabel != undefined && this.state.vertical != undefined && this.state.invert != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			minimumValue = this.state.minimumValue;
-			maximumValue = this.state.maximumValue;
-			if(this.state.increments != ""){
-				increments = this.state.increments;
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
+		}
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
-			thumbLabel = this.state.thumbLabel;
-			vertical = this.state.vertical;
-			invert = this.state.invert;
+		}
+		if (nameExists != "yes") {
+			let name = "";
+			let label = "";
+			let defaultValues = "";
+			let minimumValue = "";
+			let maximumValue = "";
+			let required = "";
+			let property = "";
+			let propertyValue = "";
+			let increments = null;
+			
+			
 
-			if (this.state.defaultValues !== undefined) {
-				defaultValues = this.state.defaultValues;
-			}
-
-			if (this.state.required !== undefined) {
-				required = this.state.required
-			}
-			if (this.state.property !== undefined) {
-				property = this.state.property;
-			}
-			if (this.state.propertyValue !== undefined) {
-				propertyValue = this.state.propertyValue;
-			}
-
-			let data = {
-				"type": "slider",
-				"name": name,
-				"label": label,
-				"options": {
-					"defaultValue": defaultValues,
-					"validation": {
-						"required": required,
-						"min": minimumValue,
-						"max": maximumValue,
-						"requiredIf": {
-							"property": property,
-							"value": propertyValue
-						}
-					},
-					"step": increments,
-					"thumbLabel": thumbLabel,
-					"vertical": vertical,
-					"invert": invert,
-					"tickInterval": "auto"
+			if (this.state.name != undefined && this.state.label != undefined && this.state.minimumValue != undefined && this.state.maximumValue != undefined
+				&& this.state.increments != undefined && this.state.thumbLabel != undefined && this.state.vertical != undefined && this.state.invert != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				minimumValue = parseInt(this.state.minimumValue);
+				maximumValue = parseInt(this.state.maximumValue);
+				if (this.state.increments != "") {
+					increments = parseInt(this.state.increments);
 				}
-			};
-			onChange(data, this.props.index);
-			alert('Submitted');
-			this.props.close();
+								
+                if (this.state.invert !== undefined) {
+					if (this.state.invert == 'true') {
+						var invert = true;
+					} else {
+						var invert = false;
+					}
+				}
+				if (this.state.vertical !== undefined) {
+					if (this.state.vertical == 'true') {
+						var vertical = true;
+					} else {
+						var vertical = false;
+					}
+				}
+				if (this.state.thumbLabel !== undefined) {
+					if (this.state.thumbLabel == 'true') {
+						var thumbLabel = true;
+					} else {
+						var thumbLabel = false;
+					}
+				}
+				if (this.state.defaultValues !== undefined) {
+					defaultValues = this.state.defaultValues;
+				}
+
+				if (this.state.required !== undefined) {
+					required = this.state.required
+				}
+				if (this.state.property !== undefined) {
+					property = this.state.property;
+				}
+				if (this.state.propertyValue !== undefined) {
+					propertyValue = this.state.propertyValue;
+				}
+
+				let data = {
+					"type": "slider",
+					"name": name,
+					"label": label,
+					"options": {
+						"defaultValue": defaultValues,
+						"validation": {
+							"required": required,
+							"min": minimumValue,
+							"max": maximumValue,
+							"requiredIf": {
+								"property": property,
+								"value": propertyValue
+							}
+						},
+						"step": increments,
+						"thumbLabel": thumbLabel,
+						"vertical": vertical,
+						"invert": invert,
+						"tickInterval": "auto"
+					}
+				};
+				onChange(data, this.props.index);
+				alert('Submitted');
+				this.props.close();
+			}
+			else alert("Enter required fields");
 		}
 		else {
-			alert("Enter required fields");
+			alert("Name already exists");
+			nameExists = "";
 		}
 	};
 	handleChange = (e) => {
@@ -132,7 +194,7 @@ class SliderControl extends Component {
 			this.setState({
 				[e.target.name]: e.target.checked
 			})
-			
+
 	};
 
 	render() {
@@ -182,7 +244,7 @@ class SliderControl extends Component {
 				</div>
 
 				<div className="mt-2">
-				<h5><b>Options</b></h5>
+					<h5><b>Options</b></h5>
 					<Input
 						s={12}
 						label="Default value"
@@ -262,17 +324,17 @@ class SliderControl extends Component {
 						id="thumbYes"
 						name="thumbLabel"
 						type="radio"
-						value={true}
-						checked={this.state.thumbLabel === "true"}
+						value="true"
+						checked={this.state.thumbLabel === 'true'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="thumbYes">Yes</label></div>
 					<div><input
 						id="thumbNo"
-						value={false}
+						value="false"
 						name="thumbLabel"
 						type="radio"
-						checked={this.state.thumbLabel === "false"}
+						checked={this.state.thumbLabel === 'false'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="thumbNo">No</label></div>
@@ -281,8 +343,8 @@ class SliderControl extends Component {
 						id="vertical"
 						name="vertical"
 						type="radio"
-						value={true}
-						checked={this.state.vertical === "true"}
+						value="true"
+						checked={this.state.vertical === 'true'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="vertical">Vertical</label></div>
@@ -290,8 +352,8 @@ class SliderControl extends Component {
 						id="horizontal"
 						name="vertical"
 						type="radio"
-						value={false}
-						checked={this.state.vertical === "false"}
+						value="false"
+						checked={this.state.vertical === 'false'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="horizontal">Horizontal</label></div>
@@ -301,8 +363,8 @@ class SliderControl extends Component {
 						id="invertYes"
 						name="invert"
 						type="radio"
-						value={true}
-						checked={this.state.invert === "true"}
+						value="true"
+						checked={this.state.invert === 'true'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="invertYes">Yes</label></div>
@@ -310,8 +372,8 @@ class SliderControl extends Component {
 						id="invertNo"
 						name="invert"
 						type="radio"
-						value={false}
-						checked={this.state.invert === "false"}
+						value="false"
+						checked={this.state.invert === 'false'}
 						onChange={this.handleChange}
 						className="mb-1 with-gap"
 					/><label className="innerDynamicLabel ml-1" htmlFor="invertNo">No</label></div>

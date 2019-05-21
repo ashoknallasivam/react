@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // menu-role-access list.
 exports.getMenuRoleAccessList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/menu-role-access`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/menu-role-access`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getMenuRoleAccessList = (requestOptions) => {
 };
 // find menu-role-access by using id.
 exports.getMenuRoleAccess = (requestOptions, menuRoleId) => {
-    return axios.get(`${config.RAPTER_URL}/menu-role-access/` + menuRoleId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/menu-role-access/` + menuRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getMenuRoleAccess = (requestOptions, menuRoleId) => {
 
 // create menu-role-access.
 exports.createMenuRoleAccess = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/menu-role-access`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/menu-role-access`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +67,8 @@ exports.createMenuRoleAccess = (requestOptions, inpParam) => {
 // };
 // delete menu-role-access.
 exports.deleteMenuRoleAccess = (requestOptions, menuRoleId) => {
-    return axios.delete(`${config.RAPTER_URL}/menu-role-access/` + menuRoleId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/menu-role-access/` + menuRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

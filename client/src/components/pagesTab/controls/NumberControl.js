@@ -1,28 +1,29 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class NumberControl extends Component {
-
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			type: "number",
 			required: false
 		};
-
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	componentDidMount() {
+		this.setState({
+			mode: this.props.mode,
+			type: this.props.type,
+			data: this.props.data,
+		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				label: this.props.data.label,
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				hint: this.props.data.options.hint,
 				defaultValue: this.props.data.options.defaultValue,
 				required: this.props.data.options.validation.required,
@@ -30,17 +31,17 @@ class NumberControl extends Component {
 				max: this.props.data.options.validation.max,
 				property: this.props.data.options.validation.requiredIf.property,
 				value: this.props.data.options.validation.requiredIf.value
-
 			})
 		}
 	}
-
 	componentWillReceiveProps(nextProps) {
 		this.setState({
+			mode: nextProps.mode,
+			type: nextProps.type,
+			innertype: nextProps.innertype,
 			data: nextProps.data,
 		});
 	}
-
 	handleChange(e) {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
@@ -48,70 +49,90 @@ class NumberControl extends Component {
 			this.setState({ [e.target.name]: e.target.checked })
 		}
 	}
-
 	handleSubmit() {
 		const { onChange } = this.props;
-		let name = '';
-		let label = '';
-		let hint = '';
-		let defaultValue = '';
-		let required = '';
-		let min = null;
-		let max = null;
-		let property = '';
-		let value = '';
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			if (this.state.hint != undefined) {
-				hint = this.state.hint;
-			}
-			if (this.state.defaultValue != undefined) {
-				defaultValue = this.state.defaultValue;
-			}
 
-			if (this.state.required !== undefined) {
-				required = this.state.required;
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
+		}
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
-			if (this.state.min !== undefined) {
-				if(this.state.min != "")
-				min = this.state.min;
-			}
-			if (this.state.max !== undefined) {
-				if(this.state.max != "")
-				max = this.state.max;
-			}
-			if (this.state.property !== undefined) {
-				property = this.state.property;
-			}
-			if (this.state.value !== undefined) {
-				value = this.state.value;
-			}
+		}
 
-			var initialState = {
-				type: this.state.type,
-				name,
-				label,
-				options: {
-					hint,
-					defaultValue,
-					validation: {
-						required,
-						min,
-						max,
-						requiredIf: {
-							property,
-							value
+		if (nameExists != "yes") {
+			let name = '';
+			let label = '';
+			let hint = '';
+			let defaultValue = '';
+			let required = '';
+			let min = null;
+			let max = null;
+			let property = '';
+			let value = '';
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				if (this.state.hint != undefined) {
+					hint = this.state.hint;
+				}
+				if (this.state.defaultValue != undefined) {
+					defaultValue = this.state.defaultValue;
+				}
+
+				if (this.state.required !== undefined) {
+					required = this.state.required;
+				}
+				if (this.state.min !== undefined) {
+					if (this.state.min != "")
+						min = this.state.min;
+				}
+				if (this.state.max !== undefined) {
+					if (this.state.max != "")
+						max = this.state.max;
+				}
+				if (this.state.property !== undefined) {
+					property = this.state.property;
+				}
+				if (this.state.value !== undefined) {
+					value = this.state.value;
+				}
+
+				var initialState = {
+					type: this.state.type,
+					name,
+					label,
+					options: {
+						hint,
+						defaultValue,
+						validation: {
+							required,
+							min,
+							max,
+							requiredIf: {
+								property,
+								value
+							}
 						}
 					}
-				}
-			};
-			alert('Submitted');
-			onChange(initialState, this.props.index);
-			this.props.close();
+				};
+				alert('Submitted');
+				onChange(initialState, this.props.index);
+				this.props.close();
+			}
+			else alert("Please fill the mandatory fields");
 		}
 		else {
-			alert("Please fill the mandatory fields");
+			alert("Name already exists");
+			nameExists = "";
 		}
 	};
 
@@ -235,11 +256,9 @@ class NumberControl extends Component {
 				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
-
 				</div>
 			</Fragment>
 		);
-
 	}
 }
 export default NumberControl;

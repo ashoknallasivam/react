@@ -18,6 +18,7 @@ router.get('/user', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     userBiz.getUserInfo(requestOptions).then(response=>{
         if(response.status===200){
             res.status(200).send(response.data);

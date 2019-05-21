@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // menu list.
 exports.getMenuList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/menu`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/menu`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

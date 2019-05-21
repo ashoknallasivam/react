@@ -60,7 +60,7 @@ class PagePreview extends React.Component {
              onChange={this.handleChange}
             /><h6>{value.options.hint}</h6>
             </div>;
-        } else if (type == 'radio1') {
+        } else if (type == 'radio') {
            return <div >
                <h5>{value.label}</h5>
              {value.options.items.map(itemval => {

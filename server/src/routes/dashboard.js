@@ -6,11 +6,14 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
+
 let fs = require('fs');
 
 // get the project info.
 router.get('/dashboard_data', (req, res) => {
     // token validation.
+	//console.log(req.headers.environment);
     let token = req.token;
     if (token === undefined || token === "" || token === null) {
         res.status(403).send({ code: responseStatus.FORBIDDEN.code, status: responseStatus.FORBIDDEN.status, messages: MESSAGE.COMMON.INVALID_TOKEN });
@@ -18,6 +21,8 @@ router.get('/dashboard_data', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     // preparing dashboard list.
     mapping(requestOptions).then(response => {
         res.status(200).send(mapToObjectRec(response.mapProjects));
@@ -38,7 +43,8 @@ router.get('/dashboard_data/:id', (req, res) => {
 
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-
+    requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.params;
     mapping(requestOptions).then(response => {
         selectedProjectInfo(response, inpParam.id, requestOptions).then(response => {
@@ -81,6 +87,8 @@ router.get('/saved_projects', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     fs.readdir('savedProjects', function (err, items) {
         if (err) {
             logging.applogger.error(err);
@@ -143,16 +151,19 @@ module.exports = router;
 
 // preparing all projects information.
 function mapping(requestOptions) {
+	//console.log(requestOptions.headers.Environment)
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+	
     let allTenants = [];
     let allOrganization = [];
     let allRoles = [];
     let allEnrollmentTarget = [];
-    return axios.get(`${config.RAPTER_URL}/tenant`, requestOptions).then(response => {
+    return axios.get(`${RAPTER_URL}/tenant`, requestOptions).then(response => {
         response.data.map(item => { item.orgs = new Map(); item.orgsList = []; allTenants.push(item) });
         var mapProjects = new Map();
         allTenants.map(item => mapProjects.set(item.id, item))
         // listing the selected project organization.
-        return axios.get(`${config.RAPTER_URL}/organization`, requestOptions).then(response => {
+        return axios.get(`${RAPTER_URL}/organization`, requestOptions).then(response => {
             response.data.map(item => { item.children = new Map(); item.roles = []; item.enrollmentTargets = []; item.raConfig = []; item.bounds = ''; item.pages = []; allOrganization.push(item) });
             var mapOrgs = new Map();
             allOrganization.map(item => mapOrgs.set(item.id, item));
@@ -201,6 +212,7 @@ function mapToObjectRec(m) {
 
 // selected project information will return.
 function selectedProjectInfo(projects, projectId, requestOptions) {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
     let allRoles = [];
     let allEnrollmentTarget = [];
     let allRaConfig = [];
@@ -212,7 +224,7 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
     for (const [key, value] of mapOrgs.entries()) {
         if (value.tenantId == parseInt(projectId)) {
             let boundBody = { "tenantId": value.tenantId, "ttoId": value.ttoId == null ? value.id : value.ttoId, "ltoId": value.ttoId == null ? null : value.id }
-            promises[key] = axios.post(`${config.RAPTER_URL}/bounds`, boundBody, requestOptions)
+            promises[key] = axios.post(`${RAPTER_URL}/bounds`, boundBody, requestOptions)
         }
     }
     return axios.all(Object.values(promises)).then(function (results) {
@@ -227,7 +239,7 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                 //let boundBody = { "tenantId": value.tenantId, "ttoId": value.ttoId == null ? value.id : value.ttoId, "ltoId": value.ttoId == null ? null : value.id }
                 let newHeaders = requestOptions;
                 newHeaders.headers['x-rapter-bounds'] = value.bounds['x-rapter-bounds'];
-                pagePromises[key] = axios.get(`${config.RAPTER_URL}/page`, newHeaders)
+                pagePromises[key] = axios.get(`${RAPTER_URL}/page`, newHeaders)
             }
         }
         return axios.all(Object.values(pagePromises)).then(function (results) {
@@ -235,7 +247,7 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                 mapOrgs.get(parseInt(Object.keys(promises)[index])).pages = [...response.data]
             })
             // listing the selected project role.
-            return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
+            return axios.get(`${RAPTER_URL}/role`, requestOptions).then(response => {
                 allRoles = [...response.data];
                 //console.log(mapProjects.get(parseInt(projectId)).orgsList)
                 for (var role of allRoles) {
@@ -247,10 +259,10 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                             role.resources = [];
                             let newHeaders = requestOptions;
                             newHeaders.headers['x-rapter-bounds'] = org.bounds["x-rapter-bounds"]
-                            menuPromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/menu-role-access`, newHeaders).catch(error => {
+                            menuPromises[role.id + "O" + org.id] = axios.get(`${RAPTER_URL}/menu-role-access`, newHeaders).catch(error => {
                                 //logging.applogger.error(error);
                             });
-                            resourcePromises[role.id + "O" + org.id] = axios.get(`${config.RAPTER_URL}/resource-role-access`, newHeaders).catch(error => {
+                            resourcePromises[role.id + "O" + org.id] = axios.get(`${RAPTER_URL}/resource-role-access`, newHeaders).catch(error => {
                                 //logging.applogger.error(error);
                             });
 
@@ -295,7 +307,7 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                             }))
                         })
                         // listing the selected project enrollment-target.
-                        return axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
+                        return axios.get(`${RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
                             allEnrollmentTarget = [...response.data];
                             for (var enrollmentTarget of allEnrollmentTarget) {
                                 for (var org of mapProjects.get(parseInt(projectId)).orgsList) {
@@ -305,7 +317,7 @@ function selectedProjectInfo(projects, projectId, requestOptions) {
                                 }
                             }
                             // listing the selected project ra-config.
-                            return axios.get(`${config.RAPTER_URL}/ra-config?tenantId=` + parseInt(projectId), requestOptions).then(response => {
+                            return axios.get(`${RAPTER_URL}/ra-config?tenantId=` + parseInt(projectId), requestOptions).then(response => {
                                 allRaConfig = [...response.data];
                                 for (var raConfig of allRaConfig) {
                                     for (var org of mapProjects.get(parseInt(projectId)).orgsList) {

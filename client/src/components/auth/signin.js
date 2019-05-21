@@ -6,8 +6,6 @@ import brand from '../../../public/assets/images/logo/login-logo.png';
 import * as actions from '../../actions';
 import env from '../../../env.json';
 
-const scaryAnimals = env;
-
 class Signin extends Component {
 
   constructor(props) {
@@ -25,11 +23,16 @@ class Signin extends Component {
 
   componentWillMount() {
     if (this.props.authStatus == true && this.props.tokenStatus == false) {
+	  this.props.twoStepGeneration();
       this.props.history.push('/twofactor');
     }
     if (this.props.authStatus == true && this.props.tokenStatus == true) {
       this.props.history.push('/dashboard');
     }
+  }
+  
+  componentDidMount () {
+	 localStorage.removeItem("token");
   }
 
   handleChange(e) {
@@ -62,6 +65,7 @@ class Signin extends Component {
   componentWillReceiveProps(newProps) {
     // redirect to feature branch if auth status is true
     if (newProps.authStatus == true) {
+	  this.props.twoStepGeneration();	
       this.props.history.push('/twofactor')
     } else {
       this.setState({ submitted: true });
@@ -89,12 +93,12 @@ class Signin extends Component {
             <form className="col-md-4" onSubmit={this.handleSubmit} >
               <Row>
                 <Col className="input-field center" s={12}>
-                  <p className="center login-form-text"><h5>RAPTER Configurator</h5></p>
+                  <div className="center login-form-text"><h5>RAPTER Configurator</h5></div>
                 </Col>
               </Row>
               <Row className="margin">
                 {/* <Col className="" > */}
-                  <i class="material-icons left mt-5 mb-4 pl-3">
+                  <i className="material-icons left mt-5 mb-4 pl-3">
                     toc</i>
                   <select  name='environment' id='environment' className="col s10" label='Environment' onChange={this.handleChange} required>
                     <option value=''>Select Environment</option>
@@ -141,7 +145,7 @@ class Signin extends Component {
                 {/* <button className="btn btn_secondary otherButtonAddDetUpt " type="submit" name="action">NEXT
                   <i className="material-icons">arrow forward</i>
                 </button> */}
-                <button className="btn btn_primary otherButtonAddDetUpt right" type="submit" name="action"><span style={{fontSize: "15px"}}>NEXT </span><i class="material-icons" style={{fontSize: "25px",verticalAlign: "top"}}>
+                <button className="btn btn_primary otherButtonAddDetUpt right" type="submit" name="action"><span style={{fontSize: "15px"}}>NEXT </span><i className="material-icons" style={{fontSize: "25px",verticalAlign: "top"}}>
 arrow_right_alt
 </i></button>
               </Row>

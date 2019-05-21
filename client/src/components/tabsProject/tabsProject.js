@@ -19,14 +19,28 @@ class TabsProject extends Component {
         }
     }
 
-    componentWillReceiveProps() {
-        this.setState({ studyConfigsEmpty: this.studyConfigsEmptyCheck(this.props.selectedLocation.raConfig) })
-        this.setState({ enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(this.props.selectedLocation.enrollmentTargets) })
-        this.setState({ rolesEmpty: this.rolesEmptyCheck(this.props.selectedLocation.roles) })
-        this.setState({ pagesEmpty: this.pagesEmptyCheck(this.props.selectedLocation.pages) })
+    componentWillReceiveProps(newProps) {
+        this.setState({ studyConfigsEmpty: this.studyConfigsEmptyCheck(newProps.selectedLocation.raConfig) })
+        this.setState({ enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(newProps.selectedLocation.enrollmentTargets) })
+        this.setState({ rolesEmpty: this.rolesEmptyCheck(newProps.selectedLocation.roles) })
+        if(newProps.selectedLocation.roles !== undefined){
+            null
+        }else{
+            this.setState({ rolesEmpty: this.rolesEmptyCheck(newProps.selectedOrganisation.roles) })
+        }
+        this.setState({ pagesEmpty: this.pagesEmptyCheck(newProps.selectedLocation.pages) })
     }
 
     componentDidMount() {
+        this.setState({ studyConfigsEmpty: this.studyConfigsEmptyCheck(this.props.selectedLocation.raConfig) })
+        this.setState({ enrollmentTargetsEmpty: this.enrollmentTargetsEmptyCheck(this.props.selectedLocation.enrollmentTargets) })
+        this.setState({ rolesEmpty: this.rolesEmptyCheck(this.props.selectedLocation.roles) })
+        if(this.props.selectedLocation.roles !== undefined){
+            null
+        }else{
+            this.setState({ rolesEmpty: this.rolesEmptyCheck(this.props.selectedOrganisation.roles) })
+        }
+        this.setState({ pagesEmpty: this.pagesEmptyCheck(this.props.selectedLocation.pages) })
     }
 
     studyConfigsEmptyCheck = (raConfig) => {

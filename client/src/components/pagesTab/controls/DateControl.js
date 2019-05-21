@@ -66,9 +66,15 @@ class DateControl extends Component {
 		};
 	}
 	componentDidMount() {
+		this.setState({
+			mode: this.props.mode,
+			type: this.props.type,
+			data: this.props.data,
+		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
@@ -91,7 +97,9 @@ class DateControl extends Component {
 	}
 	componentWillReceiveProps(nextProps) {
 		this.setState({
-			data: nextProps.data
+			mode: nextProps.mode,
+			type: nextProps.type,
+			data: nextProps.data,
 		});
 	}
 	handleChange = (e) => {
@@ -116,113 +124,135 @@ class DateControl extends Component {
 	};
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		let name = "";
-		let label = "";
-		let hint = "";
-		let defaultValue = "";
-		let property1 = "";
-		let value1 = "";
-		let year1 = null;
-		let month1 = "";
-		let day1 = null;
-		let required = "";
-		let year2 = null;
-		let month2 = "";
-		let day2 = null;
-		let year3 = null;
-		let month3 = "";
-		let day3 = null;
-		let property2 = "";
-		let value2 = "";
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			if (this.state.hint != undefined)
-				hint = this.state.hint;
-			if (this.state.defaultValue != undefined)
-				defaultValue = this.state.defaultValue;
-			if (this.state.property1 != undefined)
-				property1 = this.state.property1;
-			if (this.state.value1 != undefined)
-				value1 = this.state.value1;
-			if (this.state.year1 != undefined) {
-				if (this.state.year1 != "")
-					year1 = this.state.year1;
-			}
-			if (this.state.month1 != undefined)
-				month1 = this.state.month1;
-			if (this.state.day1 != undefined) {
-				if (this.state.day1 != "")
-					day1 = this.state.day1;
-			}
-			if (this.state.required != undefined)
-				required = this.state.required;
-			if (this.state.year2 != undefined) {
-				if (this.state.year2 != "")
-					year2 = this.state.year2;
-			}
-			if (this.state.month2 != undefined)
-				month2 = this.state.month2;
-			if (this.state.day2 != undefined) {
-				if (this.state.day2 != "")
-					day2 = this.state.day2;
-			}
-			if (this.state.year3 != undefined) {
-				if (this.state.year3 != "")
-					year3 = this.state.year3;
-			}
-			if (this.state.month3 != undefined)
-				month3 = this.state.month3;
-			if (this.state.day3 != undefined) {
-				if (this.state.day3 != "")
-					day3 = this.state.day3;
-			}
-			if (this.state.property2 != undefined)
-				property2 = this.state.property2;
-			if (this.state.value2 != undefined)
-				value2 = this.state.value2;
-			let data = {
-				"type": "date",
-				"name": name,
-				"label": label,
-				"options": {
-					"hint": hint,
-					"defaultValue": defaultValue,
-					"showIf": {
-						"property": property1,
-						"value": value1
-					},
-					"startAt": {
-						"year": year1,
-						"month": month1,
-						"day": day1
-					},
-					"validation": {
-						"required": required,
-						"minDate": {
-							"year": year2,
-							"month": month2,
-							"day": day2
-						},
-						"maxDate": {
-							"year": year3,
-							"month": month3,
-							"day": day3
-						},
-						"requiredIf": {
-							"property": property2,
-							"value": value2
-						}
-					}
-				}
-			};
-			if (this.state.dateError1 == false && this.state.dateError2 == false && this.state.dateError3 == false) {
-				onChange(data, this.props.index);
-				alert('Submitted');
-				this.props.close();
+
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
+		}
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
 		}
-		else alert("Please fill the mandatory fields");
+		if (nameExists != "yes") {
+			let name = "";
+			let label = "";
+			let hint = "";
+			let defaultValue = "";
+			let property1 = "";
+			let value1 = "";
+			let year1 = null;
+			let month1 = "";
+			let day1 = null;
+			let required = "";
+			let year2 = null;
+			let month2 = "";
+			let day2 = null;
+			let year3 = null;
+			let month3 = "";
+			let day3 = null;
+			let property2 = "";
+			let value2 = "";
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				if (this.state.hint != undefined)
+					hint = this.state.hint;
+				if (this.state.defaultValue != undefined)
+					defaultValue = this.state.defaultValue;
+				if (this.state.property1 != undefined)
+					property1 = this.state.property1;
+				if (this.state.value1 != undefined)
+					value1 = this.state.value1;
+				if (this.state.year1 != undefined) {
+					if (this.state.year1 != "")
+						year1 = this.state.year1;
+				}
+				if (this.state.month1 != undefined)
+					month1 = this.state.month1;
+				if (this.state.day1 != undefined) {
+					if (this.state.day1 != "")
+						day1 = this.state.day1;
+				}
+				if (this.state.required != undefined)
+					required = this.state.required;
+				if (this.state.year2 != undefined) {
+					if (this.state.year2 != "")
+						year2 = this.state.year2;
+				}
+				if (this.state.month2 != undefined)
+					month2 = this.state.month2;
+				if (this.state.day2 != undefined) {
+					if (this.state.day2 != "")
+						day2 = this.state.day2;
+				}
+				if (this.state.year3 != undefined) {
+					if (this.state.year3 != "")
+						year3 = this.state.year3;
+				}
+				if (this.state.month3 != undefined)
+					month3 = this.state.month3;
+				if (this.state.day3 != undefined) {
+					if (this.state.day3 != "")
+						day3 = this.state.day3;
+				}
+				if (this.state.property2 != undefined)
+					property2 = this.state.property2;
+				if (this.state.value2 != undefined)
+					value2 = this.state.value2;
+				let data = {
+					"type": "date",
+					"name": name,
+					"label": label,
+					"options": {
+						"hint": hint,
+						"defaultValue": defaultValue,
+						"showIf": {
+							"property": property1,
+							"value": value1
+						},
+						"startAt": {
+							"year": year1,
+							"month": month1,
+							"day": day1
+						},
+						"validation": {
+							"required": required,
+							"minDate": {
+								"year": year2,
+								"month": month2,
+								"day": day2
+							},
+							"maxDate": {
+								"year": year3,
+								"month": month3,
+								"day": day3
+							},
+							"requiredIf": {
+								"property": property2,
+								"value": value2
+							}
+						}
+					}
+				};
+				if (this.state.dateError1 == false && this.state.dateError2 == false && this.state.dateError3 == false) {
+					onChange(data, this.props.index);
+					alert('Submitted');
+					this.props.close();
+				}
+			}
+			else alert("Please fill the mandatory fields");
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	};
 
 	render() {
@@ -264,7 +294,7 @@ class DateControl extends Component {
 					/><div className="helper-text" >The text the user sees</div>
 				</div>
 				<div>
-				<h5><b>Options</b></h5>
+					<h5><b>Options</b></h5>
 					<Input
 						s={12}
 						label="Hint"

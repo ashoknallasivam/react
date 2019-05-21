@@ -9,9 +9,15 @@ class PhoneControl extends Component {
 		};
 	}
 	componentDidMount() {
+		this.setState({
+			mode: this.props.mode,
+			type: this.props.type,
+			data: this.props.data,
+		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
 				required: this.props.data.options.validation ? this.props.data.options.validation.required : '',
@@ -24,7 +30,9 @@ class PhoneControl extends Component {
 	}
 	componentWillReceiveProps(nextProps) {
 		this.setState({
-			data: nextProps.data
+			mode: nextProps.mode,
+			type: nextProps.type,
+			data: nextProps.data,
 		});
 	}
 	handleChange = (e) => {
@@ -34,55 +42,77 @@ class PhoneControl extends Component {
 	}
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		let name = "";
-		let label = "";
-		let defaultValue = "";
-		let required = "";
-		let minLength = null;
-		let maxLength = null;
-		let property = "";
-		let value = "";
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			if (this.state.defaultValue != undefined)
-				defaultValue = this.state.defaultValue;
-			if (this.state.required != undefined)
-				required = this.state.required;
-			if (this.state.minLength != undefined) {
-				if (this.state.minLength != "")
-					minLength = this.state.minLength;
+
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
+		}
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
-			if (this.state.maxLength != undefined) {
-				if (this.state.maxLength != "")
-					maxLength = this.state.maxLength;
-			}
-			if (this.state.property != undefined)
-				property = this.state.property;
-			if (this.state.value != undefined)
-				value = this.state.value;
-			let data = {
-				"type": "phone",
-				"name": name,
-				"label": label,
-				"options": {
-					"defaultValue": defaultValue,
-					"validation": {
-						"required": required,
-						"minLength": minLength,
-						"maxLength": maxLength,
-						"requiredIf": {
-							"property": property,
-							"value": value
+		}
+		if (nameExists != "yes") {
+			let name = "";
+			let label = "";
+			let defaultValue = "";
+			let required = "";
+			let minLength = null;
+			let maxLength = null;
+			let property = "";
+			let value = "";
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				if (this.state.defaultValue != undefined)
+					defaultValue = this.state.defaultValue;
+				if (this.state.required != undefined)
+					required = this.state.required;
+				if (this.state.minLength != undefined) {
+					if (this.state.minLength != "")
+						minLength = parseInt(this.state.minLength);
+				}
+				if (this.state.maxLength != undefined) {
+					if (this.state.maxLength != "")
+						maxLength = parseInt(this.state.maxLength);
+				}
+				if (this.state.property != undefined)
+					property = this.state.property;
+				if (this.state.value != undefined)
+					value = this.state.value;
+				let data = {
+					"type": "phone",
+					"name": name,
+					"label": label,
+					"options": {
+						"defaultValue": defaultValue,
+						"validation": {
+							"required": required,
+							"minLength": minLength,
+							"maxLength": maxLength,
+							"requiredIf": {
+								"property": property,
+								"value": value
+							}
 						}
 					}
-				}
-			};
-			onChange(data, this.props.index);
-			alert('Submitted');
-			this.props.close();
+				};
+				onChange(data, this.props.index);
+				alert('Submitted');
+				this.props.close();
+			}
+			else alert("Please fill the mandatory fields");
 		}
-		else alert("Please fill the mandatory fields");
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	};
 
 	render() {
@@ -123,7 +153,7 @@ class PhoneControl extends Component {
 					autoComplete='off' />
 				<div className="helper-text" >The text the user sees</div>
 				<div>
-				<h5><b>Options</b></h5>
+					<h5><b>Options</b></h5>
 					<Input
 						s={12}
 						className="mb-1"

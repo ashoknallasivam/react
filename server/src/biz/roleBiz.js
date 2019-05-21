@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // role list.
 exports.getRoleList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/role`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/role`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getRoleList = (requestOptions) => {
 };
 // find role by using id.
 exports.getRole = (requestOptions, roleIdId) => {
-    return axios.get(`${config.RAPTER_URL}/role/` + roleIdId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/role/` + roleIdId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getRole = (requestOptions, roleIdId) => {
 
 // create role.
 exports.createRole = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/role`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/role`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createRole = (requestOptions, inpParam) => {
 
 // update role.
 exports.updateRole = (requestOptions, RoleId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/role/` + RoleId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/role/` + RoleId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updateRole = (requestOptions, RoleId, inpParam) => {
 };
 // delete role.
 exports.deleteRole = (requestOptions, roleIdId) => {
-    return axios.delete(`${config.RAPTER_URL}/role/` + roleIdId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/role/` + roleIdId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -78,7 +84,8 @@ exports.deleteRole = (requestOptions, roleIdId) => {
 
 // create user role.
 exports.createUserRole = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/user-role`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/user-role`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         logging.applogger.error(error);
@@ -89,7 +96,8 @@ exports.createUserRole = (requestOptions, inpParam) => {
 
 // user role list.
 exports.getUserRoleList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/user-role`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/user-role`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -103,7 +111,8 @@ exports.getUserRoleList = (requestOptions) => {
 };
 // find user role by using id.
 exports.getUserRole = (requestOptions, userRoleIdId) => {
-    return axios.get(`${config.RAPTER_URL}/user-role/` + userRoleIdId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/user-role/` + userRoleIdId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -117,7 +126,8 @@ exports.getUserRole = (requestOptions, userRoleIdId) => {
 };
 // update user role.
 exports.updateUserRole = (requestOptions, userRoleIdId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/user-role/` + userRoleIdId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/user-role/` + userRoleIdId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

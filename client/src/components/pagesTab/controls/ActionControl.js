@@ -1,8 +1,6 @@
 import React, { Component, Fragment } from "react";
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class ActionControl extends Component {
 
 	constructor(props) {
@@ -34,11 +32,8 @@ class ActionControl extends Component {
 				submitText: this.props.data.options.buttons ? this.props.data.options.buttons.submitButtonText : null
 			})
 		}
-
 	}
-
 	componentWillReceiveProps = (nextProps) => {
-
 		this.setState({
 			mode: nextProps.mode,
 			type: nextProps.type,
@@ -191,9 +186,6 @@ class ActionControl extends Component {
 				</div>
 			</Fragment>
 		);
-
 	}
-
-
 }
 export default ActionControl;

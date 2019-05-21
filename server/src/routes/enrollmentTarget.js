@@ -19,6 +19,7 @@ router.post('/enrollment-target', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -47,6 +48,7 @@ router.get('/enrollment-target', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     // call rapter biz.
     enrollmentBiz.getEnrollmentTargetList(requestOptions).then(response=>{
         if(response.status===200){
@@ -66,6 +68,7 @@ router.get('/enrollment-target/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
         enrollmentBiz.getEnrollmentTarget(requestOptions, inpParam.id).then(response=>{
@@ -94,6 +97,7 @@ router.put('/enrollment-target/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
         let rtnVal = responseStatus.BAD_REQUEST;
@@ -126,6 +130,7 @@ router.delete('/enrollment-target/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
         let rtnVal = responseStatus.BAD_REQUEST;

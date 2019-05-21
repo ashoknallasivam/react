@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // page list.
 exports.getPageList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/page`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/page`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getPageList = (requestOptions) => {
 };
 // find page by using id.
 exports.getPage = (requestOptions, pageId) => {
-    return axios.get(`${config.RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getPage = (requestOptions, pageId) => {
 
 // create page.
 exports.createPage = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/page`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/page`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createPage = (requestOptions, inpParam) => {
 
 // update page.
 exports.updatePage = (requestOptions, pageId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/page/` + pageId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/page/` + pageId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updatePage = (requestOptions, pageId, inpParam) => {
 };
 // delete page.
 exports.deletePage = (requestOptions, pageId) => {
-    return axios.delete(`${config.RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/page/` + pageId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

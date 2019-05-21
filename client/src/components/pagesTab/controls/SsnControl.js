@@ -7,7 +7,6 @@ class SsnControl extends Component {
 		this.state = {
 
 		};
-
 		this.handleChange = this.handleChange.bind(this);
 	}
 	componentDidMount() {
@@ -15,11 +14,11 @@ class SsnControl extends Component {
 			mode: this.props.mode,
 			type: this.props.type,
 			data: this.props.data,
-
 		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
@@ -35,7 +34,11 @@ class SsnControl extends Component {
 	}
 
 	componentWillReceiveProps(nextProps) {
-
+		this.setState({
+			mode: nextProps.mode,
+			type: nextProps.type,
+			data: nextProps.data,
+		});
 	}
 	handleChange(e) {
 		const { name, value } = e.target;
@@ -46,63 +49,80 @@ class SsnControl extends Component {
 			})
 		}
 	}
-
 	handleSubmit = () => {
-
 		const { onChange } = this.props;
 
-		if (this.state.name !== undefined) {
-			var name = this.state.name
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.label !== undefined) {
-			var label = this.state.label
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
 		}
-		if (this.state.hint != undefined) {
-			var hint = this.state.hint;
-		}
-		if (this.state.defaultValue !== undefined) {
-			var defaultValue = this.state.defaultValue;
-		}
-		if (this.state.required !== undefined) {
-			var required = this.state.required;
-		}
-		if (this.state.minLength !== undefined) {
-			var minLength = this.state.minLength;
-		}
-		if (this.state.maxLength !== undefined) {
-			var maxLength = this.state.maxLength;
-		}
-		if (this.state.property !== undefined) {
-			var property = this.state.property;
-		}
-		if (this.state.value !== undefined) {
-			var value = this.state.value;
-		}
+		if (nameExists != "yes") {
+			if (this.state.name !== undefined) {
+				var name = this.state.name
+			}
+			if (this.state.label !== undefined) {
+				var label = this.state.label
+			}
+			if (this.state.hint != undefined) {
+				var hint = this.state.hint;
+			}
+			if (this.state.defaultValue !== undefined) {
+				var defaultValue = this.state.defaultValue;
+			}
+			if (this.state.required !== undefined) {
+				var required = this.state.required;
+			}
+			if (this.state.minLength !== undefined) {
+				var minLength = parseInt(this.state.minLength);
+			}
+			if (this.state.maxLength !== undefined) {
+				var maxLength = parseInt(this.state.maxLength);
+			}
+			if (this.state.property !== undefined) {
+				var property = this.state.property;
+			}
+			if (this.state.value !== undefined) {
+				var value = this.state.value;
+			}
 
-		var initialState = {
-			type: 'ssn',
-			name,
-			label,
-			options: {
-				hint,
-				defaultValue,
-				validation: {
-					required,
-					minLength,
-					maxLength,
-					requiredIf: {
-						value,
-						property
+			var initialState = {
+				type: 'ssn',
+				name,
+				label,
+				options: {
+					hint,
+					defaultValue,
+					validation: {
+						required,
+						minLength,
+						maxLength,
+						requiredIf: {
+							value,
+							property
 
+						}
 					}
 				}
-			}
-		};
-		//console.log(initialState)
-		alert('Submitted');
-		onChange(initialState, this.props.index);
-
-		this.props.close();
+			};
+			alert('Submitted');
+			onChange(initialState, this.props.index);
+			this.props.close();
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
 
 	render() {
@@ -135,6 +155,7 @@ class SsnControl extends Component {
 						required
 						onChange={this.handleChange}
 						className="labelText mb-1"
+						autoComplete='off'
 					/><div className="helper-text" >A unique element name</div>
 				</div>
 				<div>
@@ -148,6 +169,7 @@ class SsnControl extends Component {
 						required
 						onChange={this.handleChange}
 						className="labelText mb-1"
+						autoComplete='off'
 					/><div className="helper-text" >The text the user sees</div>
 
 				</div>
@@ -166,6 +188,7 @@ class SsnControl extends Component {
 								onChange={this.handleChange}
 								disabled
 								className="labelText mb-1"
+								autoComplete='off'
 							/><div className="helper-text" >Give user a hint</div>
 						</div>
 						<div>
@@ -178,6 +201,7 @@ class SsnControl extends Component {
 								value={this.state.defaultValue}
 								onChange={this.handleChange}
 								className="labelText mb-1"
+								autoComplete='off'
 							/><div className="helper-text" >Provide a default value</div>
 						</div>
 						<div>
@@ -191,13 +215,14 @@ class SsnControl extends Component {
 								onChange={this.handleChange}
 								disabled
 								className="labelText mb-1"
+								autoComplete='off'
 							/><div className="helper-text" >Enter the input mask.</div>
 						</div>
 						<fieldset>
 							<legend><b>Validation</b></legend>
 							<div>
 								<div>
-									<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} checked={this.state.required} />
+									<input s={12} type="checkbox" id="required" name="required" className='filled-in' onChange={this.handleChange} checked={this.state.required} />
 									<label htmlFor="required">Required?</label>
 								</div>
 							</div>
@@ -265,6 +290,7 @@ class SsnControl extends Component {
 											value={this.state.property}
 											onChange={this.handleChange}
 											className="labelText mb-1"
+											autoComplete='off'
 										/><div className="helper-text" >Property name of field dependency.</div>
 									</div>
 									<div>
@@ -277,6 +303,7 @@ class SsnControl extends Component {
 											value={this.state.value}
 											onChange={this.handleChange}
 											className="labelText mb-1"
+											autoComplete='off'
 										/><div className="helper-text" >Value of dependent field.</div>
 									</div>
 								</fieldset>

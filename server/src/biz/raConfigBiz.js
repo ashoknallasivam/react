@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // ra-config list.
 exports.getRaConfigList = (requestOptions, tenantId) => {
-    return axios.get(`${config.RAPTER_URL}/ra-config?tenantId=`+ tenantId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/ra-config?tenantId=`+ tenantId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getRaConfigList = (requestOptions, tenantId) => {
 };
 // find ra-config by using id.
 exports.getRaConfig = (requestOptions, paramsId, query_string) => {
-    return axios.get(`${config.RAPTER_URL}/ra-config/` +paramsId + '?tenantId='+ query_string , requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/ra-config/` +paramsId + '?tenantId='+ query_string , requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getRaConfig = (requestOptions, paramsId, query_string) => {
 
 // create ra-config.
 exports.createRaConfig = (requestOptions, tenantId, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/ra-config?tenantId=`+ tenantId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/ra-config?tenantId=`+ tenantId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createRaConfig = (requestOptions, tenantId, inpParam) => {
 
 // update ra-config.
 exports.updateRaConfig = (requestOptions, inpParam, query_string, reqBody) => {
-    return axios.put(`${config.RAPTER_URL}/ra-config/` + inpParam+ '?tenantId=' + query_string, reqBody, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/ra-config/` + inpParam+ '?tenantId=' + query_string, reqBody, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updateRaConfig = (requestOptions, inpParam, query_string, reqBody) => {
 };
 // delete ra-config.
 exports.deleteRaConfig = (requestOptions, inpParam, query_string) => {
-    return axios.delete(`${config.RAPTER_URL}/ra-config/` + inpParam + '?tenantId=' + query_string, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/ra-config/` + inpParam + '?tenantId=' + query_string, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

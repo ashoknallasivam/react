@@ -18,6 +18,7 @@ router.post('/page', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -49,6 +50,9 @@ router.get('/page', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
+	
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     pageBiz.getPageList(newConfig).then(response=>{
@@ -70,6 +74,8 @@ router.get('/page/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;
@@ -99,6 +105,8 @@ router.put('/page/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;
@@ -128,6 +136,8 @@ router.delete('/page/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers};
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;

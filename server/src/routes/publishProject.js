@@ -30,7 +30,8 @@ router.post('/publish', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
-
+    requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.body;
     //Check for the input parameters.
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -219,18 +220,66 @@ router.post('/publish', (req, res) => {
     } else if (inpParam.projectStatus == "save") {
         if (!fs.existsSync('savedProjects/')){
                 fs.mkdirSync('savedProjects/');
-            }
-        fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+        }
+        fs.readdir('savedProjects', function (err, items) {
             if (err) {
                 logging.applogger.error(err);
                 res.send(err);
             } else {
-                res.status(200).send({ savedProjectId: inpParam.id });
-                // fs.unlinkSync('AllProjects.json', function (err) {
-                //     if (err) throw err;
-                // })
+                let parsedData;
+                let duplicate = [];
+                var promise = []
+                for (var i = 0; i < items.length; i++) {
+                    promise.push(new Promise((resolve, reject) => {
+                        fs.readFile('savedProjects/' + items[i], (err, data) => {
+                            if (err) throw reject(err);
+                            parsedData = JSON.parse(data);
+                            resolve(parsedData)
+                            //res.send(parsedData);                    
+                        })
+                    }));
+                }
+                if(promise.length !==0){
+                    Promise.all(promise).then(function (values) {
+                        if(values.length !== 0){
+                            values.map(item => {
+                                if(item.name === inpParam.name && item.id !== inpParam.id){//same name and different id means a new unpublished project
+                                    duplicate.push(true);
+                                }
+                            })
+                            if(duplicate.includes(true)){
+                                res.status(403).send("Duplicate entry for the " + inpParam.name + " exists");
+                            }else{
+                                fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+                                    if (err) {
+                                        logging.applogger.error(err);
+                                        res.send(err);
+                                    } else {
+                                        res.status(200).send({ savedProjectId: inpParam.id });
+                                        // fs.unlinkSync('AllProjects.json', function (err) {
+                                        //     if (err) throw err;
+                                        // })
+                                    }
+                        
+                                });
+                            }
+                        }
+                    })
+                }else{
+                    fs.writeFile('savedProjects/' + inpParam.id + '.json', JSON.stringify(inpParam), 'utf8', function (err) {
+                        if (err) {
+                            logging.applogger.error(err);
+                            res.send(err);
+                        } else {
+                            res.status(200).send({ savedProjectId: inpParam.id });
+                            // fs.unlinkSync('AllProjects.json', function (err) {
+                            //     if (err) throw err;
+                            // })
+                        }
+            
+                    });
+                }
             }
-
         });
     }
 
@@ -366,7 +415,15 @@ router.post('/validate', (req, res) => {
                                     key:{type: String, required: true},
                                     collection:{type: String, required: true},
                                     title:{type: String, required: true},
-                                    subtitle:{type: String, required: true}
+                                    subtitle:{type: String, required: true},
+                                    layout:{
+                                        type: Array,
+                                        required: true,
+                                        schema:{
+                                            type: Object,
+                                            unknownKeys: 'allow',
+                                        }
+                                    }
                                 }
                             }
                         },
@@ -404,6 +461,7 @@ router.post('/validate', (req, res) => {
                                                 description:{type: String, required: true},
                                                 ratio:{type: String, required: true},
                                                 sequenceLimit:{type: String, required: true},
+                                                layout: {type: Array}
                                             }
                                         }
                                     },
@@ -452,14 +510,65 @@ router.post('/validate', (req, res) => {
             if (!fs.existsSync('savedProjects/')){
                 fs.mkdirSync('savedProjects/');
             }
-            fs.writeFile('savedProjects/' + data.id + '.json', JSON.stringify(data), 'utf8', function (err) {
+            fs.readdir('savedProjects', function (err, items) {
                 if (err) {
                     logging.applogger.error(err);
-                    res.status(500).send(err);
+                    res.send(err);
                 } else {
-                    res.status(200).send({ savedProjectId: data.id, messages: "Successfully imported as unpublished Project" });
+                    let parsedData;
+                    let duplicate = [];
+                    var promise = []
+                    for (var i = 0; i < items.length; i++) {
+                        promise.push(new Promise((resolve, reject) => {
+                            fs.readFile('savedProjects/' + items[i], (err, data) => {
+                                if (err) throw reject(err);
+                                parsedData = JSON.parse(data);
+                                resolve(parsedData)
+                                //res.send(parsedData);                    
+                            })
+                        }));
+                    }
+                    if(promise.length !==0){
+                        Promise.all(promise).then(function (values) {
+                            if(values.length !== 0){
+                                values.map(item => {
+                                    if(item.name === data.name){
+                                        duplicate.push(true);
+                                    }
+                                })
+                                if(duplicate.includes(true)){
+                                    res.status(500).send("Duplicate entry for the key name with " + data.name + "exists");
+                                }else{
+                                    fs.writeFile('savedProjects/' + data.id + '.json', JSON.stringify(data), 'utf8', function (err) {
+                                        if (err) {
+                                            logging.applogger.error(err);
+                                            res.send(err);
+                                        } else {
+                                            res.status(200).send({ savedProjectId: data.id, messages: "Successfully imported as unpublished Project" });
+                                            // fs.unlinkSync('AllProjects.json', function (err) {
+                                            //     if (err) throw err;
+                                            // })
+                                        }
+                            
+                                    });
+                                }
+                            }
+                        })
+                    }else{
+                        fs.writeFile('savedProjects/' + data.id + '.json', JSON.stringify(data), 'utf8', function (err) {
+                            if (err) {
+                                logging.applogger.error(err);
+                                res.send(err);
+                            } else {
+                                res.status(200).send({ savedProjectId: data.id, messages: "Successfully imported as unpublished Project" });
+                                // fs.unlinkSync('AllProjects.json', function (err) {
+                                //     if (err) throw err;
+                                // })
+                            }
+                
+                        });
+                    }
                 }
-
             });
         }catch(e){
             logging.applogger.error(e);
@@ -670,7 +779,7 @@ function publishRoleList(requestOptions, roleList, tenantId, globalTto, orgId, u
                 let roleBody = {
                     "name": oneRole.name,
                     "description": oneRole.description,
-                    "orgId": orgId,
+                    "orgId": orgId !== null ? orgId: globalTto,
                     "isAssignable": oneRole.isAssignable,
                     "isAutoAccess": oneRole.isAutoAccess,
                     "isAutoAssignOnIntake": oneRole.isAutoAssignOnIntake

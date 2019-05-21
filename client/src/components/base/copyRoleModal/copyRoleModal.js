@@ -32,6 +32,28 @@ class CopyRoleModal extends Component {
   }
   componentWillReceiveProps(props) { }
 
+  clearCopyRoleModal = () => {
+    this.setState({
+      selectedTenant: ""
+    })
+  }
+  
+  finalCopyRole = () =>{
+    this.props.savedRoles.map(item => {
+      if(item.name == this.state.selectedRole){
+        alert('name already exists')
+      }
+    })
+    this._copyRole();
+    this.setState({
+      selectedTenant: "",
+      organization: {},
+      location: {},
+      allRole: [],
+    })
+    
+  }
+
   _input = e => {
     this.setState({
       [e.target.name]: e.target.value, rolesError: false
@@ -101,10 +123,10 @@ class CopyRoleModal extends Component {
         statusFlag: "new"
       };
       this.props.copyRole(copiedRole);
-      this.props.CancelconfirmationModal();
+      this.props.CancelconfirmationModal();// the roles are getting cleared
       this.setState({ selectedRole: {}, rolesError: false });
     }
-    else this.setState({ rolesError: true });
+    else this.setState({ rolesError: true }); // in this component also roles are cleared
   };
 
   _handleClose = () => { };
@@ -215,13 +237,13 @@ class CopyRoleModal extends Component {
             className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
             onClick={this.props.CancelconfirmationModal}
           >
-            Close
+            Cancel
           </Button>
           <Button
             className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
-            onClick={this._copyRole}
+            onClick={this.finalCopyRole}
           >
-            Copy
+            Save
           </Button>
         </div>
       </Modal>

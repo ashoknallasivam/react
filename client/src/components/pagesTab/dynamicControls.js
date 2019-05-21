@@ -1,6 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
+import JSONInput from "react-json-editor-ajrm/index";
+import locale from "react-json-editor-ajrm/locale/en";
+import PagePreview from './pagePreview';
 import PagesTab from './pageTitles';
 import ActionControl from './controls/ActionControl';
 import AddressControl from './controls/AddressControl';
@@ -56,7 +59,8 @@ class dynamicControls extends React.Component {
 			selectedPage: this.props.selectedPage,
 			mode: this.props.mode,
 			isModalOpen: false,
-			isModalAttrOpen: false
+			isJsonModalOpen: false,
+			isPreviewModalOpen: false
 		};
 
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -208,7 +212,6 @@ class dynamicControls extends React.Component {
 			this.setState({ isModalOpen: true, mode: "ADD" })
 		} else if (e.currentTarget.name == "EDIT") {
 			data = this.state.values[i];
-			console.log("Data",data);
 			this.setState({ mode: "EDIT", idx: i, data, type: data.type, isModalOpen: true, })
 		}
 
@@ -217,31 +220,30 @@ class dynamicControls extends React.Component {
 	};
 
 
-	handleAttrCloseModal = () => {
-		let newState = this.state;
-		delete newState[data];
+	handleCloseJSONModal = () => {
 		this.setState({
-			data: {},
-			idx: '',
-			type: '',
-			isModalAttrOpen: false
+			isJsonModalOpen: false
 		})
 	};
 
-	handleAttrOpenModal = (data, idx) => {
-		console.log("handlemodal:", data);
-		this.setState({
-			data: data,
-			idx: idx
-
-		});
-		this.setState({ type: data.type }, () => {
-			return this.addControl(data, idx); // Call back function as SetState is Asynch
-		});
-		this.setState({ isModalAttrOpen: true })
+	handleOpenJSONModal = (data, idx) => {
+		this.setState({ isJsonModalOpen: true })
 	};
 
+	handleClosePreviewModal = () => {
+		this.setState({
+			isPreviewModalOpen: false
+		})
+	};
 
+	handleOpenPreviewModal = (data, idx) => {
+		
+	  localStorage.setItem('previewJson', JSON.stringify(this.state.pageJson.layout));
+	  console.log(this.state.layout);
+	  window.open("/preview/index.html", "_blank") //to open new page
+		
+		//this.setState({ isPreviewModalOpen: true })
+	};
 
 	handleSubmit(e) {
 		e.preventDefault();
@@ -272,66 +274,64 @@ class dynamicControls extends React.Component {
 
 		const { type } = this.state;
 
-
-
 		switch (type) {
 
 			case 'action-toolbar':
-				return (<ActionControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ActionControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} />);
 			case 'address':
-				return (<AddressControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<AddressControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'array':
-				return (<ArrayControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ArrayControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'button':
-				return (<ButtonControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ButtonControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'checkbox':
-				return (<CheckboxControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<CheckboxControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'checkbox-group':
-				return (<CheckgroupControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<CheckgroupControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'date':
-				return (<DateControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<DateControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'email':
-				return (<EmailControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<EmailControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'fieldset':
-				return (<FieldsetControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<FieldsetControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'heading':
-				return (<HeadingControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<HeadingControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} />);
 			case 'layout-editor':
-				return (<LayoutControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<LayoutControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'number':
-				return (<NumberControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<NumberControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'panel':
-				return (<PanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'password':
-				return (<PasswordControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PasswordControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'phone':
-				return (<PhoneControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<PhoneControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'radio':
-				return (<RadioControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<RadioControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'select':
-				return (<SelectControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SelectControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'slider':
-				return (<SliderControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SliderControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'slide-toggle':
-				return (<SlidertoogleControl index={idx} data={data} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SlidertoogleControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'ssn':
-				return (<SsnControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<SsnControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'states':
-				return (<StatesControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StatesControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'static':
-				return (<StaticControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StaticControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} />);
 			case 'static-panel':
-				return (<StaticpanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<StaticpanelControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'text':
-				return (<TextControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'textarea':
-				return (<TextareaControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextareaControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'text-mask':
-				return (<TextmaskControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TextmaskControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'time':
-				return (<TimeControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<TimeControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			case 'zip':
-				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.editor} close={this.handleCloseModal} />);
+				return (<ZipControl index={idx} data={data} type={type} onChange={this.addClick} mode={this.state.mode} close={this.handleCloseModal} values={this.state.values}/>);
 			default:
 				return <span className="pl-2">Select element type</span>;
 		}
@@ -378,11 +378,15 @@ class dynamicControls extends React.Component {
 	}
 
 	render() {
-
 		const { key, collection, title, subtitle, values } = this.state;
 		var viewOnly = '';
+		var previewButton = '';
 		viewOnly = this.state.applicationMode == 'EDIT' || this.state.applicationMode == 'CREATE' ? false : true;
-		
+		if (this.state.values.length > 0) {
+		previewButton = <Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton' name="ADD" onClick={this.handleOpenPreviewModal}>
+							<i className="orgIcon material-icons" title='Preview' >launch</i><span>Preview</span>
+						</Button>
+		}
 
 		return (
 
@@ -421,12 +425,17 @@ class dynamicControls extends React.Component {
 									<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton' name="ADD" onClick={this.handleOpenModal}>
 										<i className="material-icons" title='Add Control' >add_circle</i><span>Add Controls</span>
 									</Button>
+									<Button type="button" className='btn btn btn_primary otherButtonAddDetUpt iconButton' name="ADD" onClick={this.handleOpenJSONModal}>
+										<i className="orgIcon material-icons" title='JSON Schema' >code</i><span>JSON</span>
+									</Button>
+									{previewButton}
 								</Row>
+								
 							) : ('')
 							}
 							{viewOnly == false ? (
 								<Row>
-									<Col className="z-depth-8 mr-0" s={12} m={6} l={4} xl={8} >
+									<Col className="z-depth-8 mr-0 mt-5" s={12} m={6} l={4} xl={8} >
 										<Button type="submit " className="btn_secondary otherButtonAddDetUpt mr-2" >Save</Button>
 									</Col>
 								</Row>
@@ -464,6 +473,50 @@ class dynamicControls extends React.Component {
 							}
 
 						</form>
+					</Row>
+				</Modal>
+				
+				<Modal className="modal" open={this.state.isJsonModalOpen} modalOptions={{ dismissible: false }} close={this.handleCloseJSONModal} >
+					<button className="modal_close" onClick={this.handleCloseJSONModal}><i class="material-icons " >close</i> </button>
+					<Row>
+					
+					 <Tabs className='z-depth-0'>
+					   <Tab disabled={true} title={<i className="orgIcon material-icons" title='JSON Schema' >code</i>} active>
+					   <div style={{ maxWidth: "1400px", maxHeight: "100%" }}>
+									<Row className="margin">
+										<Col className="input-field p-0" s={12}>
+											<JSONInput
+												placeholder={this.state.pageJson} // data to display
+												theme="light_mitsuketa_tribute"
+												id='json_content'
+												locale={locale}
+												onChange={this.jsonValue}
+												height="275px"
+												width="700px"
+												colors={{
+													string: "#DAA520",
+													default: '#808080',
+													background: "#ececec"// overrides theme colors with whatever color value you want
+												}}
+												onKeyPressUpdate={false}
+												viewOnly={true}
+											/>
+										</Col>
+									</Row>
+							</div></Tab>
+				   </Tabs>				
+					
+					</Row>
+				</Modal>
+				
+				<Modal className="modal modal-fixed-footer dynamicModal" header="Element Preview" open={this.state.isPreviewModalOpen} modalOptions={{ dismissible: false }} close={this.handleClosePreviewModal} >
+					<button className="modal_close" onClick={this.handleClosePreviewModal}><i class="material-icons " >close</i> </button>
+					<Row>
+						<PagePreview 
+							
+							pageJson={this.state.pageJson} 
+							
+							/>
 					</Row>
 				</Modal>
 			</div>

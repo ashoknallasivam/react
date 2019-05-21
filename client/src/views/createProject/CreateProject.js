@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row, Input, Button, Preloader, Col } from 'react-materialize';
+import { Row, Input, Button, Preloader, Col, Modal } from 'react-materialize';
 import objectUtil from '../../utils/objectUtil';
 import PropTypes from "prop-types";
 import FormModal from '../../components/base/formModal';
@@ -39,7 +39,7 @@ class CreateProject extends Component {
       deleteOrg: false,
       editLoc: false,
       editOrg: false,
-      modalOpen: false,
+      deleteModal: false,
       validations: {
         name: false,
         organisation: false,
@@ -533,7 +533,11 @@ class CreateProject extends Component {
           //Fetching success
           if (response.status == 200) {
             this.props.history.push({
-              pathname: '/dashboard',
+              pathname: '/viewedit',
+              state: {
+                id: response.data.id,
+                applicationMode: "VIEW"
+              }
             })
 
           }
@@ -566,8 +570,10 @@ class CreateProject extends Component {
 
   finalSave = () => {
     this.props.actions.saveProject(this.state.id).then(response => {
-      if (response) {
-        alert("Project saved. Visit Unpublished project tab in Dashboard to view the project")
+      if (response.status !== 200) {
+        alert(response.response.data)
+      } else {
+        alert("Project saved. Visit Unpublished project tab in Dashboard to view the project.")
       }
       this.setState({
         preloader: false
@@ -576,7 +582,7 @@ class CreateProject extends Component {
       this.props.history.push({
         pathname: '/dashboard',
         state: {
-          id: response,
+          id: response.data.savedProjectId,
           flag: 'saved'
         }
       })
@@ -587,12 +593,11 @@ class CreateProject extends Component {
       preloader: true
     });
     this.props.actions.deleteSavedProject(this.state.id).then(response => {
-
-      if (response.status == 200) {
-        alert(response.data.messages ? response.data.messages : response.statusText)
-      } else {
-        alert(response.data.messages ? response.data.messages : response.statusText)
-      }
+      //  if (response.status == 200) {
+      //   alert(response.data.messages ? response.data.messages : response.statusText)
+      //  } else {
+      //    alert(response.data.messages ? response.data.messages : response.statusText)
+      // }
       this.props.history.push({
         pathname: '/dashboard',
       });
@@ -600,9 +605,15 @@ class CreateProject extends Component {
       this.setState({
         preloader: false
       })
-
     })
+    this.cancelDeleteModal();
   };
+  openDeleteModal = () => {
+    this.setState({ deleteModal: true });
+  }
+  cancelDeleteModal = () => {
+    this.setState({ deleteModal: false });
+  }
   componentWillUnmount() {
     if (this.state.applicationMode == "CREATE")
       this.props.actions.removeProject(this.state.id)
@@ -611,6 +622,18 @@ class CreateProject extends Component {
   render() {
     return (
       <Fragment>
+        <Modal
+          header="RAPTER Configurator"
+          id='DeleteProject' modalOptions={{ dismissible: false }}
+          open={this.state.deleteModal} >
+          <p>Are you sure you want to delete ?</p>
+          <div className="col s12 m12 l12 xl12">
+            <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1"
+              onClick={this.cancelDeleteModal}>NO</Button>
+            <Button className=' btn btn_secondary modalButton otherButtonAddDetUpt mb-2'
+              onClick={this.deleteSaved}>YES</Button>
+          </div>
+        </Modal>
         {/* {(this.state.fetched == true || this.state.applicationMode == "CREATE") ? */}
         <Row className="create-project-page">
           <Col s={12} className={this.state.preloader ? "valign-wrapper leftzero loader-overlay-view" : "hide"}>
@@ -799,7 +822,7 @@ class CreateProject extends Component {
               <Fragment>
                 <Button className="mt-1 CreateProjectPublish btn_primary" onClick={this.finalPublish} disabled={(this.state.name !== '') ? false : true}>Publish</Button>
                 {/* Display Discard in if project name is not empty */}
-                {this.state.currentProject && this.state.currentProject.projectStatus == "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.deleteSaved} disabled={(this.state.name !== '') ? false : true}>Delete</Button>}
+                {this.state.currentProject && this.state.currentProject.projectStatus == "save" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.openDeleteModal} disabled={(this.state.name !== '') ? false : true}>Delete</Button>}
                 {this.state.applicationMode === "CREATE" && <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this.finalSave} disabled={(this.state.name !== '') ? false : true}>{"Save & Close"}</Button>}
                 <Button className="mt-1 mr-1 CreateProjectPublish btn_primary" onClick={this._discard}  >Discard</Button>
               </Fragment>

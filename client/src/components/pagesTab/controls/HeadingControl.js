@@ -29,7 +29,7 @@ class HeadingControl extends Component {
 			this.setState({
 					
 					label : this.props.data.label,
-					level : this.props.data.level
+					level : this.props.data.options.level
 			})	
 		}
 
@@ -59,12 +59,14 @@ class HeadingControl extends Component {
 		}
 		if(this.state.level !== undefined)
 		{
-			var level = this.state.level
+			var level = parseInt(this.state.level)
 		}
 		var initialState =  {  
 			type:"heading",
 			label, 
-			level,
+			options: {
+				level
+			}
 		};
 		onChange(initialState,this.props.index);
 		this.props.close();
@@ -102,6 +104,7 @@ class HeadingControl extends Component {
 							value={this.state.label}
 							required
 							onChange={this.handleChange}
+							autoComplete='off'
 						/><div className="helper-text" >What the user sees</div>
 					</div>
 					<div>

@@ -1,4 +1,4 @@
-import { AUTH_USER, AUTH_TOKEN, UNAUTH_USER, AUTH_ERROR, TOKEN_ERROR } from './types';
+import { AUTH_USER, AUTH_TOKEN, UNAUTH_USER, AUTH_ERROR, TOKEN_ERROR, SMS_ERROR } from './types';
 import { authService } from '../services';
 
 export function login(username, password, environment) {
@@ -11,10 +11,32 @@ export function login(username, password, environment) {
 					dispatch({ type: AUTH_USER, 
 						//payload:environment 
 					});
-					// alert(JSON.stringify(data));
+					
 				},
 				error => {
-					dispatch(authError('Invalid Credentials'));
+					dispatch(authError(error.data.messages));
+					 
+				}
+			);
+	};
+
+}
+
+export function twoStepGeneration() {
+	
+	return function(dispatch) {
+		 authService
+			.twoStepGeneration()
+			.then(
+				data => { 
+					 //dispatch({ type: AUTH_TOKEN });
+					 //console.log('Data',data);
+					 //dispatch(smsError('Code sent via SMS.'));
+					 //alert(JSON.stringify(data));
+				},
+				error => {
+					//dispatch(smsError('Unable able send SMS. Please try again.'));
+					//console.log('Error',error)
 					// alert(JSON.stringify(error));
 				}
 			);
@@ -52,6 +74,13 @@ export function signoutUser() {
 export function authError(error) {
   return {
     type: AUTH_ERROR,
+    payload: error
+  };
+}
+
+export function smsError(error) {
+  return {
+    type: SMS_ERROR,
     payload: error
   };
 }

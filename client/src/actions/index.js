@@ -1,11 +1,12 @@
 import { fetchAllTenants,fetchSavedTenants,fetchUserInfo } from './fetchTenant';
-import{ login,twoStepVerification,signoutUser,tokenError,} from './auth.actions';
+import{ login,twoStepGeneration,twoStepVerification,signoutUser,tokenError,} from './auth.actions';
 import {  fetchRoles, fetchResourceList, fetchMenuList, } from './fetchTabsData'
 import {SaveRoles , SaveStudyConfig, SaveFunctions, SaveEnrollment, SavePages,SaveTenant,SaveOrganization,SaveLocation } from './saveTabsData'
 import {exportProject, publishProject, saveProject, cloneProject, importProject,fetchSingleTenant,removeProject,deleteSavedProject,fetchSingleSavedTenant } from './projectActions'
 
 export{
     login,
+	twoStepGeneration,
     twoStepVerification,
     signoutUser,
     tokenError,

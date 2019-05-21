@@ -7,7 +7,7 @@ let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
 let resourceBiz = require('../biz/resourceBiz');
-
+let urlList= require('../helpers/api-url');
 
 // create resource.
 router.post('/resource', (req, res) => {
@@ -19,6 +19,7 @@ router.post('/resource', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -28,7 +29,8 @@ router.post('/resource', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.post(`${config.RAPTER_URL}/resource`, inpParam, requestOptions).then(function (response) {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    axios.post(`${RAPTER_URL}/resource`, inpParam, requestOptions).then(function (response) {
         res.status(200).send(response.data);
     }).catch(error => {
         logging.applogger.error(error);
@@ -46,6 +48,7 @@ router.get('/resource', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
     resourceBiz.getResourceList(requestOptions).then(response=>{
         if(response.status===200){
             res.status(200).send(response.data);
@@ -64,10 +67,12 @@ router.get('/resource/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
-        axios.get(`${config.RAPTER_URL}/resource/` + inpParam.id, requestOptions).then(function (response) {
+        axios.get(`${RAPTER_URL}/resource/` + inpParam.id, requestOptions).then(function (response) {
             res.status(200).send(response.data);
         }).catch(error => {
             logging.applogger.error(error);
@@ -91,6 +96,7 @@ router.put('/resource/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -100,7 +106,8 @@ router.put('/resource/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.put(`${config.RAPTER_URL}/resource/` + inpParam.id, req.body, requestOptions).then(function (response) {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    axios.put(`${RAPTER_URL}/resource/` + inpParam.id, req.body, requestOptions).then(function (response) {
         res.status(200).send(response.data);
     }).catch(error => {
         logging.applogger.error(error);
@@ -117,6 +124,7 @@ router.delete('/resource/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -126,7 +134,8 @@ router.delete('/resource/:id', (req, res) => {
         res.status(400).send({ code: responseStatus.BAD_REQUEST.code, status: responseStatus.BAD_REQUEST.status, messages: MESSAGE.COMMON.MANDATORY_FIELDS_MESSAGE });
         return;
     }
-    axios.delete(`${config.RAPTER_URL}/resource/` + inpParam.id, requestOptions).then(function (response) {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    axios.delete(`${RAPTER_URL}/resource/` + inpParam.id, requestOptions).then(function (response) {
         res.send(response.data);
     }).catch(error => {
         logging.applogger.error(error);

@@ -18,6 +18,7 @@ router.post('/tenant', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -46,6 +47,8 @@ router.get('/tenant', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     tenantBiz.getTenantList(requestOptions).then(response=>{
         if(response.status===200){
             res.status(200).send(response.data);
@@ -65,6 +68,7 @@ router.get('/tenant/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
@@ -93,6 +97,7 @@ router.put('/tenant/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -121,6 +126,7 @@ router.delete('/tenant/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {

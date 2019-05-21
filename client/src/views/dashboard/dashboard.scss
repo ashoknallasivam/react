@@ -87,9 +87,9 @@ select{
 }
 
 .loader-overlay{
-    position: absolute;
+    position: fixed;
     width: 101vw !important;
-    height: 101vh;
+    height: 115vh;
     align-items: center;
     z-index: 1000;
     background: #6b6b6ba3;

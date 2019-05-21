@@ -20,6 +20,7 @@ class SelectControl extends Component {
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
@@ -96,62 +97,84 @@ class SelectControl extends Component {
 	}
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		let name = "";
-		let label = "";
-		let hint = "";
-		let defaultValue = "";
-		let property = "";
-		let value = "";
-		let required = "";
-		let validationProperty = "";
-		let validationValue = "";
-		let items = [];
 
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			items = this.state.items;
-			if (this.state.hint !== undefined)
-				hint = this.state.hint;
-			if (this.state.defaultValue !== undefined)
-				defaultValue = this.state.defaultValue;
-			if (this.state.property !== undefined)
-				property = this.state.property;
-			if (this.state.value !== undefined)
-				value = this.state.value;
-			if (this.state.required !== undefined)
-				required = this.state.required;
-			if (this.state.validationProperty !== undefined)
-				validationProperty = this.state.validationProperty;
-			if (this.state.validationValue !== undefined)
-				validationValue = this.state.validationValue;
-
-			let data = {
-				"type": this.state.type,
-				"name": name,
-				"label": label,
-				"options": {
-					"hint": hint,
-					"defaultValue": defaultValue,
-					"showIf": {
-						"property": property,
-						"value": value
-					},
-					"validation": {
-						"required": required,
-						"requiredIf": {
-							"property": validationProperty,
-							"value": validationValue
-						}
-					},
-					"items": items
-				}
-			}
-			onChange(data, this.props.index);
-			alert('submitted');
-			this.props.close();
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		else alert("Enter required fields");
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
+		}
+		if (nameExists != "yes") {
+			let name = "";
+			let label = "";
+			let hint = "";
+			let defaultValue = "";
+			let property = "";
+			let value = "";
+			let required = "";
+			let validationProperty = "";
+			let validationValue = "";
+			let items = [];
+
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				items = this.state.items;
+				if (this.state.hint !== undefined)
+					hint = this.state.hint;
+				if (this.state.defaultValue !== undefined)
+					defaultValue = this.state.defaultValue;
+				if (this.state.property !== undefined)
+					property = this.state.property;
+				if (this.state.value !== undefined)
+					value = this.state.value;
+				if (this.state.required !== undefined)
+					required = this.state.required;
+				if (this.state.validationProperty !== undefined)
+					validationProperty = this.state.validationProperty;
+				if (this.state.validationValue !== undefined)
+					validationValue = this.state.validationValue;
+
+				let data = {
+					"type": this.state.type,
+					"name": name,
+					"label": label,
+					"options": {
+						"hint": hint,
+						"defaultValue": defaultValue,
+						"showIf": {
+							"property": property,
+							"value": value
+						},
+						"validation": {
+							"required": required,
+							"requiredIf": {
+								"property": validationProperty,
+								"value": validationValue
+							}
+						},
+						"items": items
+					}
+				}
+				onChange(data, this.props.index);
+				alert('submitted');
+				this.props.close();
+			}
+			else alert("Enter required fields");
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
 
 	render() {
@@ -288,7 +311,7 @@ class SelectControl extends Component {
 								<Col s={12} m={6} l={4} xl={12} >
 									<Input
 										s={8}
-										label={`Value #${idx + 1} *`}
+										label="Value *"
 										id={`itemValue${idx}`}
 										name={`itemValue${idx}`}
 										type="text"
@@ -305,7 +328,7 @@ class SelectControl extends Component {
 								<Col s={12} m={6} l={4} xl={12} >
 									<Input
 										s={8}
-										label={`Label #${idx + 1} *`}
+										label="Label *"
 										id={`itemLabel${idx}`}
 										name={`itemLabel${idx}`}
 										type="text"

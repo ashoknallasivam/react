@@ -17,6 +17,7 @@ router.post('/role', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -45,6 +46,8 @@ router.get('/role', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     roleBiz.getRoleList(requestOptions).then(response=>{
         if(response.status===200){
             res.status(200).send(response.data);
@@ -63,6 +66,7 @@ router.get('/role/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
@@ -91,6 +95,7 @@ router.put('/role/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -118,6 +123,7 @@ router.delete('/role/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {

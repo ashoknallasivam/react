@@ -6,7 +6,6 @@ let logging = require('../utils/logger');
 let responseStatus = require('../constants/httpStatus');
 let MESSAGE = require('../constants/applicationConstants');
 const config = require('../config/config');
-let x_rapter_bounds = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc1JlYWR5IjoxMCwibHRvSWQiOjEwLCJ0ZW5hbnRJZCI6MSwidHRvSWQiOjEsImlhdCI6MTU1Mzc3NDgzMCwiZXhwIjoxNTUzODYxMjMwfQ.dn7HIw4hfAlEK7MG7OSuSKmifRUmyKnw9xMtBqurpA0";//  req.bounds.
 let resourceRoleBiz = require('../biz/resourceRoleAccessBiz');
 
 // create resource-role-access.
@@ -19,6 +18,8 @@ router.post('/resource-role-access', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.body;
     //Check for the input parameters.
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -50,6 +51,8 @@ router.get('/resource-role-access', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers };
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     resourceRoleBiz.getResourceRoleAccessList(newConfig).then(response => {
@@ -71,6 +74,8 @@ router.get('/resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers };
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;
@@ -100,6 +105,8 @@ router.put('/resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers };
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;
@@ -129,6 +136,8 @@ router.delete('/resource-role-access/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let newConfig = { headers: requestOptions.headers };
     newConfig.headers["x-rapter-bounds"] = x_rapter_bounds;
     let inpParam = req.params;

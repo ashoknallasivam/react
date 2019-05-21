@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // resource-role-access list.
 exports.getResourceRoleAccessList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/resource-role-access`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/resource-role-access`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getResourceRoleAccessList = (requestOptions) => {
 };
 // find resource-role-access by using id.
 exports.getResourceRoleAccess = (requestOptions, resourceRoleId) => {
-    return axios.get(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getResourceRoleAccess = (requestOptions, resourceRoleId) => {
 
 // create resource-role-access.
 exports.createResourceRoleAccess = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/resource-role-access`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/resource-role-access`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createResourceRoleAccess = (requestOptions, inpParam) => {
 
 // update resource-role-access.
 exports.updateResourceRoleAccess = (requestOptions, resourceRoleId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/resource-role-access/` + resourceRoleId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updateResourceRoleAccess = (requestOptions, resourceRoleId, inpParam) =>
 };
 // delete resource-role-access.
 exports.deleteResourceRoleAccess = (requestOptions, resourceRoleId) => {
-    return axios.delete(`${config.RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/resource-role-access/` + resourceRoleId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

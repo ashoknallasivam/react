@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // organization list.
 exports.getOrganizationList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/organization`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/organization`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getOrganizationList = (requestOptions) => {
 };
 // find organization by using id.
 exports.getOrganization = (requestOptions, organizationId) => {
-    return axios.get(`${config.RAPTER_URL}/organization/` + organizationId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/organization/` + organizationId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getOrganization = (requestOptions, organizationId) => {
 
 // create organization.
 exports.createOrganization = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/organization`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/organization`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createOrganization = (requestOptions, inpParam) => {
 
 // update organization.
 exports.updateOrganization = (requestOptions, organizationId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/organization/` + organizationId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/organization/` + organizationId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updateOrganization = (requestOptions, organizationId, inpParam) => {
 };
 // delete organization.
 exports.deleteOrganization = (requestOptions, organizationId) => {
-    return axios.delete(`${config.RAPTER_URL}/organization/` + organizationId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/organization/` + organizationId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -78,7 +84,8 @@ exports.deleteOrganization = (requestOptions, organizationId) => {
 
 // create organization user.
 exports.createOrganizationUser = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/organization-user`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/organization-user`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

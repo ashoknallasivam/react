@@ -108,8 +108,12 @@ class RolesTab extends Component {
         if (this.props.selectedLocation.id != "") {
             let filteredRoles = this.props.roles.filter((role) => role.id == selectedValue);
             let filteredRolesData = filteredRoles[0];
+            let newFilteredRolesData = filteredRoles[0];
+            newFilteredRolesData.isAssignable = filteredRoles[0].isAssignable.data[0];
+            newFilteredRolesData.isAutoAccess = filteredRoles[0].isAutoAccess.data[0];
+            newFilteredRolesData.isAutoAssignOnIntake = filteredRoles[0].isAutoAssignOnIntake.data[0];
 
-            this.setState({ selectedRole: filteredRolesData });// in view the ds of roles is different please take
+            this.setState({ selectedRole: newFilteredRolesData });// in view the ds of roles is different please take care
 
             let filteredMenu = [];
             this.props.roles.map((item) => {
@@ -118,7 +122,6 @@ class RolesTab extends Component {
                         if (data.statusFlag == undefined || data.statusFlag == "new") {
                             filteredMenu = [...filteredMenu, data.menuId]
                         }
-
                     })
                 }
             });
@@ -291,6 +294,9 @@ class RolesTab extends Component {
                 else if (iteratedValue.name === this.state.selectedRole.name) {
                     return true;
                 }
+            }
+            else if (iteratedValue.name === this.state.selectedRole.name) {
+                return true;
             }
         });
         if (isDuplicatte.includes(true)) {
@@ -821,29 +827,33 @@ class RolesTab extends Component {
                             </Fragment>
                             : <Fragment> {this.state.noRoleDisplay && <p className='col s3 mt-2 pl-2'>No role to display </p>}</Fragment>}
                         {this.props.applicationMode == 'VIEW' ? null :
-                            <div className='col s12 m3 l3 xl3 mt-2 ml-3'>
-                                <Col className=' col s2'>
-                                    <Button className='orgIcon innerRolesButton' onClick={this.showAddRoles} >
-                                        <i className="material-icons" title='Add Role'>
-                                            add_circle
+                            <div>
+                                <div className='col s10 m3 mt-2 ml-0'>
+                                    <Col className=' col s8'>
+                                        <Button className='btn btn_primary otherButtonAddDetUpt iconButton' onClick={this.showAddRoles} >
+                                            <i className="material-icons" title='Add Role'>
+                                                add_circle
+                                        </i><span>Add Role</span>
+                                        </Button>
+                                    </Col>
+                                    <Col className='col s2'>
+                                        {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button className="orgIcon innerRolesButton"
+                                            onClick={this.confirmationModal}>
+                                            <i className="material-icons" title='Delete Role'>
+                                                delete
                                         </i>
-                                    </Button>
-                                </Col>
-                                <Col className='col s2'>
-                                    {(this.state.isEditMode && this.props.applicationMode !== 'VIEW') && <Button className="pr-0 orgIcon innerRolesButton"
-                                        onClick={this.confirmationModal}>
-                                        <i className="material-icons" title='Delete Role'>
-                                            delete
-                                        </i>
-                                    </Button>}
-                                </Col>
-                                <Col className='col s8 pl-10'>
-                                    <Button className="btn btn_primary otherButtonAddDetUpt iconButton" onClick={this._copyRoleModel}>
-                                        <i className="material-icons" title="Copy Role">file_copy</i>
-                                        <span>Copy Role</span>
-                                    </Button>
-                                </Col>
-                                <CopyRoleModel open={this.state.copyRoleModel} CancelconfirmationModal={this.CancelconfirmationModal} copyRole={this.copyRole} />
+                                        </Button>}
+                                    </Col>
+                                </div>
+                                <div className='col s8 m3 mt-2 ml-0 pl-0'>
+                                    <Col className='col s8'>
+                                        <Button className="btn btn_primary otherButtonAddDetUpt iconButton" onClick={this._copyRoleModel}>
+                                            <i className="material-icons" title="Copy Role">file_copy</i>
+                                            <span>Copy Role</span>
+                                        </Button>
+                                    </Col>
+                                    <CopyRoleModel open={this.state.copyRoleModel} savedRoles={this.props.orgRoles.roles} CancelconfirmationModal={this.CancelconfirmationModal} copyRole={this.copyRole} />
+                                </div>
                             </div>
                         }
                     </div>
@@ -1016,7 +1026,7 @@ class RolesTab extends Component {
                     id='SaveSuccessfullModal'
                     modalOptions={{ dismissible: false }}
                     open={this.state.SaveSuccessfullModal} >
-                    <p style={{ textAlign: 'center' }}>Save Successfull</p>
+                    <p style={{ textAlign: 'center' }}>Saved Successfully</p>
 
                     <div className="col s12 m12 l12 xl12">
                         <Button className="btn btn_secondary otherButtonAddDetUpt modalButton mb-2 ml-1" onClick={this.CancelconfirmationModal}>OK</Button>

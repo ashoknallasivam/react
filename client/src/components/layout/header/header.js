@@ -43,33 +43,39 @@ class Header extends Component {
         let newProps = this.props;
         let newThis = this
         let uploadedJson;
-        uploadJson.then(function(value) {
-            try{
-                uploadedJson = JSON.parse(value);
-                uploadedJson.userId = userId;
-                uploadedJson.id = generatedId;
-                axios.post(`${BACKEND_URL}/validate`, uploadedJson, { headers: authHeaderFinal() }). then(response => {
-                    if (response.status === 200) {
-                        newProps.actions.fetchSavedTenants()
-                            
+        if (file !== undefined) {
+            uploadJson.then(function(value) {
+                try{
+                    uploadedJson = JSON.parse(value);
+                    uploadedJson.userId = userId;
+                    uploadedJson.id = generatedId;
+                    axios.post(`${BACKEND_URL}/validate`, uploadedJson, { headers: authHeaderFinal() }). then(response => {
+                        if (response.status === 200) {
+                            newProps.actions.fetchSavedTenants()
+                                
+                                alert(response.data.messages ? response.data.messages : response.statusText)
+                                newThis.setState({selectedFile: '', preloader: false});
+                        }else{
                             alert(response.data.messages ? response.data.messages : response.statusText)
                             newThis.setState({selectedFile: '', preloader: false});
-                    }else{
-                        alert(response.data.messages ? response.data.messages : response.statusText)
+                        }
+                    }).catch(error =>{
+                        alert(error.response.data)
                         newThis.setState({selectedFile: '', preloader: false});
-                    }
-                }).catch(error =>{
-                    alert(error.response.data)
+                    })
+                }catch(e){
+                    alert("Import failed due to an invalid file type or syntax errors in the file. The file must be of JSON type and with no syntax errors");
                     newThis.setState({selectedFile: '', preloader: false});
-                })
-            }catch(e){
-                alert("Import failed due to an invalid file type or syntax errors in the file. The file must be of JSON type and with no syntax errors");
-                newThis.setState({selectedFile: '', preloader: false});
-            }    
-        })
+                }    
+            })   
+        }else{
+            newThis.setState({selectedFile: '', preloader: false});
+        }
     };
+
     readUploadedFileAsText = (inputFile) => {
-        const temporaryFileReader = new FileReader();
+        if (inputFile !== undefined) {
+            const temporaryFileReader = new FileReader();
       
         return new Promise((resolve, reject) => {
           temporaryFileReader.onerror = () => {
@@ -81,7 +87,10 @@ class Header extends Component {
             resolve(temporaryFileReader.result);
           };
           temporaryFileReader.readAsText(inputFile);
-        });
+        });   
+        }else{
+            this.setState({selectedFile: '', preloader: false});
+        }
       };
 
 
@@ -97,12 +106,12 @@ class Header extends Component {
         if (this.props.tokenStatus == true) {
             homeLink = <Link to={"/dashboard"} onClick={this.handleClick} className="pl-2" name="VIEW">{"Home"}</Link>;
             createLink = <Link to={"/createProject"} onClick={this.handleClick} className="pl-2" name="CREATE">{"Create"}</Link>;
-            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import project(s)"}
+            importButton = <Button  onClick={this.handleImport} className=" imporButton">{"Import Project(s)"}
             <input type="file" className="hide" ref="fileUpload" onChange={this.onChangFile} accept=".json" ></input>
             </Button>;
             profileButton =                  
                 <Link to="/signout" className="grey-text text-lighten-5" onClick={this.toggleProfileDropDown} >
-                <i className="material-icons" title='Log out' style={{position: "absolute",top: "0",left: "97%"}} >exit_to_app</i>
+                <i className="material-icons" title='Logout' style={{position: "absolute",top: "0",left: "97%"}} >exit_to_app</i>
                 </Link>
                 
             // userMenu = <UserMenu isprofileDropDown={this.state.isdropDownOpen} toggleProfileDropDown={this.toggleProfileDropDown} />

@@ -2,10 +2,12 @@
 let axios = require('axios');
 let logging = require('../utils/logger');
 const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // enrollment-target list.
 exports.getEnrollmentTargetList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/enrollment-target`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +21,8 @@ exports.getEnrollmentTargetList = (requestOptions) => {
 };
 // find enrollment-target by using id.
 exports.getEnrollmentTarget = (requestOptions, enrollmentId) => {
-    return axios.get(`${config.RAPTER_URL}/enrollment-target/` + enrollmentId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/enrollment-target/` + enrollmentId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +37,8 @@ exports.getEnrollmentTarget = (requestOptions, enrollmentId) => {
 
 // create enrollment-target.
 exports.createEnrollmentTarget = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/enrollment-target`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/enrollment-target`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +53,8 @@ exports.createEnrollmentTarget = (requestOptions, inpParam) => {
 
 // update enrollment-target.
 exports.updateEnrollmentTarget = (requestOptions, enrollmentId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/enrollment-target/` + enrollmentId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/enrollment-target/` + enrollmentId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +68,8 @@ exports.updateEnrollmentTarget = (requestOptions, enrollmentId, inpParam) => {
 };
 // delete enrollment-target.
 exports.deleteEnrollmentTarget = (requestOptions, enrollmentId) => {
-    return axios.delete(`${config.RAPTER_URL}/enrollment-target/` + enrollmentId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/enrollment-target/` + enrollmentId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

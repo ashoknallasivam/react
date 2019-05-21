@@ -1,122 +1,154 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class SlidertoogleControl extends Component {
 
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			type: 'slide-toggle',
 			align: 'after',
-			disabled: "false",
+			disabled: false,
 			color: 'accent',
 			required: false,
-			name:''
+			name: ''
 		};
-
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 	}
 
 	componentDidMount() {
+		this.setState({
+			mode: this.props.mode,
+			type: this.props.type,
+			data: this.props.data,
+		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				label: this.props.data.label,
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				align: this.props.data.options.align,
 				color: this.props.data.options.color,
 				defaultValue: this.props.data.options.defaultValue,
-				disabled: this.props.data.options.disabled,
 				required: this.props.data.options.validation.required,
 				property: this.props.data.options.validation.requiredIf.property,
 				value: this.props.data.options.validation.requiredIf.value
-
 			})
+			if (this.props.data.options.disabled === true) {
+				this.setState({
+					disabled: 'true',
+				})
+			} else {
+				this.setState({
+					disabled: 'false',
+				})
+			}
 		}
 	}
-
 	componentWillReceiveProps(nextProps) {
 		this.setState({
-			data:nextProps.data,
+			mode: nextProps.mode,
+			type: nextProps.type,
+			data: nextProps.data,
 		});
-
 	}
 
-	handleChange(e) {		 
+	handleChange(e) {
 		const { name, value } = e.target;
 		this.setState({ [name]: value });
-		if(e.target.type == "checkbox"){
-			this.setState({[e.target.name]: e.target.checked})
+		if (e.target.type == "checkbox") {
+			this.setState({ [e.target.name]: e.target.checked })
 		}
 	}
 
 	handleSubmit() {
 		const { onChange } = this.props;
-		let name = '';
-		let label = '';
-		let defaultValue = '';
-		let align = '';
-		let color = '';
-		let disabled = '';
-		let required = '';
-		let property = '';
-		let value = '';
 
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-		if (this.state.defaultValue != undefined) {
-			defaultValue = this.state.defaultValue;
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.align != undefined) {
-			align = this.state.align;
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
 		}
-		if (this.state.color != undefined) {
-			color = this.state.color;
-		}
-		if (this.state.disabled != undefined) {
-			disabled = this.state.disabled;
-		}
+		if (nameExists != "yes") {
+			let name = '';
+			let label = '';
+			let defaultValue = '';
+			let align = '';
+			let color = '';
+			let required = '';
+			let property = '';
+			let value = '';
 
-		if (this.state.required !== undefined) {
-			required = this.state.required;
-		}
-		if (this.state.property !== undefined) {
-			property = this.state.property;
-		}
-		if (this.state.value !== undefined) {
-			value = this.state.value;
-		}
-
-		var initialState = {
-			type: this.state.type,
-			name,
-			label,
-			options: {
-				defaultValue,
-				align,
-				color,
-				disabled,
-				validation: {
-					required,
-					requiredIf: {
-						property,
-						value
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				if (this.state.defaultValue != undefined) {
+					defaultValue = this.state.defaultValue;
+				}
+				if (this.state.align != undefined) {
+					align = this.state.align;
+				}
+				if (this.state.color != undefined) {
+					color = this.state.color;
+				}
+				if (this.state.disabled !== undefined) {
+					if (this.state.disabled == 'true') {
+						var disabled = true;
+					} else {
+						var disabled = false;
 					}
 				}
+
+				if (this.state.required !== undefined) {
+					required = this.state.required;
+				}
+				if (this.state.property !== undefined) {
+					property = this.state.property;
+				}
+				if (this.state.value !== undefined) {
+					value = this.state.value;
+				}
+				
+				var initialState = {
+					type: this.state.type,
+					name,
+					label,
+					options: {
+						defaultValue,
+						align,
+						color,
+						disabled,
+						validation: {
+							required,
+							requiredIf: {
+								property,
+								value
+							}
+						}
+					}
+				};
+				alert('Submitted');
+				onChange(initialState, this.props.index);
+				this.props.close();
 			}
-		};
-		alert('Submitted');
-		onChange(initialState, this.props.index);
-		this.props.close();
-	}
-	else{
-		alert("Please fill the mandatory fields");
-	}
+			else alert("Please fill the mandatory fields");
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
 
 	render() {

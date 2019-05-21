@@ -1,32 +1,26 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class PasswordControl extends Component {
 
 	constructor(props) {
 		super(props);
-
 		this.state = {
-
 		};
 
-
 		this.handleChange = this.handleChange.bind(this);
-
 	}
+
 	componentDidMount() {
-		// alert('did')
 		this.setState({
 			mode: this.props.mode,
 			type: this.props.type,
 			data: this.props.data,
-
 		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				defaultValue: this.props.data.options ? this.props.data.options.defaultValue : '',
@@ -40,10 +34,14 @@ class PasswordControl extends Component {
 			})
 		}
 	}
-
-
+	componentWillReceiveProps(nextProps) {
+		this.setState({
+			mode: nextProps.mode,
+			type: nextProps.type,
+			data: nextProps.data,
+		});
+	}
 	handleChange(e) {
-
 		const { name, value } = e.target;
 		this.setState({ [name]: value }, () => {
 		})
@@ -53,71 +51,86 @@ class PasswordControl extends Component {
 			})
 		}
 	}
-
 	handleSubmit = () => {
-
 		const { onChange } = this.props;
 
-		if (this.state.name !== undefined) {
-			var name = this.state.name
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.label !== undefined) {
-			var label = this.state.label
-		}
-		if (this.state.hint != undefined) {
-			var hint = this.state.hint;
-		}
-		if (this.state.defaultValue !== undefined) {
-			var defaultValue = this.state.defaultValue;
-		}
-		if (this.state.required !== undefined) {
-			var required = this.state.required;
-		}
-
-		if (this.state.minLength !== undefined) {
-			var minLength = this.state.minLength;
-		}
-		if (this.state.maxLength !== undefined) {
-			var maxLength = this.state.maxLength;
-		}
-		if (this.state.property !== undefined) {
-			var property = this.state.property;
-		}
-		if (this.state.value !== undefined) {
-			var value = this.state.value;
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
 		}
 
+		if (nameExists != "yes") {
+			if (this.state.name !== undefined) {
+				var name = this.state.name
+			}
+			if (this.state.label !== undefined) {
+				var label = this.state.label
+			}
+			if (this.state.hint != undefined) {
+				var hint = this.state.hint;
+			}
+			if (this.state.defaultValue !== undefined) {
+				var defaultValue = this.state.defaultValue;
+			}
+			if (this.state.required !== undefined) {
+				var required = this.state.required;
+			}
 
-		var initialState = {
-			type: 'password',
-			name,
-			label,
-			options: {
-				hint,
-				defaultValue,
-				validation: {
-					required,
-					minLength,
-					maxLength,
-					requiredIf: {
-						property,
-						value
+			if (this.state.minLength !== undefined) {
+				var minLength = parseInt(this.state.minLength);
+			}
+			if (this.state.maxLength !== undefined) {
+				var maxLength = parseInt(this.state.maxLength);
+			}
+			if (this.state.property !== undefined) {
+				var property = this.state.property;
+			}
+			if (this.state.value !== undefined) {
+				var value = this.state.value;
+			}
+
+			var initialState = {
+				type: 'password',
+				name,
+				label,
+				options: {
+					hint,
+					defaultValue,
+					validation: {
+						required,
+						minLength,
+						maxLength,
+						requiredIf: {
+							property,
+							value
+						}
 					}
 				}
-			}
-		};
-		//console.log(initialState)
-		alert('Submitted');
-		onChange(initialState, this.props.index);
-		this.props.close();
+			};
+			alert('Submitted');
+			onChange(initialState, this.props.index);
+			this.props.close();
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
 	render() {
-
-
 		return (
 			<Fragment>
 				<div>
-
 					<div>
 						<h5><b>Password Configuration</b></h5>
 					</div>
@@ -145,6 +158,7 @@ class PasswordControl extends Component {
 							required
 							onChange={this.handleChange}
 							className="labelText mb-1"
+							autoComplete='off'
 						/><div className="helper-text" >A unique element name</div>
 					</div>
 					<div>
@@ -158,10 +172,9 @@ class PasswordControl extends Component {
 							required
 							onChange={this.handleChange}
 							className="labelText mb-1"
+							autoComplete='off'
 						/><div className="helper-text" >The text the user sees</div>
-
 					</div>
-
 					<div>
 						<div>
 							<h5>Options</h5>
@@ -175,6 +188,7 @@ class PasswordControl extends Component {
 									value={this.state.hint}
 									onChange={this.handleChange}
 									className="labelText mb-1"
+									autoComplete='off'
 								/><div className="helper-text" >Give user a hint</div>
 							</div>
 							<div>
@@ -187,17 +201,17 @@ class PasswordControl extends Component {
 									value={this.state.defaultValue}
 									onChange={this.handleChange}
 									className="labelText mb-1"
+									autoComplete='off'
 								/><div className="helper-text" >Provide a default value</div>
 							</div>
 							<fieldset>
 								<legend><b>Validation</b></legend>
 								<div>
 									<div>
-										<input s={12} type="checkbox" id="required" name="required" onChange={this.handleChange} checked={this.state.required} />
+										<input s={12} type="checkbox" id="required" name="required" className='filled-in' onChange={this.handleChange} checked={this.state.required} />
 										<label htmlFor="required">Required?</label>
 									</div>
 								</div>
-
 								<div>
 									<div>
 										<Input
@@ -235,6 +249,7 @@ class PasswordControl extends Component {
 												value={this.state.property}
 												onChange={this.handleChange}
 												className="labelText mb-1"
+												autoComplete='off'
 											/><div className="helper-text" >Property name of field dependency.</div>
 										</div>
 										<div>
@@ -247,27 +262,21 @@ class PasswordControl extends Component {
 												value={this.state.value}
 												onChange={this.handleChange}
 												className="labelText mb-1"
+												autoComplete='off'
 											/><div className="helper-text" >Value of dependent field.</div>
 										</div>
 									</fieldset>
 								</div>
 							</fieldset>
 						</div>
-
 					</div>
-
 				</div>
 				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
-
 				</div>
-
 			</Fragment>
 		);
-
 	}
-
-
 }
 export default PasswordControl;

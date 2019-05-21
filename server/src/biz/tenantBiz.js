@@ -1,11 +1,15 @@
 'use strict';
 let axios = require('axios');
 let logging = require('../utils/logger');
-const config = require('../config/config');
+let urlList= require('../helpers/api-url');
 
 // tenant list.
 exports.getTenantList = (requestOptions) => {
-    return axios.get(`${config.RAPTER_URL}/tenant`, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+	//console.log(requestOptions.headers.Environment);
+	
+	
+    return axios.get(`${RAPTER_URL}/tenant`, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -19,7 +23,8 @@ exports.getTenantList = (requestOptions) => {
 };
 // find tenant by using id.
 exports.getTenant = (requestOptions, tenantId) => {
-    return axios.get(`${config.RAPTER_URL}/tenant/` + tenantId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.get(`${RAPTER_URL}/tenant/` + tenantId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -34,7 +39,8 @@ exports.getTenant = (requestOptions, tenantId) => {
 
 // create tenant.
 exports.createTenant = (requestOptions, inpParam) => {
-    return axios.post(`${config.RAPTER_URL}/tenant`, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.post(`${RAPTER_URL}/tenant`, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -49,7 +55,8 @@ exports.createTenant = (requestOptions, inpParam) => {
 
 // update tenant.
 exports.updateTenant = (requestOptions, tenantId, inpParam) => {
-    return axios.put(`${config.RAPTER_URL}/tenant/` + tenantId, inpParam, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.put(`${RAPTER_URL}/tenant/` + tenantId, inpParam, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {
@@ -63,7 +70,8 @@ exports.updateTenant = (requestOptions, tenantId, inpParam) => {
 };
 // delete tenant.
 exports.deleteTenant = (requestOptions, tenantId) => {
-    return axios.delete(`${config.RAPTER_URL}/tenant/` + tenantId, requestOptions).then(response => {
+	let RAPTER_URL = urlList.apiUrl(requestOptions.headers.Environment)
+    return axios.delete(`${RAPTER_URL}/tenant/` + tenantId, requestOptions).then(response => {
         return response;
     }).catch(error => {
         let rtVal = {

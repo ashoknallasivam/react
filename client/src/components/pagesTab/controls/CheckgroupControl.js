@@ -5,19 +5,13 @@ import { flatten } from 'flat';
 class CheckgroupControl extends Component {
 	constructor(props) {
 		super(props);
-
 		this.state = {
 			data: [],
-			name: '',
-			label: '',
 			align: '',
 			disabled: "",
 			requiredMin: 0,
-			//required: false,
-			//name: "",
 			fields: [{ label: "" }]
 		};
-
 
 		this.handleChange = this.handleChange.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
@@ -28,23 +22,20 @@ class CheckgroupControl extends Component {
 			mode: this.props.mode,
 			type: this.props.type,
 			data: this.props.data,
-
 		});
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				fields: this.props.data.options.fields ? this.props.data.options.fields : '',
 				property: this.props.data.options.showIf ? this.props.data.options.showIf.property : '',
 				value: this.props.data.options.showIf ? this.props.data.options.showIf.value : '',
 				requiredMin: this.props.data.options.validation ? this.props.data.options.validation.requiredMin : ''
-
 			})
-
 		}
 	}
-
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			mode: nextProps.mode,
@@ -52,75 +43,88 @@ class CheckgroupControl extends Component {
 			data: nextProps.data,
 		});
 	}
-
 	handleChange(e) {
 		const { name, value } = e.target;
 		this.setState({ [name]: value }, () => {
 			this.createSchema(); // Call back function as SetState is Asynch
 		})
 	}
-
 	createSchema() {
 		//onChange(index,initialState);
 	}
-
 	handleSubmit() {
-
 		const { onChange } = this.props;
-		let name = '';
-		let label = '';
-		let hint = '';
-		let requiredMin = '';
-		let fields = [];
-		let property = '';
-		let value = '';
 
-		if (this.state.name !== undefined) {
-			name = this.state.name
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.label !== undefined) {
-			label = this.state.label
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
 		}
-		if (this.state.hint != undefined) {
-			hint = this.state.hint;
-		}
-		if (this.state.requiredMin !== undefined) {
-			requiredMin = this.state.requiredMin;
-		}
-		if (this.state.fields !== undefined) {
-			fields = this.state.fields;
+		if (nameExists != "yes") {
+			let name = '';
+			let label = '';
+			let hint = '';
+			let requiredMin = '';
+			let fields = [];
+			let property = '';
+			let value = '';
 
-		}
-		if (this.state.property !== undefined) {
-			property = this.state.property;
-		}
-		if (this.state.value !== undefined) {
-			value = this.state.value;
-		}
+			if (this.state.name !== undefined && this.state.label !== undefined) {
+				name = this.state.name;
+				label = this.state.label
+				if (this.state.hint != undefined) {
+					hint = this.state.hint;
+				}
+				if (this.state.requiredMin !== undefined) {
+					requiredMin = parseInt(this.state.requiredMin);
+				}
+				if (this.state.fields !== undefined) {
+					fields = this.state.fields;
+				}
+				if (this.state.property !== undefined) {
+					property = this.state.property;
+				}
+				if (this.state.value !== undefined) {
+					value = this.state.value;
+				}
 
-		var initialState = {
-			type: this.state.type,
-			name,
-			label,
-			options: {
-				hint,
-				showIf: {
-					property,
-					value
-				},
-				validation: {
-					requiredMin,
-				},
-				fields
-			},
-
-		};
-		alert('submitted');
-		onChange(initialState, this.props.index);
-
-		this.props.close();
+				var initialState = {
+					type: this.state.type,
+					name,
+					label,
+					options: {
+						hint,
+						showIf: {
+							property,
+							value
+						},
+						validation: {
+							requiredMin,
+						},
+						fields
+					},
+				};
+				alert('submitted');
+				onChange(initialState, this.props.index);
+				this.props.close();
+			}
+			else alert("Enter required fields");
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
-
 	handleItemLabelChange = idx => evt => {
 		const { name, value } = evt.target;
 
@@ -133,15 +137,12 @@ class CheckgroupControl extends Component {
 			}, () => {
 				this.itemSchema(idx); // Call back function as SetState is Asynch
 			})
-
 	};
 
 	itemSchema = (idx) => {
-
 		var flattenData = ''
 		var field = this.state.fields[idx];
 		flattenData = flatten(field);
-
 
 		var itemType = this.state[`element_typeCheckbox${idx}`] !== undefined ? this.state[`element_typeCheckbox${idx}`] : flattenData['type']
 		var fieldName = this.state[`fieldName${idx}`] !== undefined ? this.state[`fieldName${idx}`] : flattenData['name'];
@@ -154,7 +155,19 @@ class CheckgroupControl extends Component {
 		var othervalue = this.state[`othervalue${idx}`] !== undefined ? this.state[`othervalue${idx}`] : flattenData['options.specify.options.validation.requiredIf.value'];
 		var required = this.state[`required${idx}`] !== undefined ? this.state[`required${idx}`] : flattenData['validation.required']
 		var align = this.state[`align${idx}`] !== undefined ? this.state[`align${idx}`] : flattenData['options.align']
-		var disabled = this.state[`disabled${idx}`] !== undefined ? this.state[`disabled${idx}`] : flattenData['options.disabled']
+		//var disabled = this.state[`disabled${idx}`] !== undefined ? this.state[`disabled${idx}`] : flattenData['options.disabled']
+		//var booldisabled = JSON.parse(disabled);   //returns true
+        
+		if (this.state[`disabled${idx}`] !== undefined) {
+				if (this.state[`disabled${idx}`] == 'true') {
+					var disabled = true;
+				} else {
+					var disabled = false;
+				}
+			}
+		
+		
+		
 		var initialItemSchema = {
 			type: itemType,
 			name: fieldName,
@@ -175,11 +188,12 @@ class CheckgroupControl extends Component {
 							},
 						}
 					}
+				},
+				validation: {
+					required: required
 				}
-			},
-			validation: {
-				required: required
 			}
+			
 		};
 
 		const newItems = this.state.fields.map((field, sidx) => {
@@ -187,30 +201,24 @@ class CheckgroupControl extends Component {
 			return { ...field, ...initialItemSchema };
 		});
 
-
 		this.setState({ fields: newItems })
 	}
-
-
 	handleAddItem = () => {
 		this.setState({
 			fields: this.state.fields.concat([{ label: "" }])
 		});
 	};
-
 	handleRemoveItem = idx => () => {
 		this.setState({
 			fields: this.state.fields.filter((s, sidx) => idx !== sidx)
 		});
 	};
 
-
 	render() {
 		var flattenData = '';
 		return (
 			<Fragment>
 				<div>
-
 					<div>
 						<h5><b>Checkbox group Configuration</b></h5>
 					</div>
@@ -254,9 +262,7 @@ class CheckgroupControl extends Component {
 							className="labelText"
 							autoComplete="off"
 						/><div className="helper-text" >The text the user sees</div>
-
 					</div>
-
 					<div>
 						<div>
 							<h5>Options</h5>
@@ -393,20 +399,19 @@ class CheckgroupControl extends Component {
 												</div>
 
 												<div> <label className="innerDynamicLabel">Default state </label></div>
+												
 												<div>
-													<input id={`disabled${idx}`} name={`disabled${idx}`} type="radio" value={true}
-														checked={flattenData['options.disabled'] === "true"}
-														onChange={this.handleItemLabelChange(idx)}
-													/>
+													<input id={`disabled${idx}`} type="radio" name={`disabled${idx}`} value="true" checked={flattenData['options.disabled'] === true} onChange={this.handleItemLabelChange(idx)} />
 													<label className="innerDynamicLabel ml-1" htmlFor={`disabled${idx}`}>Disabled</label>
 												</div>
 												<div>
-													<input id={`enabled${idx}`} type="radio" name={`disabled${idx}`} value={false}
-														checked={flattenData['options.disabled'] === "false"}
-														onChange={this.handleItemLabelChange(idx)}
-													/>
+													<input id={`enabled${idx}`} name={`disabled${idx}`} type="radio" value="false" checked={flattenData['options.disabled'] === false} onChange={this.handleItemLabelChange(idx)} />
 													<label className="innerDynamicLabel ml-1" htmlFor={`enabled${idx}`}>Enabled</label>
 												</div>
+												
+												
+												
+												
 												<Collapsible accordion={false}>
 													<CollapsibleItem header='Others Specify' icon="keyboard_arrow_down">
 
@@ -460,7 +465,6 @@ class CheckgroupControl extends Component {
 																		autoComplete='off'
 																	/>	</div>
 																<div className="helper-text" >Give user a hint</div>
-
 																<fieldset>
 																	<legend>Required If?</legend>
 																	<Input
@@ -499,12 +503,9 @@ class CheckgroupControl extends Component {
 												</fieldset>
 											</CollapsibleItem>
 										</Collapsible>
-
 									</div>
-
 								</fieldset>
 							})}
-
 							<div>
 								<Col s={12} m={6} l={4} xl={12} >
 									<Button type="button" className='btn btn_primary otherButtonAddDetUpt iconButton right' name="addOrg" onClick={this.handleAddItem}>
@@ -512,18 +513,13 @@ class CheckgroupControl extends Component {
 									</Button>
 								</Col>
 							</div>
-
 						</div>
-
 					</div>
-
 				</div>
 				<div className="right valign-wrapper mt-2">
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt mr-2" onClick={this.handleSubmit}>Submit</Button>
 					<Button type="button" className="btn_secondary otherButtonAddDetUpt" onClick={this.props.close} >Cancel</Button>
-
 				</div>
-
 			</Fragment>
 		);
 	}

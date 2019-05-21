@@ -1,10 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class EmailControl extends Component {
-
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -23,6 +20,7 @@ class EmailControl extends Component {
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				hint: this.props.data.options ? this.props.data.options.hint : '',
 				required: this.props.data.options.validation ? this.props.data.options.validation.required : '',
@@ -31,7 +29,6 @@ class EmailControl extends Component {
 			})
 		}
 	}
-
 	componentWillReceiveProps(nextProps) {
 		this.setState({
 			mode: nextProps.mode,
@@ -39,53 +36,72 @@ class EmailControl extends Component {
 			data: nextProps.data,
 		});
 	}
-
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		let name = "";
-		let label = "";
-		let hint = "";
-		let required = "";
-		let property = "";
-		let propertyValue = "";
 
-		if (this.state.name != undefined && this.state.label != undefined) {
-			name = this.state.name;
-			label = this.state.label;
-			if (this.state.hint !== undefined) {
-				hint = this.state.hint;
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
+		}
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
 			}
-			if (this.state.required !== undefined) {
-				required = this.state.required
-			}
-			if (this.state.property !== undefined) {
-				property = this.state.property;
-			}
-			if (this.state.propertyValue !== undefined) {
-				propertyValue = this.state.propertyValue;
-			}
+		}
+		if (nameExists != "yes") {
+			let name = "";
+			let label = "";
+			let hint = "";
+			let required = "";
+			let property = "";
+			let propertyValue = "";
 
-			let data = {
-				"type": "email",
-				"name": name,
-				"label": label,
-				"options": {
-					"hint": hint,
-					"validation": {
-						"required": required,
-						"requiredIf": {
-							"property": property,
-							"value": propertyValue
+			if (this.state.name != undefined && this.state.label != undefined) {
+				name = this.state.name;
+				label = this.state.label;
+				if (this.state.hint !== undefined) {
+					hint = this.state.hint;
+				}
+				if (this.state.required !== undefined) {
+					required = this.state.required
+				}
+				if (this.state.property !== undefined) {
+					property = this.state.property;
+				}
+				if (this.state.propertyValue !== undefined) {
+					propertyValue = this.state.propertyValue;
+				}
+
+				let data = {
+					"type": "email",
+					"name": name,
+					"label": label,
+					"options": {
+						"hint": hint,
+						"validation": {
+							"required": required,
+							"requiredIf": {
+								"property": property,
+								"value": propertyValue
+							}
 						}
 					}
-				}
-			};
-			onChange(data, this.props.index);
-			alert('Submitted');
-			this.props.close();
+				};
+				onChange(data, this.props.index);
+				alert('Submitted');
+				this.props.close();
+			}
+			else alert("Enter required fields");
 		}
 		else {
-			alert("Enter required fields");
+			alert("Name already exists");
+			nameExists = "";
 		}
 	};
 	handleChange = (e) => {
@@ -97,9 +113,8 @@ class EmailControl extends Component {
 				[e.target.name]: e.target.checked
 			})
 	};
+
 	render() {
-
-
 		return (
 			<Fragment>
 				<div>
@@ -190,9 +205,6 @@ class EmailControl extends Component {
 				</div>
 			</Fragment>
 		);
-
 	}
-
-
 }
 export default EmailControl;

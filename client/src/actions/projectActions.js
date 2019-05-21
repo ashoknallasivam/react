@@ -187,14 +187,13 @@ export const saveProject = id => (dispatch, getState) => {
     .post(`${BACKEND_URL}/publish`, saveProject, { headers: authHeaderFinal() })
     .then(response => {
       if (response.status === 200) {
-        return response.data.savedProjectId;
+        return response;
       } else {
         return true;
       }
     })
     .catch(error =>{
-      console.log(error);
-      return error.message
+      return error
 		// dispatch(actions.SaveProjectError(error.message));
 	})
 };

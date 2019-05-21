@@ -19,6 +19,7 @@ router.post('/organization', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.
@@ -47,6 +48,8 @@ router.get('/organization', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     organizationBiz.getOrganizationList(requestOptions).then(response => {
         if (response.status === 200) {
             res.status(200).send(response.data);
@@ -66,6 +69,8 @@ router.get('/organization/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.params;
     if (inpParam !== undefined || Object.keys(inpParam).length !== 0) {
         organizationBiz.getOrganization(requestOptions, inpParam.id).then(response => {
@@ -93,6 +98,8 @@ router.put('/organization/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
+	
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
         let rtnVal = responseStatus.BAD_REQUEST;
@@ -121,6 +128,7 @@ router.delete('/organization/:id', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.params;
     if ((inpParam === undefined) || Object.keys(inpParam).length === 0) {
@@ -149,6 +157,7 @@ router.post('/organization-user', (req, res) => {
     }
     let requestOptions = config.AUTHORIZATION;
     requestOptions.headers.Authorization = "Bearer " + token;
+	requestOptions.headers.Environment = req.headers.environment;
 
     let inpParam = req.body;
     //Check for the input parameters.

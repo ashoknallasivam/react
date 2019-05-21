@@ -3,6 +3,7 @@ export const AUTH_TOKEN = 'auth_token';
 export const UNAUTH_USER = 'unauth_user';
 export const AUTH_ERROR = 'auth_error';
 export const TOKEN_ERROR = 'token_error';
+export const SMS_ERROR = 'sms_error';
 export const FETCH_MESSAGE = 'fetch_message';
 export const UPDATE_BOUNDS = 'update_bounds';
 export const GET_PAGES = 'get_pages';

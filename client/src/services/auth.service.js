@@ -4,6 +4,7 @@ import { API_URL, BACKEND_URL } from '../config';
 
 export const authService = {
     login,
+	twoStepGeneration,
 	twoStepVerification,
     logout,
 
@@ -23,10 +24,24 @@ function login(username, password, environment) {
 	
 }
 
-function twoStepVerification(code) {
-  
+
+function twoStepGeneration() {
+    
+	
     return axios
-			.post(`${BACKEND_URL}/two-factor-validate`, { code },{ headers: authHeaderInitial() })
+			.get(`${BACKEND_URL}/two-factor-sms`, { headers: authHeaderInitial() } )
+			.then(function (response) {
+				// - Save the Rapter token
+				return onSuccessStatus(response);
+			})
+     		.catch(onError);
+}
+
+
+function twoStepVerification(code) {
+    
+    return axios
+			.post(`${BACKEND_URL}/two-factor-validate`, { code }, { headers: authHeaderInitial() })
 			.then(function (response) {
 				// - Save the Rapter token
 				localStorage.setItem('finaltoken', response.data.token);
@@ -46,6 +61,12 @@ const onSuccess = function (response) {
     console.debug('Request Successful!', response);
     return response.data;
   };
+  
+const onSuccessStatus = function (response) {
+
+    console.debug('Request Successful!', response);
+    return response.status;
+  };  
 
 const onError = function (error) {
 

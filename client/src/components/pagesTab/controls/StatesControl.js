@@ -1,8 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { Row, Col, Tab, Tabs, Input, Icon, Button, Modal, Collapsible, CollapsibleItem } from 'react-materialize';
 
-
-
 class StatesControl extends Component {
 
 	constructor(props) {
@@ -20,9 +18,7 @@ class StatesControl extends Component {
 			option_validation_requiredIf_value: '',
 		};
 
-
 		this.handleChange = this.handleChange.bind(this);
-
 	}
 
 	componentDidMount() {
@@ -35,6 +31,7 @@ class StatesControl extends Component {
 		if (Object.keys(this.props.data).length > 0) {
 			this.setState({
 				name: this.props.data.name,
+				prevName: this.props.data.name,
 				label: this.props.data.label,
 				option_hint: this.props.data.options.hint,
 				option_defaultValue: this.props.data.options.defaultValue,
@@ -55,8 +52,6 @@ class StatesControl extends Component {
 		});
 	}
 
-
-
 	handleChange(e) {
 		const { name, value, checked } = e.target;
 		let tempValue = value;
@@ -68,62 +63,81 @@ class StatesControl extends Component {
 
 	handleSubmit = () => {
 		const { onChange } = this.props;
-		if (this.state.name !== undefined) {
-			var name = this.state.name
+
+		let nameExists = "";
+		if (this.state.mode == "ADD") {
+			this.props.values.map(item => {
+				if (item.name.toLowerCase() == this.state.name.toLowerCase())
+					nameExists = "yes";
+			})
 		}
-		if (this.state.label !== undefined) {
-			var label = this.state.label
+		else if (this.state.mode == "EDIT") {
+			if (this.state.prevName != this.state.name) {
+				this.props.values.map(item => {
+					if (item.name.toLowerCase() == this.state.name.toLowerCase())
+						nameExists = "yes";
+				})
+			}
 		}
-		if (this.state.option_hint !== undefined) {
-			var option_hint = this.state.label
-		}
-		if (this.state.option_defaultValue !== undefined) {
-			var option_defaultValue = this.state.option_defaultValue
-		}
-		if (this.state.option_showIf_property !== undefined) {
-			var option_showIf_property = this.state.option_showIf_property
-		}
-		if (this.state.option_showIf_value !== undefined) {
-			var option_showIf_value = this.state.option_showIf_value
-		}
-		var option_validation_required = this.state.option_validation_required
-		if (this.state.option_validation_requiredIf_property !== undefined) {
-			var option_validation_requiredIf_property = this.state.option_validation_requiredIf_property
-		} if (this.state.option_validation_requiredIf_value !== undefined) {
-			var option_validation_requiredIf_value = this.state.option_validation_requiredIf_value
-		}
-		var initialState = {
-			type: "states",
-			name,
-			label,
-			options: {
-				"hint": option_hint,
-				"defaultValue": option_defaultValue,
-				"showIf": {
-					"property": option_showIf_property,
-					"value": option_showIf_value
-				},
-				"validation": {
-					"required": option_validation_required,
-					"requiredIf": {
-						"property": option_validation_requiredIf_property,
-						"value": option_validation_requiredIf_value
+		if (nameExists != "yes") {
+			if (this.state.name !== undefined) {
+				var name = this.state.name
+			}
+			if (this.state.label !== undefined) {
+				var label = this.state.label
+			}
+			if (this.state.option_hint !== undefined) {
+				var option_hint = this.state.option_hint
+			}
+			if (this.state.option_defaultValue !== undefined) {
+				var option_defaultValue = this.state.option_defaultValue
+			}
+			if (this.state.option_showIf_property !== undefined) {
+				var option_showIf_property = this.state.option_showIf_property
+			}
+			if (this.state.option_showIf_value !== undefined) {
+				var option_showIf_value = this.state.option_showIf_value
+			}
+			var option_validation_required = this.state.option_validation_required
+			if (this.state.option_validation_requiredIf_property !== undefined) {
+				var option_validation_requiredIf_property = this.state.option_validation_requiredIf_property
+			} if (this.state.option_validation_requiredIf_value !== undefined) {
+				var option_validation_requiredIf_value = this.state.option_validation_requiredIf_value
+			}
+			var initialState = {
+				type: "states",
+				name,
+				label,
+				options: {
+					"hint": option_hint,
+					"defaultValue": option_defaultValue,
+					"showIf": {
+						"property": option_showIf_property,
+						"value": option_showIf_value
+					},
+					"validation": {
+						"required": option_validation_required,
+						"requiredIf": {
+							"property": option_validation_requiredIf_property,
+							"value": option_validation_requiredIf_value
+						}
 					}
 				}
-			}
-		};
-		onChange(initialState, this.props.index);
-		this.props.close();
+			};
+			onChange(initialState, this.props.index);
+			this.props.close();
+		}
+		else {
+			alert("Name already exists");
+			nameExists = "";
+		}
 	}
 
-
 	render() {
-
-
 		return (
 			<Fragment>
 				<div>
-					<h5><b>Heading Configuration</b></h5>
+					<h5><b>States Configuration</b></h5>
 				</div>
 				<div>
 					<Input
@@ -140,7 +154,7 @@ class StatesControl extends Component {
 				<div>
 					<Input
 						s={12}
-						label="Name"
+						label="Name *"
 						id="name"
 						name="name"
 						type="text"
@@ -148,12 +162,13 @@ class StatesControl extends Component {
 						value={this.state.name}
 						required
 						onChange={this.handleChange}
+						autoComplete='off'
 					/><div className="helper-text" >A unique element name</div>
 				</div>
 				<div>
 					<Input
 						s={12}
-						label="Label"
+						label="Label *"
 						id="label"
 						name="label"
 						type="text"
@@ -161,30 +176,31 @@ class StatesControl extends Component {
 						value={this.state.label}
 						required
 						onChange={this.handleChange}
+						autoComplete='off'
 					/><div className="helper-text" >A unique element name</div>
 				</div>
 
 				<div>
 					<div>
 						<Input s={12} className="labelText mb-1" name="option_hint" type="text" value={this.state.option_hint} label="Hint"
-							onChange={this.handleChange} />
+							onChange={this.handleChange} autoComplete='off' />
 						<div className="helper-text" >Give user a hint</div>
 					</div>
 					<div>
 						<Input s={12} className="labelText mb-1" label="Default value" id="statesDefaultValue" name="option_defaultValue" type="text" value={this.state.option_defaultValue}
-							onChange={this.handleChange} />
+							onChange={this.handleChange} autoComplete='off' />
 						<div className="helper-text" >Provide a default value</div>
 					</div>
 
 					<fieldset><legend><b>show if?</b></legend>
 						<div>
 							<Input s={12} className="labelText mb-1" label="Property Name" id="showIfPropertyName" name="option_showIf_property" type="text" value={this.state.option_showIf_property}
-								onChange={this.handleChange} />
+								onChange={this.handleChange} autoComplete='off' />
 							<div className="helper-text" >Property name of field dependency.</div>
 						</div>
 						<div>
 							<Input s={12} className="labelText mb-1" label="Property Value" id="showIfPropertyValue" name="option_showIf_value" type="text" value={this.state.option_showIf_value}
-								onChange={this.handleChange} />
+								onChange={this.handleChange} autoComplete='off' />
 							<div className="helper-text" >Value of dependent field</div>
 						</div>
 					</fieldset>
@@ -204,7 +220,7 @@ class StatesControl extends Component {
 							</div>
 							<div>
 								<Input s={12} className="labelText mb-1" label="Property value" id="validationPropertyValue" name="option_validation_requiredIf_value" type="text"
-									value={this.state.option_validation_requiredIf_value} onChange={this.handleChange} />
+									value={this.state.option_validation_requiredIf_value} onChange={this.handleChange} autoComplete='off' />
 								<div className="helper-text" >Value of dependent field.</div>
 							</div>
 						</fieldset>
@@ -218,9 +234,6 @@ class StatesControl extends Component {
 				</div>
 			</Fragment>
 		);
-
 	}
-
-
 }
 export default StatesControl;
